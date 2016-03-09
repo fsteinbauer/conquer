@@ -13,7 +13,7 @@ abstract public class Shape {
     List<LatLng> points;
 
     public Shape() {
-        this.points = new ArrayList();
+        this.points = new ArrayList<>();
     }
 
     public void addPoint(LatLng point){
@@ -22,5 +22,9 @@ abstract public class Shape {
 
     public List<LatLng> getPoints(){
         return points;
+    }
+
+    public void deletePoints(){
+        points.clear();
     }
 }

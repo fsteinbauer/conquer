@@ -16,6 +16,8 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polygon;
+import com.google.android.gms.maps.model.PolygonOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
@@ -24,6 +26,7 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import at.acid.conquer.model.Area;
 import at.acid.conquer.model.Route;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
@@ -52,8 +55,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mockLatLng.add(new LatLng(47.0627766,15.4661078));
         mockLatLng.add(new LatLng(47.0616808,15.4634255));
         mockLatLng.add(new LatLng(47.0604991,15.462735));
-        mockLatLng.add(new LatLng(47.0602757,15.4635859));
-        mockLatLng.add(new LatLng(47.0617761,15.4671111));
+        mockLatLng.add(new LatLng(47.0602757, 15.4635859));
+        mockLatLng.add(new LatLng(47.0617761, 15.4671111));
         mockLatLng.add(new LatLng(47.060469, 15.468863));
 
 
@@ -74,7 +77,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             protected void changeRoute(Route route) {
                 Log.d(TAG, "Polyline has Points: "+ route.getPoints().size());
                 mPolyline.setPoints(route.getPoints());
+            }
 
+
+            @Override
+            protected void addArea(Area area){
+                Log.d(TAG, "Add Polygon");
+                mPolyline.setPoints(new ArrayList<LatLng>());
+                Polygon polygon = mMap.addPolygon(new PolygonOptions()
+                        .addAll(area.getPoints())
+                        .strokeColor(Color.RED)
+                        .fillColor(Color.RED));
             }
         };
 

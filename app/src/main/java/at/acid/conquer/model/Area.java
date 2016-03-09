@@ -5,5 +5,7 @@ package at.acid.conquer.model;
  */
 public class Area extends Shape{
 
-
+    public Area(Route route){
+        this.points = route.points;
+    }
 }
