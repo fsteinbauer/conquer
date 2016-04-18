@@ -15,7 +15,11 @@
     Once you have your key (it starts with "AIza"), replace the "google_maps_key"
     string in this file.
     -->
-    <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">
-        AIzaSyCaOwWmHH8BUnLbTfOS9VN03KfL1xhtuvQ
-    </string>
+
+
+    <!--
+    This key was not working, so i created a new one, without a fingerprint... works for me...
+    <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">AIzaSyCaOwWmHH8BUnLbTfOS9VN03KfL1xhtuvQ</string>
+    -->
+    <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">AIzaSyBjHatwtxnwgqCLfw4xMBfDviCD652oCIM</string>
 </resources>
