@@ -33,7 +33,7 @@ public class MockLocationProvider {
         mockLocation.setLatitude(latlng.latitude);
         mockLocation.setLongitude(latlng.longitude);
         mockLocation.setAccuracy(20);
-        mockLocation.setElapsedRealtimeNanos(1457537901000L);
+        //mockLocation.setElapsedRealtimeNanos(1457537901000L);
         mockLocation.setAltitude(0);
         mockLocation.setTime(System.currentTimeMillis());
         Log.d("MockLocation", mockLocation.toString());

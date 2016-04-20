@@ -12,7 +12,7 @@ import at.acid.conquer.model.Route;
  */
 public abstract class LocationUtility {
 
-    protected Route currentRoute;
+    public Route currentRoute;
 
     protected LocationUtility() {
         this.currentRoute = new Route();

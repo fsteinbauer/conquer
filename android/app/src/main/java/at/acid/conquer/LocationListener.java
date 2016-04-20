@@ -18,6 +18,7 @@ public class LocationListener implements android.location.LocationListener {
     private LocationUtility mUtility;
 
     public LocationListener(LocationUtility mUtility) {
+        Log.d(TAG, "Location Listener Created");
         this.mUtility = mUtility;
     }
 

@@ -49,7 +49,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
-        mock = new MockLocationProvider(LocationManager.NETWORK_PROVIDER, this);
+        /*mock = new MockLocationProvider(LocationManager.NETWORK_PROVIDER, this);
 
         mockLatLng.add(new LatLng(47.060469, 15.468863));
         mockLatLng.add(new LatLng(47.0627766,15.4661078));
@@ -59,20 +59,41 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mockLatLng.add(new LatLng(47.0617761, 15.4671111));
         mockLatLng.add(new LatLng(47.060469, 15.468863));
 
+*/
+        // Acquire a reference to the system Location Manager
+        mLocationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 
+        /*LocationListener listener = new LocationListener(mLocationUtility);
+        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, listener);
+        mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, listener);
+*/
         new Timer().scheduleAtFixedRate(new TimerTask() {
-
-
             @Override
             public void run() {
-                Log.d(TAG, "TIMER");
+                /*Log.d(TAG, "TIMER");
                 if(index < mockLatLng.size()){
                     mock.pushLocation(mockLatLng.get(index++));
-                }
-            }
-        }, 10000, 1000);
+                }*/
+                // Register the listener with the Location Manager to receive location updates
 
-        mLocationUtility = new LocationUtility() {
+                Location last = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                if( last == null )
+                    Log.d("Location", "No location found!");
+                else {
+                    //LatLng pos = new LatLng(last.getLatitude(), last.getLongitude());
+                    //mMap.addMarker(new MarkerOptions().position(pos).title("Ich"));
+                    Log.d("Location", Double.toString(last.getLatitude()) + ':' + Double.toString(last.getLongitude()));
+                }
+
+                /*List<LatLng> points = mLocationUtility.currentRoute.getPoints();
+                if( points.size() > 0 ) {
+                    LatLng pos = points.get(0);
+                    mMap.addMarker(new MarkerOptions().position(pos).title("Ich"));
+                }*/
+            }
+        }, 5000, 1000);
+
+        /*mLocationUtility = new LocationUtility() {
             @Override
             protected void changeRoute(Route route) {
                 Log.d(TAG, "Polyline has Points: "+ route.getPoints().size());
@@ -94,17 +115,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                         .strokeColor(Color.rgb(200, 20, 20))
                         .fillColor(Color.argb(80, 200, 20, 20)));
             }
-        };
+        };*/
 
 
 
-        // Acquire a reference to the system Location Manager
-        mLocationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 
-        LocationListener listener = new LocationListener(mLocationUtility);
-
-        // Register the listener with the Location Manager to receive location updates
-        mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, listener);
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -139,7 +154,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     .target(latlng)
                     .zoom(14)
                     .bearing(0)
-                    .tilt(45)
+                    //.tilt(45)
                     .build();
 
             mMap.moveCamera(CameraUpdateFactory.newCameraPosition(this.cameraPosition));
@@ -148,11 +163,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
 
         // Create Polyline
-        PolylineOptions lineOptions = new PolylineOptions()
+        /*PolylineOptions lineOptions = new PolylineOptions()
                 .width(10)
                 .color(Color.RED)
                 .add(new LatLng(51.5, -0.1), new LatLng(40.7, -74.0));
-        mPolyline = mMap.addPolyline(lineOptions);
+        mPolyline = mMap.addPolyline(lineOptions);*/
 
 
     }
