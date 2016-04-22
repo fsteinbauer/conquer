@@ -1,0 +1,123 @@
+package at.acid.conquer;
+
+import android.app.Activity;
+import android.app.Service;
+import android.content.Intent;
+import android.location.*;
+import android.os.Binder;
+import android.os.Bundle;
+import android.os.IBinder;
+import android.util.Log;
+
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.*;
+
+import java.lang.ref.WeakReference;
+
+/**
+ * Created by menzi on 22.04.2016.
+ */
+public class LocationService extends Service implements
+        GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener,
+        com.google.android.gms.location.LocationListener {
+    public static final String TAG = "LocationService";
+
+    private static final int GPS_UPDATE_INTERVAL = 10000;
+    private static final int GPS_UPDATE_INTERVAL_MIN = 5000;
+
+    private GoogleApiClient mGoogleApiClient;
+    private LocationRequest mLocationRequest;
+
+    private final IBinder mBinder = new LocalBinder();
+    public class LocalBinder extends Binder {
+        LocationService getService() {
+            return LocationService.this;
+        }
+    }
+    public interface LocationServiceClient{
+        void onLocationUpdate(Location location);
+    }
+    private WeakReference<LocationServiceClient> mClient;
+
+    public void setServiceClient(LocationServiceClient client) {
+        if(client == null) {
+            mClient = null;
+            return;
+        }
+
+        mClient = new WeakReference<LocationServiceClient>(client);
+    }
+
+
+    public Location getLocation(){
+        Log.d(TAG, "getLocation()");
+        return LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
+    }
+
+    @Override
+    public void onCreate() {
+        Log.d(TAG, "onCreate()");
+        super.onCreate();
+
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
+
+        mLocationRequest = new LocationRequest()
+                .setInterval(GPS_UPDATE_INTERVAL)
+                .setFastestInterval(GPS_UPDATE_INTERVAL_MIN)
+                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+    }
+
+    @Override
+    public IBinder onBind(Intent intent) {
+        Log.d(TAG, "onBind()");
+        mGoogleApiClient.connect();
+        return mBinder;
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.d(TAG, "onStart()");
+        mGoogleApiClient.connect();
+        return super.onStartCommand(intent, flags, startId);
+    }
+
+    @Override
+    public void onDestroy() {
+        Log.d(TAG, "onDestroy()");
+        LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
+        mGoogleApiClient.disconnect();
+        super.onDestroy();
+    }
+
+    @Override
+    public void onConnected(Bundle connectionHint) {
+        Log.d(TAG, "onConnected()");
+        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+
+        if(mClient != null)
+            mClient.get().onLocationUpdate( LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient) );
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+        Log.d(TAG, "onConnectionSuspended()");
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+        Log.d(TAG, "onConnectionFailed()");
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        Log.d(TAG, "onLocationChanged()");
+        if(mClient != null)
+            mClient.get().onLocationUpdate( location );
+    }
+}
