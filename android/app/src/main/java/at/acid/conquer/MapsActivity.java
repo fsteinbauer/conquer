@@ -4,9 +4,11 @@ import android.content.Context;
 import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
-import android.os.Handler;
+
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v4.util.TimeUtils;
+import android.text.format.Time;
 import android.util.Log;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -22,6 +24,7 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -39,83 +42,55 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Polyline mPolyline;
     private CameraPosition cameraPosition;
 
-    MockLocationProvider mock;
+    private List<Location> network_locations = new LinkedList<>();
+    private List<Location> gps_locations = new LinkedList<>();
 
-    List<LatLng> mockLatLng = new ArrayList<>();
-    int index = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
-        /*mock = new MockLocationProvider(LocationManager.NETWORK_PROVIDER, this);
-
-        mockLatLng.add(new LatLng(47.060469, 15.468863));
-        mockLatLng.add(new LatLng(47.0627766,15.4661078));
-        mockLatLng.add(new LatLng(47.0616808,15.4634255));
-        mockLatLng.add(new LatLng(47.0604991,15.462735));
-        mockLatLng.add(new LatLng(47.0602757, 15.4635859));
-        mockLatLng.add(new LatLng(47.0617761, 15.4671111));
-        mockLatLng.add(new LatLng(47.060469, 15.468863));
-
-*/
-        // Acquire a reference to the system Location Manager
-        mLocationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-
-        /*LocationListener listener = new LocationListener(mLocationUtility);
-        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, listener);
-        mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, listener);
-*/
-        new Timer().scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                /*Log.d(TAG, "TIMER");
-                if(index < mockLatLng.size()){
-                    mock.pushLocation(mockLatLng.get(index++));
-                }*/
-                // Register the listener with the Location Manager to receive location updates
-
-                Location last = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-                if( last == null )
-                    Log.d("Location", "No location found!");
-                else {
-                    //LatLng pos = new LatLng(last.getLatitude(), last.getLongitude());
-                    //mMap.addMarker(new MarkerOptions().position(pos).title("Ich"));
-                    Log.d("Location", Double.toString(last.getLatitude()) + ':' + Double.toString(last.getLongitude()));
-                }
-
-                /*List<LatLng> points = mLocationUtility.currentRoute.getPoints();
-                if( points.size() > 0 ) {
-                    LatLng pos = points.get(0);
-                    mMap.addMarker(new MarkerOptions().position(pos).title("Ich"));
-                }*/
-            }
-        }, 5000, 1000);
-
-        /*mLocationUtility = new LocationUtility() {
+        mLocationUtility = new LocationUtility() {
             @Override
             protected void changeRoute(Route route) {
-                Log.d(TAG, "Polyline has Points: "+ route.getPoints().size());
-                mPolyline.setPoints(route.getPoints());
-            }
 
+            }
 
             @Override
-            protected void addArea(Area area){
-                Log.d(TAG, "Add Polygon");
-                mPolyline.setPoints(new ArrayList<LatLng>());
-                Polygon polygon = mMap.addPolygon(new PolygonOptions()
-                        .add(new LatLng(0, 0), new LatLng(0, 20), new LatLng(3, 5), new LatLng(0, 0))
-                        .strokeColor(Color.rgb( 200, 20, 20))
-                        .fillColor(Color.argb(80, 200, 20, 20)));
+            protected void addArea(Area area) {
 
-                mMap.addPolygon(new PolygonOptions()
-                        .add(new LatLng(2, 0), new LatLng(2, 20), new LatLng(8, 5), new LatLng(2, 0))
-                        .strokeColor(Color.rgb(200, 20, 20))
-                        .fillColor(Color.argb(80, 200, 20, 20)));
             }
-        };*/
+        };
+
+        mLocationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+
+        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,0,0,new LocationListener(mLocationUtility));
+
+        mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,0,0,new LocationListener(mLocationUtility));
+        Timer timer = new Timer();
+
+
+        timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+
+                Location gps_location = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                Location network_location = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+
+                gps_locations.add(gps_location);
+                network_locations.add(network_location);
+
+
+                Log.d(TAG, "" + gps_location);
+                Log.d(TAG, "" +network_location);
+
+                long time = System.currentTimeMillis();
+
+                mLocationUtility.addLocation(time, gps_location);
+                mLocationUtility.addLocation(time, network_location);
+            }
+        }, 5000, 5000);
 
 
 

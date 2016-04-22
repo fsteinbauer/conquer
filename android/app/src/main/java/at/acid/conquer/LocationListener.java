@@ -2,6 +2,8 @@ package at.acid.conquer;
 
 import android.location.Location;
 import android.os.Bundle;
+import android.os.SystemClock;
+import android.provider.Settings;
 import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
@@ -22,10 +24,14 @@ public class LocationListener implements android.location.LocationListener {
         this.mUtility = mUtility;
     }
 
+
+
     public void onLocationChanged(Location location){
         Log.d(TAG, "Location Changed: "+location.toString());
 
-        this.mUtility.handleLocationUpdate(location);
+        mUtility.addLocation(System.currentTimeMillis(), location);
+
+      //  this.mUtility.handleLocationUpdate(location);
     }
 
     public void onProviderDisabled(String provider){
