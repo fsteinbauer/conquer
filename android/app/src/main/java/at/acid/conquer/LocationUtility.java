@@ -10,36 +10,33 @@ import java.util.Map;
 
 import at.acid.conquer.model.Area;
 import at.acid.conquer.model.Route;
+import at.acid.conquer.model.TimeLocation;
 
 /**
  * Created by florian on 09.03.2016.
  */
 public abstract class LocationUtility {
-
-
-    public final String TAG = "LocationUtility";
+    public static final String TAG = "LocationUtility";
+    public static final float MAX_VALID_SPEED = 20.0f; // in km/h
+    public static final long MAX_VALID_TIME_DIFFERENCE = 5 * 60; // in seconds
 
     Map<Long, Location> locations = new HashMap<>();
 
-    public boolean addLocation(Long time, Location location)
-    {
-        if(time == null || location == null)
-        {
+    public boolean addLocation(Long time, Location location) {
+        if (time == null || location == null) {
             return false;
         }
-        if(locations.isEmpty())
-        {
+        if (locations.isEmpty()) {
             locations.put(time, location);
             return true;
         }
-        if(!validateLocation(time, location))
-        {
+        if (!validateLocation(time, location)) {
             return false;
         }
 
         locations.put(time, location);
 
-        Log.d(TAG, "Added New Location: " + location +" at time:" + time);
+        Log.d(TAG, "Added New Location: " + location + " at time:" + time);
         return true;
     }
 
@@ -95,44 +92,35 @@ public abstract class LocationUtility {
             Log.d(TAG, "KMH = " + kmh);
 
             if (kmh > 20.0) {
-                Log.d(TAG,"rejecting position update, since distance is too high for timespan!");
+                Log.d(TAG, "rejecting position update, since distance is too high for timespan!");
                 return false;
             }
         }
         return true;
-
-
     }
 
-    public Route currentRoute;
+    //----------------------------------------------------------------------------------------------
+    public static boolean validDistance(TimeLocation tloc1, TimeLocation tloc2) {
+        if (tloc1 == null || tloc2 == null)
+            return false;
 
-    protected LocationUtility() {
-        this.currentRoute = new Route();
-    }
+        float distInMeters = tloc1.mLocation.distanceTo(tloc2.mLocation);
+        long timeDifferenceInSeconds = Math.abs(tloc1.mTime - tloc2.mTime) / 1000;
+        float meterPerSecond = distInMeters / timeDifferenceInSeconds;
+        float kmh = meterPerSecond * 3.6f;
 
-    public void handleLocationUpdate(Location location) {
-        // handle application logic
+        Log.d(TAG, "km/h = " + kmh);
 
-
-        this.currentRoute.addPoint(new LatLng(location.getLatitude(), location.getLongitude()));
-
-        if (isCircle(this.currentRoute)) {
-            Area area = new Area(this.currentRoute);
-            this.currentRoute.deletePoints();
-            addArea(area);
-        } else {
-            changeRoute(currentRoute);
+        if (kmh > MAX_VALID_SPEED) {
+            Log.d(TAG, "rejecting position update, since distance is too high for timespan!");
+            return false;
         }
+
+        if (timeDifferenceInSeconds > MAX_VALID_TIME_DIFFERENCE) {
+            Log.d(TAG, "rejecting position update, since time difference is too big!");
+            return false;
+        }
+
+        return true;
     }
-
-    private boolean isCircle(Route route) {
-
-        int size = route.getPoints().size();
-        return size > 1 && route.getPoints().get(0).latitude == route.getPoints().get(size - 1).latitude &&
-                route.getPoints().get(0).longitude == route.getPoints().get(size - 1).longitude;
-    }
-
-    protected abstract void changeRoute(Route route);
-
-    protected abstract void addArea(Area area);
 }

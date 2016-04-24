@@ -1,6 +1,5 @@
 package at.acid.conquer;
 
-import android.app.Activity;
 import android.app.Service;
 import android.content.Intent;
 import android.location.*;
@@ -23,40 +22,42 @@ public class LocationService extends Service implements
         GoogleApiClient.OnConnectionFailedListener,
         com.google.android.gms.location.LocationListener {
     public static final String TAG = "LocationService";
-
-    private static final int GPS_UPDATE_INTERVAL = 10000;
-    private static final int GPS_UPDATE_INTERVAL_MIN = 5000;
+    public static final int GPS_UPDATE_INTERVAL = 30000;
+    public static final int GPS_UPDATE_INTERVAL_MIN = 20000;
 
     private GoogleApiClient mGoogleApiClient;
     private LocationRequest mLocationRequest;
 
+    // Binder (that client can call this class)
     private final IBinder mBinder = new LocalBinder();
     public class LocalBinder extends Binder {
         LocationService getService() {
             return LocationService.this;
         }
     }
-    public interface LocationServiceClient{
+
+    // Client ref (that this class can call client)
+    private WeakReference<LocationServiceClient> mClient;
+    public interface LocationServiceClient {
         void onLocationUpdate(Location location);
     }
-    private WeakReference<LocationServiceClient> mClient;
 
+    //----------------------------------------------------------------------------------------------
     public void setServiceClient(LocationServiceClient client) {
-        if(client == null) {
+        if (client == null) {
             mClient = null;
             return;
         }
-
         mClient = new WeakReference<LocationServiceClient>(client);
     }
 
-
-    public Location getLocation(){
+    //----------------------------------------------------------------------------------------------
+    public Location getLocation() {
         Log.d(TAG, "getLocation()");
         return LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
     }
 
-    @Override
+    @Override//-------------------------------------------------------------------------------------
     public void onCreate() {
         Log.d(TAG, "onCreate()");
         super.onCreate();
@@ -73,21 +74,21 @@ public class LocationService extends Service implements
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
     }
 
-    @Override
+    @Override//-------------------------------------------------------------------------------------
     public IBinder onBind(Intent intent) {
         Log.d(TAG, "onBind()");
         mGoogleApiClient.connect();
         return mBinder;
     }
 
-    @Override
+    @Override//-------------------------------------------------------------------------------------
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(TAG, "onStart()");
         mGoogleApiClient.connect();
         return super.onStartCommand(intent, flags, startId);
     }
 
-    @Override
+    @Override//-------------------------------------------------------------------------------------
     public void onDestroy() {
         Log.d(TAG, "onDestroy()");
         LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
@@ -95,29 +96,26 @@ public class LocationService extends Service implements
         super.onDestroy();
     }
 
-    @Override
+    @Override//-------------------------------------------------------------------------------------
     public void onConnected(Bundle connectionHint) {
         Log.d(TAG, "onConnected()");
         LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
-
-        if(mClient != null)
-            mClient.get().onLocationUpdate( LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient) );
     }
 
-    @Override
+    @Override//-------------------------------------------------------------------------------------
     public void onConnectionSuspended(int i) {
         Log.d(TAG, "onConnectionSuspended()");
     }
 
-    @Override
+    @Override//-------------------------------------------------------------------------------------
     public void onConnectionFailed(ConnectionResult connectionResult) {
         Log.d(TAG, "onConnectionFailed()");
     }
 
-    @Override
+    @Override//-------------------------------------------------------------------------------------
     public void onLocationChanged(Location location) {
         Log.d(TAG, "onLocationChanged()");
-        if(mClient != null)
-            mClient.get().onLocationUpdate( location );
+        if (mClient != null)
+            mClient.get().onLocationUpdate(location);
     }
 }
