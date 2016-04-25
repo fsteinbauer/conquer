@@ -104,10 +104,8 @@ public abstract class LocationUtility {
         if (tloc1 == null || tloc2 == null)
             return false;
 
-        float distInMeters = tloc1.mLocation.distanceTo(tloc2.mLocation);
+        float kmh = getSpeed(tloc1, tloc2);
         long timeDifferenceInSeconds = Math.abs(tloc1.mTime - tloc2.mTime) / 1000;
-        float meterPerSecond = distInMeters / timeDifferenceInSeconds;
-        float kmh = meterPerSecond * 3.6f;
 
         Log.d(TAG, "km/h = " + kmh);
 
@@ -122,5 +120,17 @@ public abstract class LocationUtility {
         }
 
         return true;
+    }
+
+    //----------------------------------------------------------------------------------------------
+    public static float getSpeed(TimeLocation tloc1, TimeLocation tloc2) {
+        if (tloc1 == null || tloc2 == null)
+            return 0.0f;
+
+        float distInMeters = tloc1.mLocation.distanceTo(tloc2.mLocation);
+        long timeDifferenceInSeconds = Math.abs(tloc1.mTime - tloc2.mTime) / 1000;
+        float meterPerSecond = distInMeters / timeDifferenceInSeconds;
+        float kmh = meterPerSecond * 3.6f;
+        return kmh;
     }
 }

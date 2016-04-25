@@ -20,6 +20,7 @@ public class Route {
 
     private PolylineOptions mPolylineOptions;
     private GoogleMap mMap;
+    private float mDistance;
 
     private List<Polyline> mPolylines = new ArrayList<Polyline>();
     private List<List<TimeLocation>> mPaths = new ArrayList<List<TimeLocation>>();
@@ -46,6 +47,8 @@ public class Route {
         List<LatLng> points = poly.getPoints();
         points.add(tloc.getLatLng());
         poly.setPoints(points);
+
+        mDistance += tloc.mLocation.distanceTo(oldTloc.mLocation);
     }
 
     //----------------------------------------------------------------------------------------------
@@ -61,6 +64,8 @@ public class Route {
         points.add(tloc2.getLatLng());
         poly.setPoints(points);
         mPolylines.add(poly);
+
+        mDistance += tloc1.mLocation.distanceTo(tloc2.mLocation);
     }
 
     //----------------------------------------------------------------------------------------------
@@ -73,5 +78,17 @@ public class Route {
             return null;
 
         return path.get(path.size() - 1);
+    }
+
+    //----------------------------------------------------------------------------------------------
+    public List<TimeLocation> getCurrentPath() {
+        if (mPaths.isEmpty())
+            return null;
+        return mPaths.get(mPaths.size() - 1);
+    }
+
+    //----------------------------------------------------------------------------------------------
+    public float getDistance(){
+        return mDistance;
     }
 }

@@ -11,16 +11,17 @@ import android.os.IBinder;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -28,11 +29,13 @@ import java.util.TimerTask;
 import at.acid.conquer.model.Route;
 import at.acid.conquer.model.TimeLocation;
 
+import static at.acid.conquer.LocationUtility.getSpeed;
 import static at.acid.conquer.LocationUtility.validDistance;
 
 public class MapsActivity extends FragmentActivity implements
         OnMapReadyCallback,
-        LocationService.LocationServiceClient {
+        LocationService.LocationServiceClient,
+        View.OnClickListener {
     public static final String TAG = "MapsActivity";
     public static final float DEFAULT_ZOOM = 16.0f;
 
@@ -44,6 +47,12 @@ public class MapsActivity extends FragmentActivity implements
     private Route mRoute;
     private TimeLocation mLastLocation;
     private LocationService mLocationService;
+
+    private Button mButtonStart;
+    private Button mButtonStop;
+
+    private TextView mTextArea;
+    private TextView mTextInfo;
 
     // handle bidirection connection to LocationService
     private ServiceConnection mLocationServiceConnection = new ServiceConnection() {
@@ -60,6 +69,48 @@ public class MapsActivity extends FragmentActivity implements
             mLocationService = null;
         }
     };
+
+    @Override//-------------------------------------------------------------------------------------
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_maps);
+
+        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
+
+        // Connect GUI elements
+        mButtonStart = (Button) findViewById(R.id.ButtonStart);
+        mButtonStop = (Button) findViewById(R.id.ButtonStop);
+        mButtonStart.setOnClickListener(this);
+        mButtonStop.setOnClickListener(this);
+        mButtonStop.setVisibility(View.GONE);
+
+        mTextArea = (TextView) findViewById(R.id.TextArea);
+        mTextInfo = (TextView) findViewById(R.id.TextInfo);
+        updateInfo(0,0);
+        updateArea("Graz");
+    }
+
+    @Override//-------------------------------------------------------------------------------------
+    public void onMapReady(GoogleMap googleMap) {
+        Log.d(TAG, "onMapReady()");
+        mMap = googleMap;
+        mRoute = new Route(mMap, mPathLineOptions);
+
+        // default locatin: graz
+        Location location = new Location("Wikipedia");
+        location.setLatitude(47.067);
+        location.setLongitude(15.433);
+
+        if (mLastLocation != null)
+            location = mLocationService.getLocation();
+
+        mLastLocation = new TimeLocation(location);
+        LatLng latlng = new LatLng(location.getLatitude(), location.getLongitude());
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latlng, DEFAULT_ZOOM));
+    }
 
     @Override//-------------------------------------------------------------------------------------
     public void onLocationUpdate(final Location location) {
@@ -97,39 +148,56 @@ public class MapsActivity extends FragmentActivity implements
         }
 
         mLastLocation = tloc;
+
+        List<TimeLocation> path = mRoute.getCurrentPath();
+        if( path != null && path.size() > 1 ) {
+            TimeLocation tloc1 = path.get(path.size()-1);
+            TimeLocation tloc2 = path.get(path.size()-2);
+            float kmh = getSpeed(tloc1, tloc2);
+            float distance = mRoute.getDistance() / 1000; // distance in km
+            updateInfo(kmh, distance);
+        }
     }
 
-    @Override//-------------------------------------------------------------------------------------
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_maps);
+    private void startTracking(){
+        Log.d(TAG, "startTracking()");
 
-        // Start LocationService
         Intent intent = new Intent(this, LocationService.class);
         bindService(intent, mLocationServiceConnection, Context.BIND_AUTO_CREATE);
+    }
 
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
+    private void stopTracking(){
+        Log.d(TAG, "stopTracking()");
+        unbindService(mLocationServiceConnection);
     }
 
     @Override//-------------------------------------------------------------------------------------
-    public void onMapReady(GoogleMap googleMap) {
-        Log.d(TAG, "onMapReady()");
-        mMap = googleMap;
-        mRoute = new Route(mMap, mPathLineOptions);
+    public void onClick(View v) {
+        switch( v.getId() ){
+            case R.id.ButtonStart:{
+                mButtonStart.setVisibility(View.GONE);
+                mButtonStop.setVisibility(View.VISIBLE);
+                startTracking();
+                break;
+            }
+            case R.id.ButtonStop:{
+                mButtonStop.setVisibility(View.GONE);
+                mButtonStart.setVisibility(View.VISIBLE);
+                stopTracking();
+                break;
+            }
+        }
+    }
 
-        // default locatin: graz
-        Location location = new Location("Wikipedia");
-        location.setLatitude(47.067);
-        location.setLongitude(15.433);
+    //----------------------------------------------------------------------------------------------
+    private void updateInfo(float kmh, float distance){
+        String text = "Speed: " + String.format("%.3f", kmh) + " km/h";
+        text += "\nDistance: " + String.format("%.3f", distance) + " km";
+        mTextInfo.setText(text);
+    }
 
-        if (mLastLocation != null)
-            location = mLocationService.getLocation();
-
-        mLastLocation = new TimeLocation(location);
-        LatLng latlng = new LatLng(location.getLatitude(), location.getLongitude());
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latlng, DEFAULT_ZOOM));
+    //----------------------------------------------------------------------------------------------
+    private void updateArea(CharSequence area){
+        mTextArea.setText(area);
     }
 }
