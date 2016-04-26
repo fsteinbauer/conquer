@@ -6,6 +6,8 @@ import android.widget.ArrayAdapter;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Polygon;
+import com.google.android.gms.maps.model.PolygonOptions;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,21 +37,32 @@ public class Area {
     public void addPoint(LatLng point) {
         mPolygon.add(point);
 
-        if( mBBoxMin == null || mBBoxMax == null ) {
+        if (mBBoxMin == null || mBBoxMax == null) {
             mBBoxMin = point;
             mBBoxMax = point;
-        }
-        else if( point.latitude < mBBoxMin.latitude )
+        } else if (point.latitude < mBBoxMin.latitude)
             mBBoxMin = new LatLng(point.latitude, mBBoxMin.longitude);
-        else if( point.longitude < mBBoxMin.longitude )
+        else if (point.longitude < mBBoxMin.longitude)
             mBBoxMin = new LatLng(mBBoxMin.latitude, point.longitude);
-        else if( point.latitude > mBBoxMax.latitude )
+        else if (point.latitude > mBBoxMax.latitude)
             mBBoxMin = new LatLng(point.latitude, mBBoxMax.longitude);
-        else if( point.longitude > mBBoxMax.longitude )
+        else if (point.longitude > mBBoxMax.longitude)
             mBBoxMin = new LatLng(mBBoxMax.latitude, point.longitude);
     }
 
-    public void draw(@NonNull GoogleMap map, @NonNull Color color) {
+    public void draw(@NonNull GoogleMap map, int color) {
+        PolygonOptions options = new PolygonOptions()
+                .strokeColor(color)
+                .fillColor(color);
+        Polygon polygon = map.addPolygon(options);
+        polygon.setPoints(mPolygon);
+    }
 
+    public boolean inArea(LatLng point) {
+        if (point.latitude < mBBoxMin.latitude || point.latitude > mBBoxMax.latitude ||
+                point.longitude < mBBoxMin.longitude || point.longitude > mBBoxMax.longitude)
+            return false;
+        //
+        return true;
     }
 }
