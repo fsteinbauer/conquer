@@ -2,6 +2,7 @@ package at.acid.conquer.model;
 
 import android.graphics.Color;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.widget.ArrayAdapter;
 
 import com.google.android.gms.maps.GoogleMap;
@@ -50,10 +51,11 @@ public class Area {
             JSONObject obj = new JSONObject(json);
             String name = obj.getString("name");
             JSONArray points = obj.getJSONArray("data");
-/*            for( int i = 0; i < points.length(); i++ ) {
+            for( int i = 0; i < points.length(); i++ ) {
                 JSONObject point = points.getJSONObject(i);
-                addPoint( new LatLng(point.getLong("lat"), point.getLong("lng")) );
-            }*/
+                addPoint( new LatLng(point.getDouble("lat"), point.getDouble("lon")) );
+
+            }
 
 
         }
@@ -86,8 +88,11 @@ public class Area {
         PolygonOptions options = new PolygonOptions()
                 .strokeColor(color)
                 .fillColor(color);
-        Polygon polygon = map.addPolygon(options);
-        polygon.setPoints(mPolygon);
+
+        Log.d(TAG, "Points: " + mPolygon);
+        options.addAll(mPolygon);
+        map.addPolygon(options);
+
     }
 
     //----------------------------------------------------------------------------------------------
