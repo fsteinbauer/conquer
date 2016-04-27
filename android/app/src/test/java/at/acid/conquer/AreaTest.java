@@ -72,4 +72,34 @@ public class AreaTest {
         assertEquals("Point on diagonal line 9", false, area.inArea(new LatLng(-4.0001, 5)));
         assertEquals("Point on diagonal line 10", true, area.inArea(new LatLng(-3.9999, 5)));
     }
+
+    @Test
+    public void pointInConcaveArea(){
+        List<LatLng> polygon = new ArrayList<LatLng>();
+        polygon.add(new LatLng(0, 10));
+        polygon.add(new LatLng(10,10));
+        polygon.add(new LatLng(10,-10));
+        polygon.add(new LatLng(-10,-10));
+        polygon.add(new LatLng(-10, 10));
+        polygon.add(new LatLng(0, 10));
+        polygon.add(new LatLng(0, 5));
+        polygon.add(new LatLng(-5, 5));
+        polygon.add(new LatLng(-5, -5));
+        polygon.add(new LatLng(5, -5));
+        polygon.add(new LatLng(5, 5));
+        polygon.add(new LatLng(0, 5));
+        LatLng bBoxMin = new LatLng(-10, -10);
+        LatLng bBoxMax = new LatLng(10, 10);
+
+        Area area = new Area("Graz", bBoxMin, bBoxMax, polygon);
+        assertEquals("Point inside 1", true, area.inArea(new LatLng(1, 5)));
+        assertEquals("Point inside 2", true, area.inArea(new LatLng(1, 5.0001)));
+        assertEquals("Point inside 3", false, area.inArea(new LatLng(1, 4.999)));
+        assertEquals("Point inside 4", true, area.inArea(new LatLng(-5, -5)));
+        assertEquals("Point inside 5", true, area.inArea(new LatLng(-5.0001, -5.0001)));
+        assertEquals("Point inside 6", false, area.inArea(new LatLng(-4.9999, -4.9999)));
+        assertEquals("Point inside 7", true, area.inArea(new LatLng(-1, -10)));
+        assertEquals("Point inside 7", false, area.inArea(new LatLng(-1, -10.0001)));
+        assertEquals("Point inside 7", true, area.inArea(new LatLng(-1, -9.9999)));
+    }
 }

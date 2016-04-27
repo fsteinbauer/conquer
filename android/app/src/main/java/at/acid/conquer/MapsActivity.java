@@ -13,6 +13,9 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
+
+import at.acid.conquer.data.Areas;
+import at.acid.conquer.model.Area;
 import at.acid.conquer.model.Route;
 import at.acid.conquer.model.TimeLocation;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -22,6 +25,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.PolylineOptions;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -37,11 +41,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private GoogleMap mMap;
     private Route mRoute;
+    private List<Area> mAreas = new ArrayList<Area>();
     private TimeLocation mLastLocation;
     private LocationService mLocationService;
 
     private ImageButton mButtonStartStop;
-
 
     private TextView mTextArea;
     private TextView mTextInfo;
@@ -94,6 +98,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Location location = new Location("Wikipedia");
         location.setLatitude(47.067);
         location.setLongitude(15.433);
+
+        for( String json : Areas.mAreas){
+            Area area = new Area("");
+            area.loadJson(json);
+            mAreas.add(area);
+            area.draw(mMap, Color.BLUE);
+        }
+
 
         if(mLastLocation != null){ location = mLocationService.getLocation(); }
 

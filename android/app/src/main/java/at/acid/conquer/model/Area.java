@@ -9,6 +9,10 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Polygon;
 import com.google.android.gms.maps.model.PolygonOptions;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,14 +44,24 @@ public class Area {
     }
 
     //----------------------------------------------------------------------------------------------
-    public void setPoints(List<LatLng> polygon) {
-        mPolygon = new ArrayList<LatLng>();
-        mBBoxMax = null;
-        mBBoxMin = null;
+    public boolean loadJson(@NonNull String json) {
+        try {
 
-        for( LatLng point : polygon ){
-            addPoint( point );
+            JSONObject obj = new JSONObject(json);
+            String name = obj.getString("name");
+            JSONArray points = obj.getJSONArray("data");
+/*            for( int i = 0; i < points.length(); i++ ) {
+                JSONObject point = points.getJSONObject(i);
+                addPoint( new LatLng(point.getLong("lat"), point.getLong("lng")) );
+            }*/
+
+
         }
+        catch( JSONException e ){
+            e.printStackTrace();
+            return false;
+        }
+        return true;
     }
 
     //----------------------------------------------------------------------------------------------
