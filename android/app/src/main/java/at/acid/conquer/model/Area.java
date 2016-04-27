@@ -85,9 +85,17 @@ public class Area {
 
     //----------------------------------------------------------------------------------------------
     public void draw(@NonNull GoogleMap map, int color) {
+
+        int alphaBitmask = 230 << 3*8;
+        int transparentColor = color ^ alphaBitmask;
+
+
+        int alphaBitmaskBorder = 128 << 3*8;
+        int transparentColorBorder = color ^ alphaBitmaskBorder;
         PolygonOptions options = new PolygonOptions()
-                .strokeColor(color)
-                .fillColor(color);
+                .strokeColor(transparentColorBorder)
+                .fillColor(transparentColor);
+
 
         Log.d(TAG, "Points: " + mPolygon);
         options.addAll(mPolygon);
