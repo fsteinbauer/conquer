@@ -22,8 +22,8 @@ public class LocationService extends Service implements
         GoogleApiClient.OnConnectionFailedListener,
         com.google.android.gms.location.LocationListener {
     public static final String TAG = "LocationService";
-    public static final int GPS_UPDATE_INTERVAL = 30000;
-    public static final int GPS_UPDATE_INTERVAL_MIN = 20000;
+    public static final int GPS_UPDATE_INTERVAL = 15000;
+    public static final int GPS_UPDATE_INTERVAL_MIN = 10000;
 
     private GoogleApiClient mGoogleApiClient;
     private LocationRequest mLocationRequest;

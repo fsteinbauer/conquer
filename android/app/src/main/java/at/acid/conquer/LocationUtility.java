@@ -18,7 +18,7 @@ import at.acid.conquer.model.TimeLocation;
 public abstract class LocationUtility {
     public static final String TAG = "LocationUtility";
     public static final float MAX_VALID_SPEED = 20.0f; // in km/h
-    public static final long MAX_VALID_TIME_DIFFERENCE = 5 * 60; // in seconds
+    public static final long MAX_VALID_TIME_DIFFERENCE = 60; // in seconds
 
     Map<Long, Location> locations = new HashMap<>();
 

@@ -22,18 +22,35 @@ public class Area {
 
     private LatLng mBBoxMin;
     private LatLng mBBoxMax;
-    private LatLng mCenter;
 
     private List<LatLng> mPolygon = new ArrayList<LatLng>();
 
+    //----------------------------------------------------------------------------------------------
     public Area(@NonNull String name) {
         mName = name;
     }
 
-    public void setPoints(List<LatLng> polygon) {
+    //----------------------------------------------------------------------------------------------
+    public Area(@NonNull String name, LatLng bBoxMin, LatLng bBoxMax, List<LatLng> polygon)
+    {
+        mName = name;
+        mBBoxMin = bBoxMin;
+        mBBoxMax = bBoxMax;
         mPolygon = polygon;
     }
 
+    //----------------------------------------------------------------------------------------------
+    public void setPoints(List<LatLng> polygon) {
+        mPolygon = new ArrayList<LatLng>();
+        mBBoxMax = null;
+        mBBoxMin = null;
+
+        for( LatLng point : polygon ){
+            addPoint( point );
+        }
+    }
+
+    //----------------------------------------------------------------------------------------------
     public void addPoint(LatLng point) {
         mPolygon.add(point);
 
@@ -50,6 +67,7 @@ public class Area {
             mBBoxMin = new LatLng(mBBoxMax.latitude, point.longitude);
     }
 
+    //----------------------------------------------------------------------------------------------
     public void draw(@NonNull GoogleMap map, int color) {
         PolygonOptions options = new PolygonOptions()
                 .strokeColor(color)
@@ -58,11 +76,55 @@ public class Area {
         polygon.setPoints(mPolygon);
     }
 
+    //----------------------------------------------------------------------------------------------
     public boolean inArea(LatLng point) {
-        if (point.latitude < mBBoxMin.latitude || point.latitude > mBBoxMax.latitude ||
-                point.longitude < mBBoxMin.longitude || point.longitude > mBBoxMax.longitude)
+        double x = point.latitude;
+        double y = point.longitude;
+
+        if (x < mBBoxMin.latitude || x > mBBoxMax.latitude ||
+                y < mBBoxMin.longitude || y > mBBoxMax.longitude)
             return false;
-        //
+
+        int size = mPolygon.size();
+        LatLng a, b;
+        int intersections = 0;
+        double diffy, t, sx;
+        for( int i = 0; i < size; i++ ){
+            a = mPolygon.get(i);
+            b = mPolygon.get((i+1) % size);
+
+            if((a.latitude == x && a.longitude == y) || (b.latitude == x && b.longitude == y))
+                return true;
+
+            if((a.longitude < y && b.longitude < y) || (a.longitude > y && b.longitude > y) ||
+                    (a.latitude > x && b.latitude > x))
+                continue;
+
+            diffy = b.longitude - a.longitude;
+            if( diffy == 0.0 ){
+                if( (a.latitude < x && b.latitude > x) || (a.latitude > x && b.latitude < x) )
+                    return true;
+                continue;
+            }
+
+            t = (y - a.longitude) / diffy;
+            sx = a.latitude + t * (b.latitude - a.latitude);
+
+            if( sx == x )
+                return true;
+
+            if( sx < x )
+                intersections++;
+        }
+
+        if( intersections % 2 == 0 )
+            return false;
+
         return true;
+    }
+
+    //----------------------------------------------------------------------------------------------
+    public String getName(){
+        return mName;
     }
 }
