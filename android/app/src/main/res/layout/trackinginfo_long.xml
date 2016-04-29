@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android">
+    <LinearLayout android:id="@id/ll_trackinginfo_long"
+                  android:layout_width="match_parent"
+                  android:layout_height="0dp"
+                  android:layout_weight="5"
+                  android:orientation="vertical"
+                  android:visibility="gone"
+                  android:background="@drawable/gradient_textview"
+    >
+        <LinearLayout android:layout_width="match_parent"
+                      android:layout_height="0dp"
+                      android:layout_weight="2"
+                      android:orientation="vertical">
+
+            <include layout="@layout/trackinginfo_info"/>
+        </LinearLayout>
+
+        <LinearLayout android:layout_width="match_parent"
+                      android:layout_height="0dp"
+                      android:layout_weight="3"
+                      android:orientation="vertical"
+                      android:visibility="visible"
+        >
+
+
+            <TextView android:layout_width="match_parent"
+                      android:layout_height="0dp"
+                      android:layout_weight="1"
+                      android:text="Test Bla Bla"
+                      android:textColor="@color/orange"
+                      android:textAppearance="?android:attr/textAppearanceLarge"
+                      android:gravity="center_horizontal"
+            />
+
+
+            <TextView android:layout_width="match_parent"
+                      android:layout_height="0dp"
+                      android:layout_weight="1"
+                      android:text="Noch mehr Bla Bla"
+                      android:textColor="@color/orange"
+                      android:textAppearance="?android:attr/textAppearanceLarge"
+                      android:gravity="center_horizontal"
+
+            />
+
+            <TextView android:layout_width="match_parent"
+                      android:layout_height="0dp"
+                      android:layout_weight="1"
+                      android:text="Und noch ein Bisschen Bla Bla"
+                      android:textColor="@color/orange"
+                      android:textAppearance="?android:attr/textAppearanceLarge"
+                      android:gravity="center_horizontal"
+
+            />
+
+        </LinearLayout>
+    </LinearLayout>
+</merge>
+

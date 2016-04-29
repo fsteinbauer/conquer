@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--activity_maps.xml-->
+    <item name="cl_activity_maps" type="id"/>
+    <item name="map_map" type="id"/>
+    <item name="ll_display_frame" type="id"/>
+    <item name="tv_invisible" type="id"/>
+    <item name="fab_trackinginfo" type="id"/>
+
+
+    <!--trackinginfo_long.xml-->
+    <item name="ll_trackinginfo_long" type="id"/>
+
+
+    <!--trackinginfo_short.xml-->
+    <item name="ll_trackinginfo_short" type="id"/>
+
+
+    <!--trackinginfo_info.xml-->
+    <item name="tv_trackinginfo_info_place" type="id"/>
+    <item name="ll_trackinginfo_info_info" type="id"/>
+    <item name="tv_trackinginfo_info_speed" type="id"/>
+    <item name="tv_trackinginfo_info_distance" type="id"/>
+    <item name="tv_trackinginfo_info_time" type="id"/>
+
+
+</resources>

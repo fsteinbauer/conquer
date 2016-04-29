@@ -5,15 +5,18 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.graphics.Color;
+import android.graphics.Rect;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
-import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
-
+import at.acid.conquer.animation.TrackingInfoAnimator;
 import at.acid.conquer.data.Areas;
 import at.acid.conquer.model.Area;
 import at.acid.conquer.model.Route;
@@ -33,7 +36,7 @@ import java.util.TimerTask;
 import static at.acid.conquer.LocationUtility.getSpeed;
 import static at.acid.conquer.LocationUtility.validDistance;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, LocationService.LocationServiceClient, View.OnClickListener{
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, LocationService.LocationServiceClient, View.OnClickListener, View.OnTouchListener{
     public static final String TAG = "MapsActivity";
     public static final float DEFAULT_ZOOM = 16.0f;
 
@@ -45,12 +48,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private TimeLocation mLastLocation;
     private LocationService mLocationService;
 
-    private ImageButton mButtonStartStop;
+    private FloatingActionButton mFABTrackingInfo;
+    private LinearLayout mLayoutTrackingInfoLong;
+    private LinearLayout mLayoutTrackingInfoShort;
+    private TextView mTextViewInvisble;
 
-    private TextView mTextArea;
-    private TextView mTextInfo;
-
-    private boolean isTracking;
+    private TrackingInfoAnimator mTIAnimator;
+    private boolean mIsLayoutExtended;
 
     // handle bidirection connection to LocationService
     private ServiceConnection mLocationServiceConnection = new ServiceConnection(){
@@ -73,20 +77,31 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         setContentView(R.layout.activity_maps);
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map_map);
         mapFragment.getMapAsync(this);
 
         // Connect GUI elements
-        mButtonStartStop = (ImageButton) findViewById(R.id.ButtonPlayStop);
-        mButtonStartStop.setOnClickListener(this);
+        initGUIElements();
+        mTIAnimator = new TrackingInfoAnimator(getApplicationContext(), mFABTrackingInfo, mLayoutTrackingInfoShort, mLayoutTrackingInfoLong, mTextViewInvisble);
 
-
-        mTextArea = (TextView) findViewById(R.id.TextArea);
-        mTextInfo = (TextView) findViewById(R.id.TextInfo);
         updateInfo(0, 0);
         updateArea("Graz");
 
     }
+
+    private void initGUIElements(){
+        mLayoutTrackingInfoShort = (LinearLayout) findViewById(R.id.ll_trackinginfo_short);
+        mLayoutTrackingInfoLong = (LinearLayout) findViewById(R.id.ll_trackinginfo_long);
+
+        LinearLayout mLayoutFrame = (LinearLayout) findViewById(R.id.ll_display_frame);
+        mLayoutFrame.setOnTouchListener(this);
+
+        mFABTrackingInfo = (FloatingActionButton) findViewById(R.id.fab_trackinginfo);
+        mFABTrackingInfo.setOnClickListener(this);
+
+        mTextViewInvisble = (TextView) findViewById(R.id.tv_invisible);
+    }
+
 
     @Override//-------------------------------------------------------------------------------------
     public void onMapReady(GoogleMap googleMap){
@@ -99,7 +114,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         location.setLatitude(47.067);
         location.setLongitude(15.433);
 
-        for( String json : Areas.mAreas){
+        for(String json : Areas.mAreas){
             Area area = new Area("");
             area.loadJson(json);
             mAreas.add(area);
@@ -176,31 +191,50 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override//-------------------------------------------------------------------------------------
     public void onClick(View v){
         switch(v.getId()){
-            case R.id.ButtonPlayStop:{
-                if(isTracking){
-                    isTracking = false;
-                    stopTracking();
-                    TranslationAnimator.translateAndScaleCenter(mButtonStartStop);
-                } else{
-                    isTracking = true;
-                    TranslationAnimator.translateAndScaleToBottomRight(mButtonStartStop);
-                    startTracking();
-                }
+            case R.id.fab_trackinginfo:
 
+                if(mIsLayoutExtended){
+                    mIsLayoutExtended = false;
+                    mTIAnimator.shrinkTrackingInfo();
+                } else{
+
+                    mIsLayoutExtended = true;
+                    mTIAnimator.extendTrackingInfo();
+                }
                 break;
-            }
         }
     }
+
+
+    @Override
+    public boolean onTouch(View v, MotionEvent event){
+
+        if(mLayoutTrackingInfoLong.getVisibility() == View.VISIBLE){
+            Rect infoRect = new Rect();
+            mLayoutTrackingInfoLong.getHitRect(infoRect);
+
+            if(!infoRect.contains((int) event.getX(), (int) event.getY())){
+                mIsLayoutExtended = false;
+                mTIAnimator.shrinkTrackingInfo();
+                return true;
+            }
+        }
+
+        return false;
+    }
+
 
     //----------------------------------------------------------------------------------------------
     private void updateInfo(float kmh, float distance){
         String text = "Speed: " + String.format("%.3f", kmh) + " km/h";
         text += "\nDistance: " + String.format("%.3f", distance) + " km";
-        mTextInfo.setText(text);
+//        mTextInfo.setText(text);
     }
 
     //----------------------------------------------------------------------------------------------
     private void updateArea(CharSequence area){
-        mTextArea.setText(area);
+//        mTextArea.setText(area);
     }
+
+
 }

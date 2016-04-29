@@ -4,4 +4,8 @@
     <string name="title_activity_maps">Map</string>
     <string name="imgBtn_start">Start Tracking</string>
     <string name="imgBtn_stop">Stop</string>
+    <string name="Show">Show</string>
+    <string name="test1">qwer</string>
+    <string name="test2">asdf</string>
+    <string name="test3">yxcv</string>
 </resources>
