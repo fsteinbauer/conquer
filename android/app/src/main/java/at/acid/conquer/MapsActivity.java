@@ -14,8 +14,10 @@ import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -67,6 +69,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private ArrayList<NavDrawerItem> navDrawerItems;
     private NavDrawerListAdapter adapter;
     private ActionBarDrawerToggle mDrawerToggle;
+    private ImageButton mDrawerButton;
 
     // handle bidirection connection to LocationService
     private ServiceConnection mLocationServiceConnection = new ServiceConnection(){
@@ -103,6 +106,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         adapter = new NavDrawerListAdapter(getApplicationContext(),
                 navDrawerItems);
         mDrawerList.setAdapter(adapter);
+
+        mDrawerButton = (ImageButton) findViewById(R.id.drawer_button);
+        mDrawerButton.setOnClickListener(this);
 
 //        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
 //                R.drawable.common_signin_btn_icon_dark, //nav menu toggle icon
@@ -239,7 +245,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     @Override//-------------------------------------------------------------------------------------
     public void onClick(View v){
+        Log.d(TAG, "Onclick "+v.getId());
+
         switch(v.getId()){
+
+            case R.id.drawer_button:
+                mDrawerLayout.openDrawer(Gravity.LEFT);
+                break;
+
+
             case R.id.fab_trackinginfo:
 
                 if(mIsLayoutExtended){

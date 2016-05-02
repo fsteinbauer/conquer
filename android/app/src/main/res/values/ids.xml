@@ -7,6 +7,7 @@
     <item name="ll_display_frame" type="id"/>
     <item name="tv_invisible" type="id"/>
     <item name="fab_trackinginfo" type="id"/>
+    <item name="drawer_button" type="id"/>
 
 
     <!--trackinginfo_long.xml-->
