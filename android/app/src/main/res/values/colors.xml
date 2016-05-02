@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="orange">#ff930a</color>
+
+    <color name="background">#001725</color>
+    <color name="background_secondary">#042940</color>
+    <color name="accent">#E36767</color>
+    <color name="accent_secondary">#E89E9E</color>
+
+
 </resources>

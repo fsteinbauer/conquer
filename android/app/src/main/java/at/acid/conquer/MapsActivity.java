@@ -10,15 +10,21 @@ import android.location.Location;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.widget.DrawerLayout;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
+
+import at.acid.conquer.adapter.NavDrawerListAdapter;
 import at.acid.conquer.animation.TrackingInfoAnimator;
 import at.acid.conquer.data.Areas;
 import at.acid.conquer.model.Area;
+import at.acid.conquer.model.NavDrawerItem;
 import at.acid.conquer.model.Route;
 import at.acid.conquer.model.TimeLocation;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -56,6 +62,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private TrackingInfoAnimator mTIAnimator;
     private boolean mIsLayoutExtended;
 
+    private DrawerLayout mDrawerLayout;
+    private ListView mDrawerList;
+    private ArrayList<NavDrawerItem> navDrawerItems;
+    private NavDrawerListAdapter adapter;
+    private ActionBarDrawerToggle mDrawerToggle;
+
     // handle bidirection connection to LocationService
     private ServiceConnection mLocationServiceConnection = new ServiceConnection(){
         @Override
@@ -75,6 +87,43 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+
+
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mDrawerList = (ListView) findViewById(R.id.list_slidermenu);
+
+        navDrawerItems = new ArrayList<NavDrawerItem>();
+
+        // adding nav drawer items to array
+        navDrawerItems.add(new NavDrawerItem("Map", R.drawable.ic_map_white_24dp));
+        navDrawerItems.add(new NavDrawerItem("Highscores", R.drawable.ic_star_circle_white_24dp));
+        navDrawerItems.add(new NavDrawerItem("Account", R.drawable.ic_account_white_24dp));
+
+
+        adapter = new NavDrawerListAdapter(getApplicationContext(),
+                navDrawerItems);
+        mDrawerList.setAdapter(adapter);
+
+//        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
+//                R.drawable.common_signin_btn_icon_dark, //nav menu toggle icon
+//                R.string.app_name, // nav drawer open - description for accessibility
+//                R.string.app_name // nav drawer close - description for accessibility
+//        ){
+//            public void onDrawerClosed(View view) {
+//                getActionBar().setTitle(mTitle);
+//                // calling onPrepareOptionsMenu() to show action bar icons
+//                invalidateOptionsMenu();
+//            }
+//
+//            public void onDrawerOpened(View drawerView) {
+//                getActionBar().setTitle(mDrawerTitle);
+//                // calling onPrepareOptionsMenu() to hide action bar icons
+//                invalidateOptionsMenu();
+//            }
+//        };
+//        mDrawerLayout.setDrawerListener(mDrawerToggle);
+
+
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map_map);

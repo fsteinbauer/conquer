@@ -1,50 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                                                 xmlns:app="http://schemas.android.com/apk/res-auto"
-                                                 android:id="@id/cl_activity_maps"
-                                                 android:layout_width="match_parent"
-                                                 android:layout_height="match_parent">
+
+<android.support.v4.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/drawer_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
 
-    <fragment android:id="@id/map_map"
-              xmlns:android="http://schemas.android.com/apk/res/android"
-              xmlns:tools="http://schemas.android.com/tools"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:name="com.google.android.gms.maps.SupportMapFragment"
-              tools:context="at.acid.conquer.MapsActivity"
-    />
+    <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                                     xmlns:app="http://schemas.android.com/apk/res-auto"
+                                                     android:id="@id/cl_activity_maps"
+                                                     android:layout_width="match_parent"
+                                                     android:layout_height="match_parent">
 
-    <LinearLayout android:id="@id/ll_display_frame"
+
+        <fragment android:id="@id/map_map"
                   xmlns:android="http://schemas.android.com/apk/res/android"
                   xmlns:tools="http://schemas.android.com/tools"
                   android:layout_width="match_parent"
                   android:layout_height="match_parent"
-                  android:orientation="vertical"
-
-    >
-        <TextView android:id="@id/tv_invisible"
-                  android:layout_width="match_parent"
-                  android:layout_height="0dp"
-                  android:layout_weight="8"
-                  android:visibility="invisible"
-                  android:clickable="true"
+                  android:name="com.google.android.gms.maps.SupportMapFragment"
+                  tools:context="at.acid.conquer.MapsActivity"
         />
 
-        <include layout="@layout/trackinginfo_short"/>
-        <include layout="@layout/trackinginfo_long"/>
-    </LinearLayout>
+        <LinearLayout android:id="@id/ll_display_frame"
+                      xmlns:android="http://schemas.android.com/apk/res/android"
+                      xmlns:tools="http://schemas.android.com/tools"
+                      android:layout_width="match_parent"
+                      android:layout_height="match_parent"
+                      android:orientation="vertical"
 
-    <android.support.design.widget.FloatingActionButton android:id="@id/fab_trackinginfo"
-                                                        android:layout_width="wrap_content"
-                                                        android:layout_height="wrap_content"
-                                                        app:layout_anchor="@id/ll_trackinginfo_short"
-                                                        app:layout_anchorGravity="top|right|end"
-                                                        android:layout_margin="8dp"
-                                                        app:backgroundTint="#ad0200"
-                                                        android:src="@drawable/double_arrow_white"
-                                                        android:adjustViewBounds="false"/>
+        >
+            <TextView android:id="@id/tv_invisible"
+                      android:layout_width="match_parent"
+                      android:layout_height="0dp"
+                      android:layout_weight="8"
+                      android:visibility="invisible"
+                      android:clickable="true"
+            />
+
+            <include layout="@layout/trackinginfo_short"/>
+            <include layout="@layout/trackinginfo_long"/>
+        </LinearLayout>
+
+        <android.support.design.widget.FloatingActionButton android:id="@id/fab_trackinginfo"
+                                                            android:layout_width="wrap_content"
+                                                            android:layout_height="wrap_content"
+                                                            app:layout_anchor="@id/ll_trackinginfo_short"
+                                                            app:layout_anchorGravity="top|right|end"
+                                                            android:layout_margin="8dp"
+                                                            app:backgroundTint="#ad0200"
+                                                            android:src="@drawable/double_arrow_white"
+                                                            android:adjustViewBounds="false"/>
 
 
-</android.support.design.widget.CoordinatorLayout>
+    </android.support.design.widget.CoordinatorLayout>
+
+    <ListView
+        android:id="@+id/list_slidermenu"
+        android:layout_width="240dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:choiceMode="singleChoice"
+        android:divider="@color/background_secondary"
+        android:dividerHeight="2dp"
+        android:background="@color/background"/>
+
+</android.support.v4.widget.DrawerLayout>
