@@ -221,9 +221,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onDestroy() {
         super.onDestroy();
         Log.d(TAG, "App Killed, going to stop Location Service");
-        Intent intent = new Intent(this, LocationService.class);
-        unbindService(mLocationServiceConnection);
-        stopService(intent);
+        if( mLocationService != null ) {
+            Intent intent = new Intent(this, LocationService.class);
+            unbindService(mLocationServiceConnection);
+            stopService(intent);
+        }
     }
 
     @Override//-------------------------------------------------------------------------------------
