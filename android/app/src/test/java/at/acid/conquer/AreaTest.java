@@ -7,6 +7,7 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.List;
 
+import at.acid.conquer.data.Areas;
 import at.acid.conquer.model.Area;
 
 import static org.junit.Assert.*;
@@ -19,7 +20,7 @@ public class AreaTest {
     @Test
     public void createWithName() throws Exception {
         Area area = new Area("Graz");
-        assertEquals("Graz", area.getName());
+        assertEquals("Name", "Graz", area.getName());
     }
 
     @Test
@@ -34,7 +35,7 @@ public class AreaTest {
 
         Area area = new Area("Graz", bBoxMin, bBoxMax, polygon);
 
-        assertEquals("Graz", area.getName());
+        assertEquals("Name", "Graz", area.getName());
     }
 
     @Test
@@ -101,5 +102,16 @@ public class AreaTest {
         assertEquals("Point inside 7", true, area.inArea(new LatLng(-1, -10)));
         assertEquals("Point inside 7", false, area.inArea(new LatLng(-1, -10.0001)));
         assertEquals("Point inside 7", true, area.inArea(new LatLng(-1, -9.9999)));
+    }
+
+    @Test
+    public void loadArea(){
+        String json = Areas.mAreas.get(0);
+
+        Area area = new Area("Area51");
+        area.loadJson(json);
+
+        assertEquals("Name", "Graz - Innere Stadt", area.getName());
+        assertEquals("Point inside", true, area.inArea(new LatLng(47.067050, 15.442080)));
     }
 }

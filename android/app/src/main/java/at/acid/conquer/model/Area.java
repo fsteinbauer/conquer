@@ -51,17 +51,13 @@ public class Area {
     //----------------------------------------------------------------------------------------------
     public boolean loadJson(@NonNull String json) {
         try {
-
             JSONObject obj = new JSONObject(json);
-            String name = obj.getString("name");
+            mName = obj.getString("name");
             JSONArray points = obj.getJSONArray("data");
             for( int i = 0; i < points.length(); i++ ) {
                 JSONObject point = points.getJSONObject(i);
                 addPoint( new LatLng(point.getDouble("lat"), point.getDouble("lon")) );
-
             }
-
-
         }
         catch( JSONException e ){
             e.printStackTrace();
@@ -77,14 +73,17 @@ public class Area {
         if (mBBoxMin == null || mBBoxMax == null) {
             mBBoxMin = point;
             mBBoxMax = point;
-        } else if (point.latitude < mBBoxMin.latitude)
+            return;
+        }
+
+        if (point.latitude < mBBoxMin.latitude)
             mBBoxMin = new LatLng(point.latitude, mBBoxMin.longitude);
-        else if (point.longitude < mBBoxMin.longitude)
+        if (point.longitude < mBBoxMin.longitude)
             mBBoxMin = new LatLng(mBBoxMin.latitude, point.longitude);
-        else if (point.latitude > mBBoxMax.latitude)
-            mBBoxMin = new LatLng(point.latitude, mBBoxMax.longitude);
-        else if (point.longitude > mBBoxMax.longitude)
-            mBBoxMin = new LatLng(mBBoxMax.latitude, point.longitude);
+        if (point.latitude > mBBoxMax.latitude)
+            mBBoxMax = new LatLng(point.latitude, mBBoxMax.longitude);
+        if (point.longitude > mBBoxMax.longitude)
+            mBBoxMax = new LatLng(mBBoxMax.latitude, point.longitude);
     }
 
     //----------------------------------------------------------------------------------------------
