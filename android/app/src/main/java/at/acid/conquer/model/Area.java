@@ -27,6 +27,8 @@ public class Area {
     public static final String TAG = "Area";
     private String mName;
 
+    private float mTravelDistance;
+
     private LatLng mBBoxMin;
     private LatLng mBBoxMax;
 
@@ -149,5 +151,15 @@ public class Area {
     //----------------------------------------------------------------------------------------------
     public String getName(){
         return mName;
+    }
+
+    //----------------------------------------------------------------------------------------------
+    public float getTravelDistance(){
+        return mTravelDistance;
+    }
+
+    //----------------------------------------------------------------------------------------------
+    public void addDistance(float distance){
+        mTravelDistance += distance;
     }
 }

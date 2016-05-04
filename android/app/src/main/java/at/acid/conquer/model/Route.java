@@ -32,12 +32,12 @@ public class Route {
     }
 
     //----------------------------------------------------------------------------------------------
-    public void addLocationToCurrentPath(@NonNull TimeLocation tloc) {
+    public float addLocationToCurrentPath(@NonNull TimeLocation tloc) {
         TimeLocation oldTloc = getLastLocation();
 
         if (oldTloc == null) {
             Log.d(TAG, "addLocationToCurrentPath(): no current path! (call addLocationToNewPath first)");
-            return;
+            return 0;
         }
 
         List<TimeLocation> path = mPaths.get(mPaths.size() - 1);
@@ -48,11 +48,13 @@ public class Route {
         points.add(tloc.getLatLng());
         poly.setPoints(points);
 
-        mDistance += tloc.mLocation.distanceTo(oldTloc.mLocation);
+        float distance = tloc.mLocation.distanceTo(oldTloc.mLocation);
+        mDistance += distance;
+        return distance;
     }
 
     //----------------------------------------------------------------------------------------------
-    public void addLocationToNewPath(@NonNull TimeLocation tloc1, @NonNull TimeLocation tloc2) {
+    public float addLocationToNewPath(@NonNull TimeLocation tloc1, @NonNull TimeLocation tloc2) {
         List<TimeLocation> newPath = new ArrayList<TimeLocation>();
         newPath.add(tloc1);
         newPath.add(tloc2);
@@ -65,7 +67,9 @@ public class Route {
         poly.setPoints(points);
         mPolylines.add(poly);
 
-        mDistance += tloc1.mLocation.distanceTo(tloc2.mLocation);
+        float distance = tloc1.mLocation.distanceTo(tloc2.mLocation);
+        mDistance += distance;
+        return distance;
     }
 
     //----------------------------------------------------------------------------------------------

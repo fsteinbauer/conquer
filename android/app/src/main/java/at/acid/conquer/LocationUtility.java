@@ -59,7 +59,7 @@ public abstract class LocationUtility {
     //----------------------------------------------------------------------------------------------
     public static int setAlpha(int color, float alpha){
         color &= 0x00ffffff; // reset alpha bits
-        color |= ((char)(255*alpha)) << 24;
+        color |= ((char)(255*(1-alpha))) << 24;
         return color;
     }
 }

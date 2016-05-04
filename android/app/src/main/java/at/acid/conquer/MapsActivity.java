@@ -97,7 +97,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mTextArea = (TextView) findViewById(R.id.TextArea);
         mTextInfo = (TextView) findViewById(R.id.TextInfo);
         updateInfo(0, 0);
-        updateArea("Graz");
+        updateArea("unknown");
 
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -159,14 +159,24 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         Log.d(TAG, "onLocationUpdate(): " + location.toString());
 
         TimeLocation tloc = new TimeLocation(location);
+        float distance = 0;
 
         // distance to last valid point is valid - add point
         if (validDistance(mRoute.getLastLocation(), tloc)) {
-            mRoute.addLocationToCurrentPath(tloc);
+            distance = mRoute.addLocationToCurrentPath(tloc);
         }
         // distance to last point is valid - create new route
         else if (validDistance(mLastLocation, tloc)) {
-            mRoute.addLocationToNewPath(mLastLocation, tloc);
+            distance = mRoute.addLocationToNewPath(mLastLocation, tloc);
+        }
+
+        Area currentArea = null;
+        for( Area area : mAreas ){
+            if( area.inArea(tloc.getLatLng()) ){
+                area.addDistance( distance );
+                currentArea = area;
+                break;
+            }
         }
 
         mMarker.setPosition(tloc.getLatLng());
@@ -179,21 +189,41 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             TimeLocation tloc1 = path.get(path.size() - 1);
             TimeLocation tloc2 = path.get(path.size() - 2);
             float kmh = getSpeed(tloc1, tloc2);
-            float distance = mRoute.getDistance() / 1000; // distance in km
-            updateInfo(kmh, distance);
+            if( currentArea != null ){
+                updateInfo(kmh, currentArea.getTravelDistance() / 1000);
+                updateArea(currentArea.getName());
+            }
+            else{
+                updateInfo(kmh, mRoute.getDistance() / 1000);
+                updateArea("unknown");
+            }
         }
     }
 
+    //----------------------------------------------------------------------------------------------
     private void startTracking() {
         Log.d(TAG, "startTracking()");
-
         Intent intent = new Intent(this, LocationService.class);
+        startService(intent);
         bindService(intent, mLocationServiceConnection, Context.BIND_AUTO_CREATE);
+
     }
 
+    //----------------------------------------------------------------------------------------------
     private void stopTracking() {
         Log.d(TAG, "stopTracking()");
+        Intent intent = new Intent(this, LocationService.class);
         unbindService(mLocationServiceConnection);
+        stopService(intent);
+    }
+
+    @Override//-------------------------------------------------------------------------------------
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, "App Killed, going to stop Location Service");
+        Intent intent = new Intent(this, LocationService.class);
+        unbindService(mLocationServiceConnection);
+        stopService(intent);
     }
 
     @Override//-------------------------------------------------------------------------------------
