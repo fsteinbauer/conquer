@@ -17,6 +17,8 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import static at.acid.conquer.LocationUtility.setAlpha;
+
 /**
  * Created by florian on 09.03.2016.
  * Killed and revived by menzi on 25.04.2016
@@ -85,17 +87,11 @@ public class Area {
 
     //----------------------------------------------------------------------------------------------
     public void draw(@NonNull GoogleMap map, int color) {
-
-        int alphaBitmask = 230 << 3*8;
-        int transparentColor = color ^ alphaBitmask;
-
-
-        int alphaBitmaskBorder = 128 << 3*8;
-        int transparentColorBorder = color ^ alphaBitmaskBorder;
+        int transparentColor = setAlpha(color, 0.9f);
+        int transparentColorBorder = setAlpha(color, 0.5f);
         PolygonOptions options = new PolygonOptions()
                 .strokeColor(transparentColorBorder)
                 .fillColor(transparentColor);
-
 
         Log.d(TAG, "Points: " + mPolygon);
         options.addAll(mPolygon);

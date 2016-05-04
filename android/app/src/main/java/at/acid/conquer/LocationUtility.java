@@ -20,84 +20,6 @@ public abstract class LocationUtility {
     public static final float MAX_VALID_SPEED = 20.0f; // in km/h
     public static final long MAX_VALID_TIME_DIFFERENCE = 60; // in seconds
 
-    Map<Long, Location> locations = new HashMap<>();
-
-    public boolean addLocation(Long time, Location location) {
-        if (time == null || location == null) {
-            return false;
-        }
-        if (locations.isEmpty()) {
-            locations.put(time, location);
-            return true;
-        }
-        if (!validateLocation(time, location)) {
-            return false;
-        }
-
-        locations.put(time, location);
-
-        Log.d(TAG, "Added New Location: " + location + " at time:" + time);
-        return true;
-    }
-
-
-    public boolean wurst(Long timeOfLocation, Location network, Location gps) {
-        if (network == null && gps == null) {
-            return false;
-        }
-
-        boolean network_valid = validateLocation(timeOfLocation, network);
-        boolean gps_valid = validateLocation(timeOfLocation, gps);
-
-        if (!network_valid && !gps_valid) {
-
-            return false;
-        } else if (!network_valid && gps_valid) {
-
-            locations.put(timeOfLocation, gps);
-            return true;
-        } else if (network_valid && !gps_valid) {
-
-            locations.put(timeOfLocation, network);
-            return true;
-        }
-
-        // locations.put(timeOfLocation, findBetterMatch(network, gps));
-        return true;
-
-    }
-
-    private boolean validateLocation(long currentTime, Location location) {
-        if (location == null) {
-            return false;
-        }
-
-
-        for (Map.Entry<Long, Location> old_location :
-                locations.entrySet()) {
-            if ((currentTime - old_location.getKey()) > 60000)
-
-            {
-                continue;
-            }
-
-
-            float distInMeters = location.distanceTo(old_location.getValue());
-
-            double meterPerSecond = distInMeters / ((currentTime - old_location.getKey()) / 1000);
-
-            double kmh = meterPerSecond * 3.6;
-
-
-            Log.d(TAG, "KMH = " + kmh);
-
-            if (kmh > 20.0) {
-                Log.d(TAG, "rejecting position update, since distance is too high for timespan!");
-                return false;
-            }
-        }
-        return true;
-    }
 
     //----------------------------------------------------------------------------------------------
     public static boolean validDistance(TimeLocation tloc1, TimeLocation tloc2) {
@@ -132,5 +54,12 @@ public abstract class LocationUtility {
         float meterPerSecond = distInMeters / timeDifferenceInSeconds;
         float kmh = meterPerSecond * 3.6f;
         return kmh;
+    }
+
+    //----------------------------------------------------------------------------------------------
+    public static int setAlpha(int color, float alpha){
+        color &= 0x00ffffff; // reset alpha bits
+        color |= ((char)(255*alpha)) << 24;
+        return color;
     }
 }
