@@ -2,28 +2,31 @@
 <resources>
 
     <!--activity_maps.xml-->
-    <item name="cl_activity_maps" type="id"/>
-    <item name="map_map" type="id"/>
-    <item name="ll_display_frame" type="id"/>
-    <item name="tv_invisible" type="id"/>
-    <item name="fab_trackinginfo" type="id"/>
-    <item name="drawer_button" type="id"/>
+    <item name="rl_activity_maps" type="id"/>
+    <item name="tl_tabs" type="id"/>
+    <item name="ti_map" type="id"/>
+    <item name="ti_highscores" type="id"/>
+    <item name="ti_account" type="id"/>
+    <item name="fl_fragment_container" type="id"/>
 
 
-    <!--trackinginfo_long.xml-->
-    <item name="ll_trackinginfo_long" type="id"/>
-
-
-    <!--trackinginfo_short.xml-->
-    <item name="ll_trackinginfo_short" type="id"/>
-
-
-    <!--trackinginfo_info.xml-->
+    <!--fragment_map.xml-->
+    <item name="frag_map" type="id"/>
+    <item name="mv_map" type="id"/>
+    <item name="ll_trackinginfo" type="id"/>
     <item name="tv_trackinginfo_info_place" type="id"/>
     <item name="ll_trackinginfo_info_info" type="id"/>
     <item name="tv_trackinginfo_info_speed" type="id"/>
-    <item name="tv_trackinginfo_info_distance" type="id"/>
-    <item name="tv_trackinginfo_info_time" type="id"/>
+    <item name="tv_trackinginfo_info_points" type="id"/>
+    <item name="tv_trackinginfo_info_duration" type="id"/>
+    <item name="fab_run_stop" type="id"/>
 
+
+    <!--fragment_highscores.xml-->
+    <item name="frag_highscore" type="id"/>
+
+
+    <!--fragment_account.xml-->
+    <item name="frag_account" type="id"/>
 
 </resources>

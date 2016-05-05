@@ -1,80 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout android:id="@id/rl_activity_maps"
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+>
 
 
-<android.support.v4.widget.DrawerLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/drawer_layout"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    <android.support.design.widget.TabLayout android:id="@id/tl_tabs"
+                                             android:layout_height="wrap_content"
+                                             android:layout_width="match_parent"
+                                             app:tabBackground="@color/background"
+                                             app:tabIndicatorColor="@color/orange"
+                                             app:tabIndicatorHeight="4dp"
+                                             app:tabMaxWidth="0dp"
+                                             app:tabGravity="fill"
+                                             app:tabMode="fixed"
+    >
 
-
-    <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                                                     xmlns:app="http://schemas.android.com/apk/res-auto"
-                                                     android:id="@id/cl_activity_maps"
-                                                     android:layout_width="match_parent"
-                                                     android:layout_height="match_parent">
-
-
-        <fragment android:id="@id/map_map"
-                  xmlns:android="http://schemas.android.com/apk/res/android"
-                  xmlns:tools="http://schemas.android.com/tools"
-                  android:layout_width="match_parent"
-                  android:layout_height="match_parent"
-                  android:name="com.google.android.gms.maps.SupportMapFragment"
-                  tools:context="at.acid.conquer.MapsActivity"
+        <android.support.design.widget.TabItem android:id="@id/ti_map"
+                                               android:layout_height="wrap_content"
+                                               android:layout_width="wrap_content"
+                                               android:icon="@drawable/ic_google_maps"
         />
 
-        <LinearLayout android:id="@id/ll_display_frame"
-                      xmlns:android="http://schemas.android.com/apk/res/android"
-                      xmlns:tools="http://schemas.android.com/tools"
-                      android:layout_width="match_parent"
-                      android:layout_height="match_parent"
-                      android:orientation="vertical"
 
-        >
+        <android.support.design.widget.TabItem android:id="@id/ti_highscores"
+                                               android:layout_height="wrap_content"
+                                               android:layout_width="wrap_content"
+                                               android:icon="@drawable/ic_trophy"
+        />
 
-            <ImageButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@id/drawer_button"
-                android:background="@color/background_secondary"
-                android:src="@drawable/ic_menu_white_24dp"
-                android:padding="8dp"
-                android:layout_margin="8dp" />
-
-            <TextView android:id="@id/tv_invisible"
-                      android:layout_width="match_parent"
-                      android:layout_height="0dp"
-                      android:layout_weight="8"
-                      android:visibility="invisible"
-                      android:clickable="true"
-            />
-
-            <include layout="@layout/trackinginfo_short"/>
-            <include layout="@layout/trackinginfo_long"/>
-        </LinearLayout>
-
-        <android.support.design.widget.FloatingActionButton android:id="@id/fab_trackinginfo"
-                                                            android:layout_width="wrap_content"
-                                                            android:layout_height="wrap_content"
-                                                            app:layout_anchor="@id/ll_trackinginfo_short"
-                                                            app:layout_anchorGravity="top|right|end"
-                                                            android:layout_margin="8dp"
-                                                            app:backgroundTint="#ad0200"
-                                                            android:src="@drawable/double_arrow_white"
-                                                            android:adjustViewBounds="false"/>
+        <android.support.design.widget.TabItem android:id="@id/ti_account"
+                                               android:layout_height="wrap_content"
+                                               android:layout_width="wrap_content"
+                                               android:icon="@drawable/ic_account"
+        />
 
 
-    </android.support.design.widget.CoordinatorLayout>
+    </android.support.design.widget.TabLayout>
 
-    <ListView
-        android:id="@+id/list_slidermenu"
-        android:layout_width="240dp"
-        android:layout_height="match_parent"
-        android:layout_gravity="start"
-        android:choiceMode="singleChoice"
-        android:divider="@color/background_secondary"
-        android:dividerHeight="2dp"
-        android:background="@color/background"/>
 
-</android.support.v4.widget.DrawerLayout>
+    <FrameLayout android:id="@id/fl_fragment_container"
+                 android:layout_width="match_parent"
+                 android:layout_height="match_parent"
+                 android:layout_below="@id/tl_tabs"
+    />
+
+</RelativeLayout>

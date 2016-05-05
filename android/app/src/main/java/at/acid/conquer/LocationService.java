@@ -15,7 +15,8 @@ import com.google.android.gms.location.*;
 import java.lang.ref.WeakReference;
 
 /**
- * Created by menzi on 22.04.2016.
+ * Created by menzi
+ * 22.04.2016.
  */
 public class LocationService extends Service implements
         GoogleApiClient.ConnectionCallbacks,
@@ -31,7 +32,7 @@ public class LocationService extends Service implements
     // Binder (that client can call this class)
     private final IBinder mBinder = new LocalBinder();
     public class LocalBinder extends Binder {
-        LocationService getService() {
+        public LocationService getService() {
             return LocationService.this;
         }
     }

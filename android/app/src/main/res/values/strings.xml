@@ -8,4 +8,7 @@
     <string name="test1">qwer</string>
     <string name="test2">asdf</string>
     <string name="test3">yxcv</string>
+    <string name="ac_map">Map</string>
+    <string name="ac_highscores">Highscores</string>
+    <string name="ac_account">Account</string>
 </resources>

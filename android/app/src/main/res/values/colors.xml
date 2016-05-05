@@ -6,6 +6,8 @@
     <color name="background_secondary">#042940</color>
     <color name="accent">#E36767</color>
     <color name="accent_secondary">#E89E9E</color>
-
-
+    <color name="white">#ffffff</color>
+    <color name="grey">#a7a7a7</color>
+    <color name="red">#cc0000</color>
+    <color name="green">#08e400</color>
 </resources>

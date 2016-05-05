@@ -98,63 +98,63 @@ public class TrackingInfoAnimator{
 //    }
 
 
-    public void extendTrackingInfo(){
-        mFAB.hide();
-        mTVInvisible.setLayoutParams(mShrinkInvisible);
-
-        Animation bottomUp = AnimationUtils.loadAnimation(mAppContext, R.anim.bottom_up);
-        bottomUp.setAnimationListener(new Animation.AnimationListener(){
-            @Override
-            public void onAnimationStart(Animation animation){}
-
-            @Override
-            public void onAnimationEnd(Animation animation){
-                CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) mFAB.getLayoutParams();
-                params.setAnchorId(R.id.ll_trackinginfo_long);
-
-                ObjectAnimator rotate = ObjectAnimator.ofFloat(mFAB, "rotation", -180f);
-                rotate.start();
-
-                mFAB.show();
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation){}
-        });
-
-        mLayoutLong.startAnimation(bottomUp);
-        mLayoutShort.setVisibility(View.GONE);
-        mLayoutLong.setVisibility(View.VISIBLE);
-    }
-
-
-    public void shrinkTrackingInfo(){
-        mFAB.hide();
-        mTVInvisible.setLayoutParams(mExtendInvisible);
-
-        Animation topDown = AnimationUtils.loadAnimation(mAppContext, R.anim.top_down);
-        topDown.setAnimationListener(new Animation.AnimationListener(){
-            @Override
-            public void onAnimationStart(Animation animation){}
-
-            @Override
-            public void onAnimationEnd(Animation animation){
-                CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) mFAB.getLayoutParams();
-                params.setAnchorId(R.id.ll_trackinginfo_short);
-
-                ObjectAnimator rotate = ObjectAnimator.ofFloat(mFAB, "rotation", 0f);
-                rotate.start();
-
-                mFAB.show();
-            }
-
-            @Override
-            public void onAnimationRepeat(Animation animation){}
-        });
-
-        mLayoutLong.startAnimation(topDown);
-        mLayoutLong.setVisibility(View.GONE);
-        mLayoutShort.setVisibility(View.VISIBLE);
-    }
+//    public void extendTrackingInfo(){
+//        mFAB.hide();
+//        mTVInvisible.setLayoutParams(mShrinkInvisible);
+//
+//        Animation bottomUp = AnimationUtils.loadAnimation(mAppContext, R.anim.bottom_up);
+//        bottomUp.setAnimationListener(new Animation.AnimationListener(){
+//            @Override
+//            public void onAnimationStart(Animation animation){}
+//
+//            @Override
+//            public void onAnimationEnd(Animation animation){
+//                CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) mFAB.getLayoutParams();
+//                params.setAnchorId(R.id.ll_trackinginfo_long);
+//
+//                ObjectAnimator rotate = ObjectAnimator.ofFloat(mFAB, "rotation", -180f);
+//                rotate.start();
+//
+//                mFAB.show();
+//            }
+//
+//            @Override
+//            public void onAnimationRepeat(Animation animation){}
+//        });
+//
+//        mLayoutLong.startAnimation(bottomUp);
+//        mLayoutShort.setVisibility(View.GONE);
+//        mLayoutLong.setVisibility(View.VISIBLE);
+//    }
+//
+//
+//    public void shrinkTrackingInfo(){
+//        mFAB.hide();
+//        mTVInvisible.setLayoutParams(mExtendInvisible);
+//
+//        Animation topDown = AnimationUtils.loadAnimation(mAppContext, R.anim.top_down);
+//        topDown.setAnimationListener(new Animation.AnimationListener(){
+//            @Override
+//            public void onAnimationStart(Animation animation){}
+//
+//            @Override
+//            public void onAnimationEnd(Animation animation){
+//                CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) mFAB.getLayoutParams();
+//                params.setAnchorId(R.id.ll_trackinginfo_short);
+//
+//                ObjectAnimator rotate = ObjectAnimator.ofFloat(mFAB, "rotation", 0f);
+//                rotate.start();
+//
+//                mFAB.show();
+//            }
+//
+//            @Override
+//            public void onAnimationRepeat(Animation animation){}
+//        });
+//
+//        mLayoutLong.startAnimation(topDown);
+//        mLayoutLong.setVisibility(View.GONE);
+//        mLayoutShort.setVisibility(View.VISIBLE);
+//    }
 
 }
