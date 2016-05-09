@@ -5,29 +5,22 @@ import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import at.acid.conquer.model.Area;
-import at.acid.conquer.model.Route;
-import at.acid.conquer.model.TimeLocation;
-
 /**
  * Created by florian on 09.03.2016.
  */
-public abstract class LocationUtility {
-    public static final String TAG = "LocationUtility";
+public abstract class Utility {
+    public static final String TAG = "Utility";
     public static final float MAX_VALID_SPEED = 20.0f; // in km/h
     public static final long MAX_VALID_TIME_DIFFERENCE = 60; // in seconds
 
 
     //----------------------------------------------------------------------------------------------
-    public static boolean validDistance(TimeLocation tloc1, TimeLocation tloc2) {
-        if (tloc1 == null || tloc2 == null)
+    public static boolean validDistance(Location loc1, Location loc2) {
+        if (loc1 == null || loc2 == null)
             return false;
 
-        float kmh = getSpeed(tloc1, tloc2);
-        long timeDifferenceInSeconds = Math.abs(tloc1.mTime - tloc2.mTime) / 1000;
+        float kmh = getSpeed(loc1, loc2);
+        long timeDifferenceInSeconds = Math.abs(loc1.getTime() - loc2.getTime()) / 1000;
 
         Log.d(TAG, "km/h = " + kmh);
 
@@ -45,12 +38,12 @@ public abstract class LocationUtility {
     }
 
     //----------------------------------------------------------------------------------------------
-    public static float getSpeed(TimeLocation tloc1, TimeLocation tloc2) {
-        if (tloc1 == null || tloc2 == null)
+    public static float getSpeed(Location loc1, Location loc2) {
+        if (loc1 == null || loc2 == null)
             return 0.0f;
 
-        float distInMeters = tloc1.mLocation.distanceTo(tloc2.mLocation);
-        long timeDifferenceInSeconds = Math.abs(tloc1.mTime - tloc2.mTime) / 1000;
+        float distInMeters = loc1.distanceTo(loc2);
+        long timeDifferenceInSeconds = Math.abs(loc1.getTime() - loc2.getTime()) / 1000;
         float meterPerSecond = distInMeters / timeDifferenceInSeconds;
         float kmh = meterPerSecond * 3.6f;
         return kmh;
@@ -61,5 +54,10 @@ public abstract class LocationUtility {
         color &= 0x00ffffff; // reset alpha bits
         color |= ((char)(255*(1-alpha))) << 24;
         return color;
+    }
+
+    //----------------------------------------------------------------------------------------------
+    public static LatLng getLatLng(Location location){
+        return new LatLng(location.getLatitude(), location.getLongitude());
     }
 }

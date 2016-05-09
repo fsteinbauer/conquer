@@ -18,7 +18,6 @@ import android.widget.TextView;
 import at.acid.conquer.data.Areas;
 import at.acid.conquer.model.Area;
 import at.acid.conquer.model.Route;
-import at.acid.conquer.model.TimeLocation;
 
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
@@ -37,8 +36,9 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import static at.acid.conquer.LocationUtility.getSpeed;
-import static at.acid.conquer.LocationUtility.validDistance;
+import static at.acid.conquer.Utility.getLatLng;
+import static at.acid.conquer.Utility.getSpeed;
+import static at.acid.conquer.Utility.validDistance;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, LocationService.LocationServiceClient, View.OnClickListener {
     public static final String TAG = "MapsActivity";
@@ -50,7 +50,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Route mRoute;
     private Marker mMarker;
     private List<Area> mAreas = new ArrayList<Area>();
-    private TimeLocation mLastLocation;
+    private Location mLastLocation;
     private LocationService mLocationService;
 
     private ImageButton mButtonStartStop;
@@ -127,7 +127,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             location = mLocationService.getLocation();
         }
 
-        mLastLocation = new TimeLocation(location);
+        mLastLocation = location;
         LatLng latlng = new LatLng(location.getLatitude(), location.getLongitude());
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latlng, DEFAULT_ZOOM));
 
@@ -137,8 +137,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     @Override//-------------------------------------------------------------------------------------
-    public void onLocationUpdate(final Location location) {
-        if (location == null) {
+    public void onLocationUpdate(final Location loc) {
+        if (loc == null) {
             Log.d(TAG, "onLocationUpdate(): unknown position");
             return;
         }
@@ -146,49 +146,47 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         if (mMap == null) {
             Log.d(TAG, "onLocationUpdate(): wait for map");
 
-            Timer timer = new Timer();
-            timer.schedule(new TimerTask() {
+            new Timer().schedule(new TimerTask() {
                 public void run() {
-                    onLocationUpdate(location);
+                    onLocationUpdate(loc);
                 }
             }, 1000);
             return;
         }
 
 
-        Log.d(TAG, "onLocationUpdate(): " + location.toString());
+        Log.d(TAG, "onLocationUpdate(): " + loc.toString());
 
-        TimeLocation tloc = new TimeLocation(location);
         float distance = 0;
 
         // distance to last valid point is valid - add point
-        if (validDistance(mRoute.getLastLocation(), tloc)) {
-            distance = mRoute.addLocationToCurrentPath(tloc);
+        if (validDistance(mRoute.getLastLocation(), loc)) {
+            distance = mRoute.addLocationToCurrentPath(loc);
         }
         // distance to last point is valid - create new route
-        else if (validDistance(mLastLocation, tloc)) {
-            distance = mRoute.addLocationToNewPath(mLastLocation, tloc);
+        else if (validDistance(mLastLocation, loc)) {
+            distance = mRoute.addLocationToNewPath(mLastLocation, loc);
         }
 
         Area currentArea = null;
         for( Area area : mAreas ){
-            if( area.inArea(tloc.getLatLng()) ){
+            if( area.inArea(getLatLng(loc)) ){
                 area.addDistance( distance );
                 currentArea = area;
                 break;
             }
         }
 
-        mMarker.setPosition(tloc.getLatLng());
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(tloc.getLatLng()));
+        mMarker.setPosition(getLatLng(loc));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(getLatLng(loc)));
 
-        mLastLocation = tloc;
+        mLastLocation = loc;
 
-        List<TimeLocation> path = mRoute.getCurrentPath();
+        List<Location> path = mRoute.getCurrentPath();
         if (path != null && path.size() > 1) {
-            TimeLocation tloc1 = path.get(path.size() - 1);
-            TimeLocation tloc2 = path.get(path.size() - 2);
-            float kmh = getSpeed(tloc1, tloc2);
+            Location loc1 = path.get(path.size() - 1);
+            Location loc2 = path.get(path.size() - 2);
+            float kmh = getSpeed(loc1, loc2);
             if( currentArea != null ){
                 updateInfo(kmh, currentArea.getTravelDistance() / 1000);
                 updateArea(currentArea.getName());
