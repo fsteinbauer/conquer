@@ -4,12 +4,14 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,6 +21,7 @@ import at.acid.conquer.R;
 import at.acid.conquer.data.Areas;
 import at.acid.conquer.model.Area;
 import at.acid.conquer.model.Route;
+
 import com.google.android.gms.maps.*;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.PolylineOptions;
@@ -38,6 +41,8 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+
+
 /**
  * Created by trewurm
  * 04.05.2016.
@@ -47,13 +52,16 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
     public static final float DEFAULT_ZOOM = 16.0f;
 
     private MapView mMapView;
+
     private Marker mMarker;
+
     private GoogleMap mGoogleMap;
     private FloatingActionButton mFABTrackingInfo;
 
     private PolylineOptions mPathLineOptions = new PolylineOptions().width(10.0f).color(Color.RED);
     private Route mRoute;
     private List<Area> mAreas = new ArrayList<>();
+
     private Location mLastLocation;
     private LocationService mLocationService;
 
@@ -87,21 +95,15 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
         mFABTrackingInfo = (FloatingActionButton) rootView.findViewById(R.id.fab_run_stop);
         mFABTrackingInfo.setOnClickListener(this);
 
-        Log.d(TAG, "Got to Line: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+
 
         // Gets the MapView from the XML layout and creates it
         mMapView = (MapView) rootView.findViewById(R.id.mv_map);
-        Log.d(TAG, "Got to Line: "+Thread.currentThread().getStackTrace()[2].getLineNumber());
         final Bundle mapViewSavedInstanceState = savedInstanceState != null ? savedInstanceState.getBundle("mapViewSaveState") : null;
-        Log.d(TAG, "Got to Line: "+Thread.currentThread().getStackTrace()[2].getLineNumber());
         mMapView.onCreate(mapViewSavedInstanceState);
-
-        Log.d(TAG, "Got to Line: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
 
         // Gets to GoogleMap from the MapView and does initialization stuff
         mMapView.getMapAsync(this);
-
-        Log.d(TAG, "Got to Line: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
 
         return rootView;
     }
@@ -114,6 +116,7 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
                 if (mIsRunning) {
                     mIsRunning = false;
                     stopTracking();
+
                     mFABTrackingInfo.setImageResource(R.drawable.ic_run);
 //                    mFABTrackingInfo.setBackgroundTintList(ColorStateList.valueOf(ContextCompact.getColor(v.getContext(), R.color.green)));
 
@@ -153,6 +156,7 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
             location = mLocationService.getLocation();
         }
 
+
         mLastLocation = location;
         LatLng latlng = new LatLng(location.getLatitude(), location.getLongitude());
         mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latlng, DEFAULT_ZOOM));
@@ -160,6 +164,7 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
         mMarker = mGoogleMap.addMarker(new MarkerOptions()
                 .position(latlng)
                 .title("me"));
+
     }
 
     @Override
@@ -183,6 +188,7 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
 
 
         Log.d(TAG, "onLocationUpdate(): " + location.toString());
+
 
         Location loc = new Location(location);
         float distance = 0;
@@ -231,6 +237,7 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
         Intent intent = new Intent(context, LocationService.class);
         context.startService(intent);
         context.bindService(intent, mLocationServiceConnection, Context.BIND_AUTO_CREATE);
+
     }
 
     private void stopTracking() {
@@ -241,11 +248,13 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
         context.stopService(intent);
     }
 
+
     //----------------------------------------------------------------------------------------------
     private void updateInfo(float kmh, float distance) {
         String text = "Speed: " + String.format("%.3f", kmh) + " km/h";
         text += "\nDistance: " + String.format("%.3f", distance) + " km";
 //        mTextInfo.setText(text);
+
     }
 
 

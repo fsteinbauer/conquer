@@ -23,6 +23,7 @@ android {
     }
 }
 
+
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.+'
@@ -36,3 +37,4 @@ dependencies {
     compile 'com.android.support:support-annotations:23.+' // can't get the 21 version to work...
     compile 'com.android.support:design:23.2.1'
 }
+

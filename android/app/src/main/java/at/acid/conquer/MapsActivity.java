@@ -5,9 +5,11 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 
+
 import at.acid.conquer.fragments.AccountFragment;
 import at.acid.conquer.fragments.HighscoreFragment;
 import at.acid.conquer.fragments.MapFragment;
+
 
 
 public class MapsActivity extends FragmentActivity implements TabLayout.OnTabSelectedListener {
@@ -17,6 +19,7 @@ public class MapsActivity extends FragmentActivity implements TabLayout.OnTabSel
     public final static int TAB_ACCOUNT = 2;
 
     private TabLayout mTabLayout;
+
 
     @Override//-------------------------------------------------------------------------------------
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,5 +66,6 @@ public class MapsActivity extends FragmentActivity implements TabLayout.OnTabSel
 
     @Override
     public void onTabReselected(TabLayout.Tab tab) {
+
     }
 }

@@ -10,6 +10,7 @@
 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
+
     <!-- this line does absolutely nothing on my system... still need to manually enable mock
          locations in the dev settings inside the emulator -->
     <uses-permission android:name="android.permission.ACCESS_MOCK_LOCATION" />
