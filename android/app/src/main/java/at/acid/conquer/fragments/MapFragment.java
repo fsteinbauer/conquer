@@ -82,21 +82,14 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
         mFABTrackingInfo = (FloatingActionButton) rootView.findViewById(R.id.fab_run_stop);
         mFABTrackingInfo.setOnClickListener(this);
 
-        Log.d(TAG, "Got to Line: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
 
         // Gets the MapView from the XML layout and creates it
         mMapView = (MapView) rootView.findViewById(R.id.mv_map);
-        Log.d(TAG, "Got to Line: "+Thread.currentThread().getStackTrace()[2].getLineNumber());
         final Bundle mapViewSavedInstanceState = savedInstanceState != null ? savedInstanceState.getBundle("mapViewSaveState") : null;
-        Log.d(TAG, "Got to Line: "+Thread.currentThread().getStackTrace()[2].getLineNumber());
         mMapView.onCreate(mapViewSavedInstanceState);
-
-        Log.d(TAG, "Got to Line: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
 
         // Gets to GoogleMap from the MapView and does initialization stuff
         mMapView.getMapAsync(this);
-
-        Log.d(TAG, "Got to Line: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
 
         return rootView;
     }

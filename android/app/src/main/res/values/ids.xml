@@ -28,5 +28,9 @@
 
     <!--fragment_account.xml-->
     <item name="frag_account" type="id"/>
+    <item name="iv_picture" type="id" />
+    <item name="tv_profile_name" type="id" />
+    <item name="ib_name_edit" type="id" />
+    <item name="et_profile_name" type="id" />
 
 </resources>
