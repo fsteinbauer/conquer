@@ -21,7 +21,6 @@ import at.acid.conquer.R;
 import at.acid.conquer.data.Areas;
 import at.acid.conquer.model.Area;
 import at.acid.conquer.model.Route;
-import at.acid.conquer.model.TimeLocation;
 import com.google.android.gms.maps.*;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.PolylineOptions;
@@ -31,8 +30,9 @@ import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import static at.acid.conquer.LocationUtility.getSpeed;
-import static at.acid.conquer.LocationUtility.validDistance;
+import static at.acid.conquer.Utility.getLatLng;
+import static at.acid.conquer.Utility.getSpeed;
+import static at.acid.conquer.Utility.validDistance;
 
 /**
  * Created by trewurm
@@ -49,7 +49,7 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
     private PolylineOptions mPathLineOptions = new PolylineOptions().width(10.0f).color(Color.RED);
     private Route mRoute;
     private List<Area> mAreas = new ArrayList<>();
-    private TimeLocation mLastLocation;
+    private Location mLastLocation;
     private LocationService mLocationService;
 
     private boolean mIsRunning;
@@ -148,7 +148,7 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
             location = mLocationService.getLocation();
         }
 
-        mLastLocation = new TimeLocation(location);
+        mLastLocation = location;
         LatLng latlng = new LatLng(location.getLatitude(), location.getLongitude());
         mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latlng, DEFAULT_ZOOM));
     }
@@ -175,26 +175,26 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
 
         Log.d(TAG, "onLocationUpdate(): " + location.toString());
 
-        TimeLocation tloc = new TimeLocation(location);
+        Location loc = new Location(location);
 
         // distance to last valid point is valid - add point
-        if (validDistance(mRoute.getLastLocation(), tloc)) {
-            mRoute.addLocationToCurrentPath(tloc);
-            mGoogleMap.moveCamera(CameraUpdateFactory.newLatLng(tloc.getLatLng()));
+        if (validDistance(mRoute.getLastLocation(), loc)) {
+            mRoute.addLocationToCurrentPath(loc);
+            mGoogleMap.moveCamera(CameraUpdateFactory.newLatLng(getLatLng(loc)));
         }
         // distance to last point is valid - create new route
-        else if (validDistance(mLastLocation, tloc)) {
-            mRoute.addLocationToNewPath(mLastLocation, tloc);
-            mGoogleMap.moveCamera(CameraUpdateFactory.newLatLng(tloc.getLatLng()));
+        else if (validDistance(mLastLocation, loc)) {
+            mRoute.addLocationToNewPath(mLastLocation, loc);
+            mGoogleMap.moveCamera(CameraUpdateFactory.newLatLng(getLatLng(loc)));
         }
 
-        mLastLocation = tloc;
+        mLastLocation = loc;
 
-        List<TimeLocation> path = mRoute.getCurrentPath();
+        List<Location> path = mRoute.getCurrentPath();
         if (path != null && path.size() > 1) {
-            TimeLocation tloc1 = path.get(path.size() - 1);
-            TimeLocation tloc2 = path.get(path.size() - 2);
-            float kmh = getSpeed(tloc1, tloc2);
+            Location loc1 = path.get(path.size() - 1);
+            Location loc2 = path.get(path.size() - 2);
+            float kmh = getSpeed(loc1, loc2);
             float distance = mRoute.getDistance() / 1000; // distance in km
             updateInfo(kmh, distance);
         }

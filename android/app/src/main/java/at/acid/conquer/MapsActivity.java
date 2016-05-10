@@ -9,6 +9,7 @@ import android.location.Location;
 import android.net.Uri;
 
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
@@ -47,7 +48,7 @@ import static at.acid.conquer.Utility.getSpeed;
 import static at.acid.conquer.Utility.validDistance;
 
 
-public class MapsActivity extends FragmentActivity implements TabLayout.OnTabSelectedListener, LocationService.LocationServiceClient, View.OnClickListener {
+public class MapsActivity extends FragmentActivity implements TabLayout.OnTabSelectedListener, LocationService.LocationServiceClient {
     public static final String TAG = "MapsActivity";
     public static final float DEFAULT_ZOOM = 16.0f;
     public final static int TAB_MAP = 0;
@@ -67,6 +68,8 @@ public class MapsActivity extends FragmentActivity implements TabLayout.OnTabSel
 
     private TextView mTextArea;
     private TextView mTextInfo;
+
+    private boolean isTracking;
 
     // handle bidirection connection to LocationService
     private ServiceConnection mLocationServiceConnection = new ServiceConnection() {
@@ -228,25 +231,6 @@ public class MapsActivity extends FragmentActivity implements TabLayout.OnTabSel
             Intent intent = new Intent(this, LocationService.class);
             unbindService(mLocationServiceConnection);
             stopService(intent);
-        }
-    }
-
-    @Override//-------------------------------------------------------------------------------------
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.ButtonPlayStop: {
-                if (isTracking) {
-                    isTracking = false;
-                    stopTracking();
-                    TranslationAnimator.translateAndScaleCenter(mButtonStartStop);
-                } else {
-                    isTracking = true;
-                    TranslationAnimator.translateAndScaleToBottomRight(mButtonStartStop);
-                    startTracking();
-                }
-
-                break;
-            }
         }
     }
 
