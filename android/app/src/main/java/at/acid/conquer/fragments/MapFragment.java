@@ -74,17 +74,29 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Log.d(TAG, "Got to Line: "+Thread.currentThread().getStackTrace()[2].getLineNumber());
+
+
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_map, container, false);
         mFABTrackingInfo = (FloatingActionButton) rootView.findViewById(R.id.fab_run_stop);
         mFABTrackingInfo.setOnClickListener(this);
 
+        Log.d(TAG, "Got to Line: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+
         // Gets the MapView from the XML layout and creates it
         mMapView = (MapView) rootView.findViewById(R.id.mv_map);
-        mMapView.onCreate(savedInstanceState);
+        Log.d(TAG, "Got to Line: "+Thread.currentThread().getStackTrace()[2].getLineNumber());
+        final Bundle mapViewSavedInstanceState = savedInstanceState != null ? savedInstanceState.getBundle("mapViewSaveState") : null;
+        Log.d(TAG, "Got to Line: "+Thread.currentThread().getStackTrace()[2].getLineNumber());
+        mMapView.onCreate(mapViewSavedInstanceState);
+
+        Log.d(TAG, "Got to Line: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
 
         // Gets to GoogleMap from the MapView and does initialization stuff
         mMapView.getMapAsync(this);
+
+        Log.d(TAG, "Got to Line: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
 
         return rootView;
     }
@@ -220,20 +232,24 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        mMapView.onSaveInstanceState(outState);
+        //This MUST be done before saving any of your own or your base class's variables
+        final Bundle mapViewSaveState = new Bundle(outState);
+        mMapView.onSaveInstanceState(mapViewSaveState);
+        outState.putBundle("mapViewSaveState", mapViewSaveState);
+        //Add any other variables here.
         super.onSaveInstanceState(outState);
     }
 
     @Override
     public final void onPause() {
-        mMapView.onPause();
         super.onPause();
+        mMapView.onPause();
     }
 
     @Override
     public void onResume() {
-        mMapView.onResume();
         super.onResume();
+        mMapView.onResume();
     }
 
     @Override

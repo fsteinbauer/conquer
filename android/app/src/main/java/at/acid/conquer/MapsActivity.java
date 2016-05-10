@@ -19,9 +19,11 @@ public class MapsActivity extends FragmentActivity implements TabLayout.OnTabSel
 
     @Override//-------------------------------------------------------------------------------------
     protected void onCreate(Bundle savedInstanceState) {
+
+        Log.d(TAG, "Got to Line: "+Thread.currentThread().getStackTrace()[2].getLineNumber());
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
-
+        Log.d(TAG, "Got to Line: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
         // Connect GUI elements
         initGUIElements();
     }
