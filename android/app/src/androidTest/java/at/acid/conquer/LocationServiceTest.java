@@ -109,7 +109,7 @@ public class LocationServiceTest implements LocationService.LocationServiceClien
 
     @Test//-----------------------------------------------------------------------------------------
     public void stopAndRestartService() throws Exception {
-        mLocationService.pushMockLocation(0,0, 0);
+        mLocationService.pushMockLocation(0, 0, System.currentTimeMillis());
         for(int i = 0; i < 10 && mLocations.size() < 1; i++)
             Thread.sleep(100);
 
@@ -118,7 +118,7 @@ public class LocationServiceTest implements LocationService.LocationServiceClien
         stopLocationService();
         startLocationService();
 
-        mLocationService.pushMockLocation(0, 0, 0);
+        mLocationService.pushMockLocation(0, 0, System.currentTimeMillis());
         for(int i = 0; i < 10 && mLocations.size() < 1; i++)
             Thread.sleep(100);
 

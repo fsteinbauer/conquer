@@ -4,14 +4,12 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,6 +32,12 @@ import static at.acid.conquer.Utility.getLatLng;
 import static at.acid.conquer.Utility.getSpeed;
 import static at.acid.conquer.Utility.validDistance;
 
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
+
 /**
  * Created by trewurm
  * 04.05.2016.
@@ -43,6 +47,7 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
     public static final float DEFAULT_ZOOM = 16.0f;
 
     private MapView mMapView;
+    private Marker mMarker;
     private GoogleMap mGoogleMap;
     private FloatingActionButton mFABTrackingInfo;
 
@@ -108,13 +113,13 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
             case R.id.fab_run_stop:
                 if (mIsRunning) {
                     mIsRunning = false;
-//                    stopTracking();
+                    stopTracking();
                     mFABTrackingInfo.setImageResource(R.drawable.ic_run);
 //                    mFABTrackingInfo.setBackgroundTintList(ColorStateList.valueOf(ContextCompact.getColor(v.getContext(), R.color.green)));
 
                 } else {
                     mIsRunning = true;
-//                    startTracking();
+                    startTracking();
                     mFABTrackingInfo.setImageResource(R.drawable.ic_hotel);
 //                    mFABTrackingInfo.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(v.getContext(), R.color.red)));
                 }
@@ -151,6 +156,10 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
         mLastLocation = location;
         LatLng latlng = new LatLng(location.getLatitude(), location.getLongitude());
         mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latlng, DEFAULT_ZOOM));
+
+        mMarker = mGoogleMap.addMarker(new MarkerOptions()
+                .position(latlng)
+                .title("me"));
     }
 
     @Override
@@ -176,16 +185,27 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
         Log.d(TAG, "onLocationUpdate(): " + location.toString());
 
         Location loc = new Location(location);
+        float distance = 0;
 
         // distance to last valid point is valid - add point
         if (validDistance(mRoute.getLastLocation(), loc)) {
-            mRoute.addLocationToCurrentPath(loc);
-            mGoogleMap.moveCamera(CameraUpdateFactory.newLatLng(getLatLng(loc)));
+            distance = mRoute.addLocationToCurrentPath(loc);
         }
         // distance to last point is valid - create new route
         else if (validDistance(mLastLocation, loc)) {
-            mRoute.addLocationToNewPath(mLastLocation, loc);
-            mGoogleMap.moveCamera(CameraUpdateFactory.newLatLng(getLatLng(loc)));
+            distance = mRoute.addLocationToNewPath(mLastLocation, loc);
+        }
+
+        mMarker.setPosition(getLatLng(loc));
+        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLng(getLatLng(loc)));
+
+        Area currentArea = null;
+        for (Area area : mAreas) {
+            if (area.inArea(getLatLng(loc))) {
+                area.addDistance(distance);
+                currentArea = area;
+                break;
+            }
         }
 
         mLastLocation = loc;
@@ -195,22 +215,30 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
             Location loc1 = path.get(path.size() - 1);
             Location loc2 = path.get(path.size() - 2);
             float kmh = getSpeed(loc1, loc2);
-            float distance = mRoute.getDistance() / 1000; // distance in km
-            updateInfo(kmh, distance);
+            if (currentArea != null) {
+                updateInfo(kmh, currentArea.getTravelDistance() / 1000);
+                updateArea(currentArea.getName());
+            } else {
+                updateInfo(kmh, mRoute.getDistance() / 1000);
+                updateArea("unknown");
+            }
         }
     }
 
-
     private void startTracking() {
         Log.d(TAG, "startTracking()");
-
-        Intent intent = new Intent(getContext(), LocationService.class);
-        getContext().bindService(intent, mLocationServiceConnection, Context.BIND_AUTO_CREATE);
+        Context context = getContext();
+        Intent intent = new Intent(context, LocationService.class);
+        context.startService(intent);
+        context.bindService(intent, mLocationServiceConnection, Context.BIND_AUTO_CREATE);
     }
 
     private void stopTracking() {
         Log.d(TAG, "stopTracking()");
-        getContext().unbindService(mLocationServiceConnection);
+        Context context = getContext();
+        Intent intent = new Intent(context, LocationService.class);
+        context.unbindService(mLocationServiceConnection);
+        context.stopService(intent);
     }
 
     //
