@@ -241,14 +241,11 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
         context.stopService(intent);
     }
 
-    //
     //----------------------------------------------------------------------------------------------
     private void updateInfo(float kmh, float distance) {
         String text = "Speed: " + String.format("%.3f", kmh) + " km/h";
         text += "\nDistance: " + String.format("%.3f", distance) + " km";
 //        mTextInfo.setText(text);
-
-
     }
 
 
