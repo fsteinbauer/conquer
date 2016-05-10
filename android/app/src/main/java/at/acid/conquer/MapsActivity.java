@@ -7,10 +7,12 @@ import android.content.ServiceConnection;
 import android.graphics.Color;
 import android.location.Location;
 import android.net.Uri;
+
 import android.os.Bundle;
-import android.os.IBinder;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
+
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -18,6 +20,10 @@ import android.widget.TextView;
 import at.acid.conquer.data.Areas;
 import at.acid.conquer.model.Area;
 import at.acid.conquer.model.Route;
+
+import at.acid.conquer.fragments.AccountFragment;
+import at.acid.conquer.fragments.HighscoreFragment;
+import at.acid.conquer.fragments.MapFragment;
 
 import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
@@ -40,9 +46,13 @@ import static at.acid.conquer.Utility.getLatLng;
 import static at.acid.conquer.Utility.getSpeed;
 import static at.acid.conquer.Utility.validDistance;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, LocationService.LocationServiceClient, View.OnClickListener {
+
+public class MapsActivity extends FragmentActivity implements TabLayout.OnTabSelectedListener, LocationService.LocationServiceClient, View.OnClickListener {
     public static final String TAG = "MapsActivity";
     public static final float DEFAULT_ZOOM = 16.0f;
+    public final static int TAB_MAP = 0;
+    public final static int TAB_HIGHSCORE = 1;
+    public final static int TAB_ACCOUNT = 2;
 
     private PolylineOptions mPathLineOptions = new PolylineOptions().width(10.0f).color(Color.RED);
 
@@ -57,8 +67,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private TextView mTextArea;
     private TextView mTextInfo;
-
-    private boolean isTracking;
 
     // handle bidirection connection to LocationService
     private ServiceConnection mLocationServiceConnection = new ServiceConnection() {
@@ -79,33 +87,25 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      * See https://g.co/AppIndexing/AndroidStudio for more information.
      */
     private GoogleApiClient client;
+    private TabLayout mTabLayout;
 
     @Override//-------------------------------------------------------------------------------------
     protected void onCreate(Bundle savedInstanceState) {
+        
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+        Log.d(TAG, "Got to Line: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
 
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
-
-        // Connect GUI elements
-        mButtonStartStop = (ImageButton) findViewById(R.id.ButtonPlayStop);
-        mButtonStartStop.setOnClickListener(this);
-
-
-        mTextArea = (TextView) findViewById(R.id.TextArea);
-        mTextInfo = (TextView) findViewById(R.id.TextInfo);
-        updateInfo(0, 0);
-        updateArea("unknown");
+        //updateInfo(0, 0);
+        //updateArea("unknown");
 
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
-        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build(); //???
     }
 
-    @Override//-------------------------------------------------------------------------------------
-    public void onMapReady(GoogleMap googleMap) {
+    // @Override//-------------------------------------------------------------------------------------
+    /* public void onMapReady(GoogleMap googleMap) {
         Log.d(TAG, "onMapReady()");
         mMap = googleMap;
         mRoute = new Route(mMap, mPathLineOptions);
@@ -121,9 +121,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             mAreas.add(area);
             area.draw(mMap, Color.BLUE);
         }
+        initGUIElements();
+    } */
 
+    private void initGUIElements() {
+        MapFragment mapFragment = new MapFragment();
+        getSupportFragmentManager().beginTransaction().add(R.id.fl_fragment_container, mapFragment).commit();
 
-        if (mLastLocation != null) {
+/*         if (mLastLocation != null) {
             location = mLocationService.getLocation();
         }
 
@@ -133,7 +138,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         mMarker = mMap.addMarker(new MarkerOptions()
                 .position(latlng)
-                .title("me"));
+                .title("me")); */
     }
 
     @Override//-------------------------------------------------------------------------------------
@@ -255,6 +260,39 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     //----------------------------------------------------------------------------------------------
     private void updateArea(CharSequence area) {
         mTextArea.setText(area);
+        mTabLayout = (TabLayout) findViewById(R.id.tl_tabs);
+        mTabLayout.setOnTabSelectedListener(this);
+    }
+
+    @Override
+    public void onTabSelected(TabLayout.Tab tab) {
+        final int position = tab.getPosition();
+        switch (position) {
+            case TAB_MAP:
+                Log.d(TAG, "Maps clicked");
+                MapFragment mapFragment = new MapFragment();
+                getSupportFragmentManager().beginTransaction().replace(R.id.fl_fragment_container, mapFragment).commit();
+                break;
+
+            case TAB_HIGHSCORE:
+                Log.d(TAG, "Highscores clicked");
+                HighscoreFragment highscoreFragment = new HighscoreFragment();
+                getSupportFragmentManager().beginTransaction().replace(R.id.fl_fragment_container, highscoreFragment).commit();
+                break;
+            case TAB_ACCOUNT:
+                Log.d(TAG, "Account clicked");
+                AccountFragment accountFragment = new AccountFragment();
+                getSupportFragmentManager().beginTransaction().replace(R.id.fl_fragment_container, accountFragment).commit();
+                break;
+        }
+    }
+
+    @Override
+    public void onTabUnselected(TabLayout.Tab tab) {
+    }
+
+    @Override
+    public void onTabReselected(TabLayout.Tab tab) {
     }
 
     @Override
