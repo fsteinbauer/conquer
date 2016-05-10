@@ -94,7 +94,7 @@ public class MapsActivity extends FragmentActivity implements TabLayout.OnTabSel
 
     @Override//-------------------------------------------------------------------------------------
     protected void onCreate(Bundle savedInstanceState) {
-        
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
         Log.d(TAG, "Got to Line: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
@@ -132,7 +132,8 @@ public class MapsActivity extends FragmentActivity implements TabLayout.OnTabSel
     private void initGUIElements() {
         MapFragment mapFragment = new MapFragment();
         getSupportFragmentManager().beginTransaction().add(R.id.fl_fragment_container, mapFragment).commit();
-
+        mTabLayout = (TabLayout) findViewById(R.id.tl_tabs);
+        mTabLayout.setOnTabSelectedListener(this);
 /*         if (mLastLocation != null) {
             location = mLocationService.getLocation();
         }
@@ -179,9 +180,9 @@ public class MapsActivity extends FragmentActivity implements TabLayout.OnTabSel
         }
 
         Area currentArea = null;
-        for( Area area : mAreas ){
-            if( area.inArea(getLatLng(loc)) ){
-                area.addDistance( distance );
+        for (Area area : mAreas) {
+            if (area.inArea(getLatLng(loc))) {
+                area.addDistance(distance);
                 currentArea = area;
                 break;
             }
@@ -197,11 +198,10 @@ public class MapsActivity extends FragmentActivity implements TabLayout.OnTabSel
             Location loc1 = path.get(path.size() - 1);
             Location loc2 = path.get(path.size() - 2);
             float kmh = getSpeed(loc1, loc2);
-            if( currentArea != null ){
+            if (currentArea != null) {
                 updateInfo(kmh, currentArea.getTravelDistance() / 1000);
                 updateArea(currentArea.getName());
-            }
-            else{
+            } else {
                 updateInfo(kmh, mRoute.getDistance() / 1000);
                 updateArea("unknown");
             }
@@ -229,7 +229,7 @@ public class MapsActivity extends FragmentActivity implements TabLayout.OnTabSel
     protected void onDestroy() {
         super.onDestroy();
         Log.d(TAG, "App Killed, going to stop Location Service");
-        if( mLocationService != null ) {
+        if (mLocationService != null) {
             Intent intent = new Intent(this, LocationService.class);
             unbindService(mLocationServiceConnection);
             stopService(intent);
