@@ -9,7 +9,7 @@ import android.util.Log;
 import at.acid.conquer.fragments.AccountFragment;
 import at.acid.conquer.fragments.HighscoreFragment;
 import at.acid.conquer.fragments.MapFragment;
-
+import at.acid.conquer.model.User;
 
 
 public class MapsActivity extends FragmentActivity implements TabLayout.OnTabSelectedListener {
@@ -26,6 +26,10 @@ public class MapsActivity extends FragmentActivity implements TabLayout.OnTabSel
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
         Log.d(TAG, "Got to Line: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+
+        User user = new User(getBaseContext());
+
+        user.saveData();
 
         initGUIElements();
     }

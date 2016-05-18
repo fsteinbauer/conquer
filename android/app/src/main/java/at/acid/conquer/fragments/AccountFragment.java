@@ -42,7 +42,7 @@ public class AccountFragment extends Fragment implements View.OnClickListener {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_account, container, false);
 
-        mUser = new User();
+        mUser = new User(getContext());
         mUser.setName("Johannes der Läufer");
 
 
