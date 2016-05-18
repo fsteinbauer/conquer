@@ -1,5 +1,6 @@
 package at.acid.conquer.model;
 
+import android.location.Location;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
@@ -10,6 +11,8 @@ import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static at.acid.conquer.Utility.getLatLng;
 
 /**
  * Created by florian on 09.03.2016.
@@ -23,7 +26,7 @@ public class Route {
     private float mDistance;
 
     private List<Polyline> mPolylines = new ArrayList<Polyline>();
-    private List<List<TimeLocation>> mPaths = new ArrayList<List<TimeLocation>>();
+    private List<List<Location>> mPaths = new ArrayList<List<Location>>();
 
     //----------------------------------------------------------------------------------------------
     public Route(@NonNull GoogleMap map, @NonNull PolylineOptions options) {
@@ -32,52 +35,52 @@ public class Route {
     }
 
     //----------------------------------------------------------------------------------------------
-    public float addLocationToCurrentPath(@NonNull TimeLocation tloc) {
-        TimeLocation oldTloc = getLastLocation();
+    public float addLocationToCurrentPath(@NonNull Location loc) {
+        Location oldLoc = getLastLocation();
 
-        if (oldTloc == null) {
+        if (oldLoc == null) {
             Log.d(TAG, "addLocationToCurrentPath(): no current path! (call addLocationToNewPath first)");
             return 0;
         }
 
-        List<TimeLocation> path = mPaths.get(mPaths.size() - 1);
-        path.add(tloc);
+        List<Location> path = mPaths.get(mPaths.size() - 1);
+        path.add(loc);
 
         Polyline poly = mPolylines.get(mPolylines.size() - 1);
         List<LatLng> points = poly.getPoints();
-        points.add(tloc.getLatLng());
+        points.add(getLatLng(loc));
         poly.setPoints(points);
 
-        float distance = tloc.mLocation.distanceTo(oldTloc.mLocation);
+        float distance = loc.distanceTo(oldLoc);
         mDistance += distance;
         return distance;
     }
 
     //----------------------------------------------------------------------------------------------
-    public float addLocationToNewPath(@NonNull TimeLocation tloc1, @NonNull TimeLocation tloc2) {
-        List<TimeLocation> newPath = new ArrayList<TimeLocation>();
-        newPath.add(tloc1);
-        newPath.add(tloc2);
+    public float addLocationToNewPath(@NonNull Location loc1, @NonNull Location loc2) {
+        List<Location> newPath = new ArrayList<Location>();
+        newPath.add(loc1);
+        newPath.add(loc2);
         mPaths.add(newPath);
 
         Polyline poly = mMap.addPolyline(mPolylineOptions);
         List<LatLng> points = poly.getPoints();
-        points.add(tloc1.getLatLng());
-        points.add(tloc2.getLatLng());
+        points.add(getLatLng(loc1));
+        points.add(getLatLng(loc2));
         poly.setPoints(points);
         mPolylines.add(poly);
 
-        float distance = tloc1.mLocation.distanceTo(tloc2.mLocation);
+        float distance = loc1.distanceTo(loc2);
         mDistance += distance;
         return distance;
     }
 
     //----------------------------------------------------------------------------------------------
-    public TimeLocation getLastLocation() {
+    public Location getLastLocation() {
         if (mPaths.isEmpty())
             return null;
 
-        List<TimeLocation> path = mPaths.get(mPaths.size() - 1);
+        List<Location> path = mPaths.get(mPaths.size() - 1);
         if (path.isEmpty())
             return null;
 
@@ -85,7 +88,7 @@ public class Route {
     }
 
     //----------------------------------------------------------------------------------------------
-    public List<TimeLocation> getCurrentPath() {
+    public List<Location> getCurrentPath() {
         if (mPaths.isEmpty())
             return null;
         return mPaths.get(mPaths.size() - 1);

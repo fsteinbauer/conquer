@@ -15,7 +15,8 @@ import com.google.android.gms.location.*;
 import java.lang.ref.WeakReference;
 
 /**
- * Created by menzi on 22.04.2016.
+ * Created by menzi
+ * 22.04.2016.
  */
 public class LocationService extends Service implements
         GoogleApiClient.ConnectionCallbacks,
@@ -25,13 +26,13 @@ public class LocationService extends Service implements
     public static final int GPS_UPDATE_INTERVAL = 15000;
     public static final int GPS_UPDATE_INTERVAL_MIN = 10000;
 
-    private GoogleApiClient mGoogleApiClient;
+    protected GoogleApiClient mGoogleApiClient;
     private LocationRequest mLocationRequest;
 
     // Binder (that client can call this class)
     private final IBinder mBinder = new LocalBinder();
     public class LocalBinder extends Binder {
-        LocationService getService() {
+        public LocationService getService() {
             return LocationService.this;
         }
     }
@@ -44,6 +45,7 @@ public class LocationService extends Service implements
 
     //----------------------------------------------------------------------------------------------
     public void setServiceClient(LocationServiceClient client) {
+        Log.d(TAG, "setServiceClient()");
         if (client == null) {
             mClient = null;
             return;
@@ -91,8 +93,10 @@ public class LocationService extends Service implements
     @Override//-------------------------------------------------------------------------------------
     public void onDestroy() {
         Log.d(TAG, "onDestroy()");
-        LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
-        mGoogleApiClient.disconnect();
+        if( mGoogleApiClient.isConnected() ) {
+            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
+            mGoogleApiClient.disconnect();
+        }
         super.onDestroy();
     }
 
@@ -115,7 +119,26 @@ public class LocationService extends Service implements
     @Override//-------------------------------------------------------------------------------------
     public void onLocationChanged(Location location) {
         Log.d(TAG, "onLocationChanged()");
-        if (mClient != null)
+        if (mClient != null) {
             mClient.get().onLocationUpdate(location);
+        }
+    }
+
+    //----------------------------------------------------------------------------------------------
+    public void pushMockLocation(double lat, double lng, long time){
+        Log.d(TAG, "pushMockLocation()");
+        Location location = new Location(LocationManager.GPS_PROVIDER);
+        location.setLatitude(lat);
+        location.setLongitude(lng);
+        location.setAccuracy(4.0f);
+        location.setTime(time);
+        location.setElapsedRealtimeNanos(time); //wrong time, never used, but needet
+        LocationServices.FusedLocationApi.setMockMode(mGoogleApiClient, true);
+        LocationServices.FusedLocationApi.setMockLocation(mGoogleApiClient, location);
+    }
+
+    //----------------------------------------------------------------------------------------------
+    public boolean isConnected(){
+        return mGoogleApiClient.isConnected();
     }
 }

@@ -1,13 +1,10 @@
 package at.acid.conquer.model;
 
-import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.util.Log;
-import android.widget.ArrayAdapter;
 
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Polygon;
 import com.google.android.gms.maps.model.PolygonOptions;
 
 import org.json.JSONArray;
@@ -17,7 +14,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-import static at.acid.conquer.LocationUtility.setAlpha;
+import static at.acid.conquer.Utility.setAlpha;
 
 /**
  * Created by florian on 09.03.2016.
@@ -105,6 +102,7 @@ public class Area {
         double x = point.latitude;
         double y = point.longitude;
 
+        // check for bounding box
         if (x < mBBoxMin.latitude || x > mBBoxMax.latitude ||
                 y < mBBoxMin.longitude || y > mBBoxMax.longitude)
             return false;
@@ -117,14 +115,18 @@ public class Area {
             a = mPolygon.get(i);
             b = mPolygon.get((i+1) % size);
 
+            // if point equals an edge point of polygon, return true
             if((a.latitude == x && a.longitude == y) || (b.latitude == x && b.longitude == y))
                 return true;
 
+            // if the segment does not cross the scan line, ignore it
             if((a.longitude < y && b.longitude < y) || (a.longitude > y && b.longitude > y) ||
                     (a.latitude > x && b.latitude > x))
                 continue;
 
             diffy = b.longitude - a.longitude;
+
+            // line parallel to scanline
             if( diffy == 0.0 ){
                 if( (a.latitude < x && b.latitude > x) || (a.latitude > x && b.latitude < x) )
                     return true;
@@ -134,13 +136,16 @@ public class Area {
             t = (y - a.longitude) / diffy;
             sx = a.latitude + t * (b.latitude - a.latitude);
 
+            // point is exactly on segment
             if( sx == x )
                 return true;
 
+            // count intersections (only from one side of point)
             if( sx < x )
                 intersections++;
         }
 
+        // even number of intersections means the point is outside the polygon
         if( intersections % 2 == 0 )
             return false;
 

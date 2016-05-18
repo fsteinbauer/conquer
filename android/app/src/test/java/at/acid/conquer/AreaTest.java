@@ -16,15 +16,8 @@ import static org.junit.Assert.*;
  * To work on unit tests, switch the Test Artifact in the Build Variants view.
  */
 public class AreaTest {
-
-    @Test
-    public void createWithName() throws Exception {
-        Area area = new Area("Graz");
-        assertEquals("Name", "Graz", area.getName());
-    }
-
-    @Test
-    public void createWithAll() throws Exception {
+    @Test//-----------------------------------------------------------------------------------------
+    public void createArea() throws Exception {
         List<LatLng> polygon = new ArrayList<LatLng>();
         polygon.add(new LatLng(10, 10));
         polygon.add(new LatLng(10,-10));
@@ -38,7 +31,7 @@ public class AreaTest {
         assertEquals("Name", "Graz", area.getName());
     }
 
-    @Test
+    @Test//-----------------------------------------------------------------------------------------
     public void pointInConvexArea() throws Exception{
         List<LatLng> polygon = new ArrayList<LatLng>();
         polygon.add(new LatLng(10, 10));
@@ -74,7 +67,7 @@ public class AreaTest {
         assertEquals("Point on diagonal line 10", true, area.inArea(new LatLng(-3.9999, 5)));
     }
 
-    @Test
+    @Test//-----------------------------------------------------------------------------------------
     public void pointInConcaveArea(){
         List<LatLng> polygon = new ArrayList<LatLng>();
         polygon.add(new LatLng(0, 10));
@@ -104,7 +97,7 @@ public class AreaTest {
         assertEquals("Point inside 7", true, area.inArea(new LatLng(-1, -9.9999)));
     }
 
-    @Test
+    @Test//-----------------------------------------------------------------------------------------
     public void loadArea(){
         String json = Areas.mAreas.get(0);
 
