@@ -19,27 +19,38 @@ public class RegisterRequest extends Request {
 
 
     final static String TAG = "RegisterRequest";
-    public RegisterRequest()
-    {
 
+    final long Latitude;
+    final long Longitude;
+    public RegisterRequest(long latitude, long longitude)
+    {
+        Latitude = latitude;
+        Longitude = longitude;
     }
 
-    private long id;
+    private String id;
+    private String name;
     private int success;
     private List<PowerUP> powerUPs;
 
 
     @Override
-    protected String getMessage() {
-        return "REGISTER()";
+    public String getURLExtension() {
+        return "user/register/"+ Latitude + "/"  + Longitude;
     }
 
     @Override
     public boolean parseReturn(String returnString) {
         try {
             JSONObject obj = new JSONObject(returnString);
+            JSONObject user = obj.getJSONObject("user");
 
-            success = obj.getInt("success");
+
+            id = user.getString("id");
+            name = user.getString("name");
+
+            success = 0;
+            //success = obj.getInt("success");
 
             JSONArray arrPowerUps = obj.getJSONArray("powerups");
 

@@ -1,22 +1,12 @@
 package at.acid.conquer.communication;
 
-import android.app.DownloadManager;
 
-import com.google.android.gms.appdatasearch.GetRecentContextCall;
-
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
-import org.apache.http.StatusLine;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.DefaultHttpClient;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.ByteArrayOutputStream;
+
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
+
 import java.net.HttpURLConnection;
 import java.net.URL;
 
@@ -30,13 +20,13 @@ public class Communicator {
 
     final static String URL_STRING = "TODO";
 
-    void register()
+    void register(final long lat, final long lng)
     {
 
         new Thread(new Runnable() {
             public void run() {
 
-                if(sendRequest(new RegisterRequest()))
+                if(sendRequest(new RegisterRequest(lat, lng)))
                 {
                     //TODO;
                 }
@@ -59,16 +49,13 @@ public class Communicator {
     }
 
 
+
     protected boolean sendRequest(Request req) {
 
         try {
-            final java.net.URL url = new URL(URL_STRING);
+            final java.net.URL url = new URL(URL_STRING + req.getURLExtension());
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
             try {
-                OutputStream out = new BufferedOutputStream(urlConnection.getOutputStream());
-                out.write(req.getRequestBytes());
-                out.flush();
-                out.close();
 
                 InputStream in = new BufferedInputStream(urlConnection.getInputStream());
                 return req.parseReturn(readStream(in));

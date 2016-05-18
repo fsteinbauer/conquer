@@ -1,6 +1,5 @@
 package at.acid.conquer.communication.Requests;
 
-import java.nio.charset.Charset;
 
 /**
  * Created by Annie on 04/05/2016.
@@ -8,12 +7,8 @@ import java.nio.charset.Charset;
 public abstract class Request {
 
 
-    protected abstract String getMessage();
+    public abstract String getURLExtension();
 
-    public byte[] getRequestBytes()
-    {
-         return getMessage().getBytes(Charset.forName("UTF-8"));
-    }
 
     public abstract boolean parseReturn(String s);
 }
