@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.util.Log;
 
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -20,15 +21,41 @@ import at.acid.conquer.data.Areas;
  */
 public class User {
     private class AreaStore{
+        public long mRunningTime;
         public double mDistance;
         public long mPoints;
-        public long mRunningTime;
+
+        public JSONObject getJSONObject() {
+            JSONObject obj = new JSONObject();
+            try {
+                obj.put("RunningTime", mRunningTime);
+                obj.put("Distance", mDistance);
+                obj.put("Points", mPoints);
+            } catch (JSONException e) {
+                //trace("DefaultListItem.toString JSONException: "+e.getMessage());
+            }
+            return obj;
+        }
     }
     private class RouteStore{
+        public long mDate;
+        public long mRunningTime;
         public double mDistance;
         public long mPoints;
-        public long mRunningTime;
-        public long mDate;
+
+
+        public JSONObject getJSONObject() {
+            JSONObject obj = new JSONObject();
+            try {
+                obj.put("Date", mDate);
+                obj.put("RunningTime", mRunningTime);
+                obj.put("Distance", mDistance);
+                obj.put("Points", mPoints);
+            } catch (JSONException e) {
+                //trace("DefaultListItem.toString JSONException: "+e.getMessage());
+            }
+            return obj;
+        }
     }
 
     private String mId;
@@ -45,7 +72,8 @@ public class User {
     public User(Context context){
         mContext = context;
 
-        for( int i = 0; i < Areas.mAreas.size(); i++)
+        //for( int i = 0; i < Areas.mAreas.size(); i++)
+        for( int i = 0; i < 5; i++)
             mAreas.add(new AreaStore());
 
         SharedPreferences store = mContext.getSharedPreferences(STORE_NAME, Context.MODE_PRIVATE);
@@ -62,19 +90,19 @@ public class User {
             for (int i = 0; i < jroutes.length(); i++) {
                 JSONObject jsonobject = jroutes.getJSONObject(i);
                 RouteStore routeStore = new RouteStore();
+                routeStore.mDate = jsonobject.getLong("mDate");
+                routeStore.mRunningTime = jsonobject.getLong("mRunningTime");
                 routeStore.mDistance = jsonobject.getDouble("mDistance");
                 routeStore.mPoints = jsonobject.getLong("mPoints");
-                routeStore.mRunningTime = jsonobject.getLong("mRunningTime");
-                routeStore.mDate = jsonobject.getLong("mDate");
                 mRoutes.add(routeStore);
             }
             JSONArray jareas = new JSONArray(areas);
             for (int i = 0; i < jareas.length(); i++) {
                 JSONObject jsonobject = jareas.getJSONObject(i);
                 AreaStore areaStore = new AreaStore();
+                areaStore.mRunningTime = jsonobject.getLong("mRunningTime");
                 areaStore.mDistance = jsonobject.getDouble("mDistance");
                 areaStore.mPoints = jsonobject.getLong("mPoints");
-                areaStore.mRunningTime = jsonobject.getLong("mRunningTime");
                 mAreas.add(areaStore);
             }
 
@@ -86,17 +114,24 @@ public class User {
         // TODO: change points
         mLastAvtivity = System.currentTimeMillis();
 
-        addRoute(1,1,1,1);
-        addRoute(2,2,2,2);
+        addRoute(18052016, 60, 90, 100);
+        addRoute(20052016, 120, 180,200);
         updateArea(1,1,1,1);
-        updateArea(2,2,2,2);
+        updateArea(2,20,25,20);
     }
 
     public Boolean saveData(){
         SharedPreferences.Editor store = mContext.getSharedPreferences(STORE_NAME, Context.MODE_PRIVATE).edit();
 
-        JSONArray routes = new JSONArray(Arrays.asList(mRoutes));
-        JSONArray areas = new JSONArray(Arrays.asList(mAreas));
+        JSONArray routes = new JSONArray();
+        for (int i=0; i < mRoutes.size(); i++) {
+            routes.put(mRoutes.get(i).getJSONObject());
+        }
+
+        JSONArray areas = new JSONArray();
+        for (int i=0; i < mAreas.size(); i++) {
+            areas.put(mAreas.get(i).getJSONObject());
+        }
 
         store.putString("routes", routes.toString());
         store.putString("areas", areas.toString());
@@ -108,24 +143,27 @@ public class User {
         Log.d(TAG, routes.toString());
         Log.d(TAG, areas.toString());
 
+        Log.d(TAG, areas.toString());
+
         return store.commit();
     }
 
-    public void addRoute(double distance, long points, long runningTime, long date){
+    public void addRoute(long date, long runningTime, double distance, long points){
         RouteStore route = new RouteStore();
+        route.mDate = date;
+        route.mRunningTime = runningTime;
         route.mDistance = distance;
         route.mPoints = points;
-        route.mRunningTime = runningTime;
-        route.mDate = date;
         mRoutes.add(route);
     }
 
-    public void updateArea(int areaId, double distance, long points, long runningTime){
-        if( areaId < Areas.mAreas.size() ) {
+    public void updateArea(int areaId, long runningTime, double distance, long points){
+        //if( areaId < Areas.mAreas.size() ) {
+        if( areaId < 5 ) {
             AreaStore area = mAreas.get(areaId);
+            area.mRunningTime += runningTime;
             area.mDistance += distance;
             area.mPoints += points;
-            area.mRunningTime += runningTime;
         }
     }
 

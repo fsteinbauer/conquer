@@ -31,6 +31,10 @@ public class MapsActivity extends FragmentActivity implements TabLayout.OnTabSel
 
         user.saveData();
 
+        user.updateArea(2,22,27,22);
+
+        user.saveData();
+
         initGUIElements();
     }
 
