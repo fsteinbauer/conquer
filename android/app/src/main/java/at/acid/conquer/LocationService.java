@@ -83,6 +83,12 @@ public class LocationService extends Service implements
         return mBinder;
     }
 
+    @Override
+    public boolean onUnbind(Intent intent) {
+        Log.d(TAG, "unUnbind");
+        return super.onUnbind(intent);
+    }
+
     @Override//-------------------------------------------------------------------------------------
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(TAG, "onStart()");

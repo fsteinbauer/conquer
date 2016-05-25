@@ -16,8 +16,8 @@
     <item name="ll_trackinginfo" type="id"/>
     <item name="tv_trackinginfo_info_place" type="id"/>
     <item name="ll_trackinginfo_info_info" type="id"/>
-    <item name="tv_trackinginfo_info_speed" type="id"/>
     <item name="tv_trackinginfo_info_points" type="id"/>
+    <item name="tv_trackinginfo_info_distance" type="id"/>
     <item name="tv_trackinginfo_info_duration" type="id"/>
     <item name="fab_run_stop" type="id"/>
 
