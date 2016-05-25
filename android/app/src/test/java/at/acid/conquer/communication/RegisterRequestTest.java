@@ -20,26 +20,47 @@ public class RegisterRequestTest {
     public void ParseVaildReturnString1() throws Exception {
         String returnString =
                 "{\n" +
-                "   'success': 0,\n" +
+                "   'user': {'id':'ABCD-FGH-YZ', 'name':'halloWelt!'},\n" +
                 "   'powerups': [],\n" +
-                "   'highscores': []\n" +
+                "   'highscore': []\n" +
                 "}";
 
-        RegisterRequest rr = new RegisterRequest();
+        RegisterRequest rr = new RegisterRequest(0.5, 0.5);
 
         assertTrue("Return of parseReturn was False, should be True", rr.parseReturn(returnString));
+        RegisterRequest.Result res = rr.getResult();
 
-        Assert.assertEquals("Success should be 0!",rr.getSuccess(), 0);
-        Assert.assertTrue("Wrong ID returned!", rr.getId() != 0);
+        Assert.assertNotNull(res);
 
-        Assert.assertNotNull("PowerUps should not be Null!", rr.getPowerUPs());
-        Assert.assertTrue("PowerUps should be empty!", rr.getPowerUPs().isEmpty());
+        Assert.assertEquals("Success should be 0!",res.mSuccess, 0);
+        Assert.assertTrue("Wrong ID returned!", res.mID.equals("ABCD-FGH-YZ"));
 
-        
+        Assert.assertNotNull("PowerUps should not be Null!", res.mPowerUPs);
+        Assert.assertTrue("PowerUps should be empty!", res.mPowerUPs.isEmpty());
 
-        //TODO: Highscore!
+    }
 
+    @Test
+    public void ParsePowerUpsAndHighScore() throws Exception {
+        String returnString =
+                "{\n" +
+                        "   'user': {'id':'ABCD-FGH-YZ', 'name':'halloWelt!'},\n" +
+                        "   'powerups': [],\n" +
+                        "   'highscore': []\n" +
+                        "}";
 
+        RegisterRequest rr = new RegisterRequest(0.5, 0.5);
+
+        assertTrue("Return of parseReturn was False, should be True", rr.parseReturn(returnString));
+        RegisterRequest.Result res = rr.getResult();
+
+        Assert.assertNotNull(res);
+
+        Assert.assertEquals("Success should be 0!",res.mSuccess, 0);
+        Assert.assertTrue("Wrong ID returned!", res.mID.equals("ABCD-FGH-YZ"));
+
+        Assert.assertNotNull("PowerUps should not be Null!", res.mPowerUPs);
+        Assert.assertTrue("PowerUps should be empty!", res.mPowerUPs.isEmpty());
 
     }
 }
