@@ -297,5 +297,9 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
         super.onLowMemory();
         mMapView.onLowMemory();
     }
+
+    public boolean isRunning() {
+        return mIsRunning;
+    }
 }
 
