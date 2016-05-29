@@ -8,7 +8,7 @@ import com.google.android.gms.maps.model.LatLng;
 /**
  * Created by florian on 09.03.2016.
  */
-public abstract class Utility {
+public abstract class LocationUtility {
     public static final String TAG = "Utility";
     public static final float MAX_VALID_SPEED = 20.0f; // in km/h
     public static final long MAX_VALID_TIME_DIFFERENCE = 60; // in seconds
@@ -47,13 +47,6 @@ public abstract class Utility {
         float meterPerSecond = distInMeters / timeDifferenceInSeconds;
         float kmh = meterPerSecond * 3.6f;
         return kmh;
-    }
-
-    //----------------------------------------------------------------------------------------------
-    public static int setAlpha(int color, float alpha){
-        color &= 0x00ffffff; // reset alpha bits
-        color |= ((char)(255*(1-alpha))) << 24;
-        return color;
     }
 
     //----------------------------------------------------------------------------------------------

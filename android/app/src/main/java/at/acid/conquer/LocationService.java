@@ -125,7 +125,13 @@ public class LocationService extends Service implements
     @Override//-------------------------------------------------------------------------------------
     public void onLocationChanged(Location location) {
         Log.d(TAG, "onLocationChanged()");
-        if (mClient != null) {
+        // use only valid GPS data
+        if (mClient != null && location.getProvider() == LocationManager.GPS_PROVIDER) {
+            mClient.get().onLocationUpdate(location);
+        }
+
+        //for testing only (emulator gps data)
+        if (mClient != null && location.getProvider().equals("fused")) {
             mClient.get().onLocationUpdate(location);
         }
     }

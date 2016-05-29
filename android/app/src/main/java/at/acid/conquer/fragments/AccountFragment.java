@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import at.acid.conquer.MainActivity;
 import at.acid.conquer.R;
 
 import android.view.inputmethod.InputMethodManager;
@@ -16,9 +17,6 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-import java.util.concurrent.Future;
-
-import at.acid.conquer.R;
 import at.acid.conquer.model.User;
 
 
@@ -29,6 +27,8 @@ import at.acid.conquer.model.User;
 
 
 public class AccountFragment extends Fragment implements View.OnClickListener {
+    private MainActivity mMainActivity;
+
     private boolean mEditMode;
     private ImageButton mButtonEditName;
     private TextView mTextFieldName;
@@ -40,9 +40,10 @@ public class AccountFragment extends Fragment implements View.OnClickListener {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        mMainActivity = ((MainActivity) getActivity());
         View rootView = inflater.inflate(R.layout.fragment_account, container, false);
 
-        mUser = new User(getContext());
+        mUser = mMainActivity.getUser();
         mUser.setName("Johannes der Läufer");
 
 

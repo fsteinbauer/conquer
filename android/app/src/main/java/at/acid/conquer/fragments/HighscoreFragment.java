@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import at.acid.conquer.MainActivity;
 import at.acid.conquer.R;
 
 /**
@@ -12,10 +14,12 @@ import at.acid.conquer.R;
  * 04.05.2016.
  */
 public class HighscoreFragment extends Fragment {
+    private MainActivity mMainActivity;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+        mMainActivity = ((MainActivity) getActivity());
         return inflater.inflate(R.layout.fragment_highscores, container, false);
     }
 }
