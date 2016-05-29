@@ -12,7 +12,7 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import java.util.ArrayList;
 import java.util.List;
 
-import static at.acid.conquer.MapsUtility.getLatLng;
+import static at.acid.conquer.Utility.getLatLng;
 
 /**
  * Created by florian on 09.03.2016.
