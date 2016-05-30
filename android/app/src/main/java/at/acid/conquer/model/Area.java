@@ -21,6 +21,7 @@ import java.util.List;
 public class Area {
     public static final String TAG = "Area";
     private String mName;
+    private int mId;
 
     private float mTravelDistance;
 
@@ -30,14 +31,14 @@ public class Area {
     private List<LatLng> mPolygon = new ArrayList<LatLng>();
 
     //----------------------------------------------------------------------------------------------
-    public Area(@NonNull String name) {
-        mName = name;
+    public Area() {
     }
 
     //----------------------------------------------------------------------------------------------
-    public Area(@NonNull String name, LatLng bBoxMin, LatLng bBoxMax, List<LatLng> polygon)
+    public Area(@NonNull String name, int id, LatLng bBoxMin, LatLng bBoxMax, List<LatLng> polygon)
     {
         mName = name;
+        mId = id;
         mBBoxMin = bBoxMin;
         mBBoxMax = bBoxMax;
         mPolygon = polygon;
@@ -48,6 +49,7 @@ public class Area {
         try {
             JSONObject obj = new JSONObject(json);
             mName = obj.getString("name");
+            mId = obj.getInt("id");
             JSONArray points = obj.getJSONArray("data");
             for( int i = 0; i < points.length(); i++ ) {
                 JSONObject point = points.getJSONObject(i);
@@ -90,7 +92,6 @@ public class Area {
         Log.d(TAG, "Points: " + mPolygon);
         options.addAll(mPolygon);
         map.addPolygon(options);
-
     }
 
     //----------------------------------------------------------------------------------------------
@@ -149,17 +150,18 @@ public class Area {
     }
 
     //----------------------------------------------------------------------------------------------
-    public String getName(){
-        return mName;
+    public void addDistance(float distance){
+        mTravelDistance += distance;
     }
 
     //----------------------------------------------------------------------------------------------
+    public String getName(){
+        return mName;
+    }
+    public int getId() { return mId; }
     public float getTravelDistance(){
         return mTravelDistance;
     }
 
-    //----------------------------------------------------------------------------------------------
-    public void addDistance(float distance){
-        mTravelDistance += distance;
-    }
+
 }

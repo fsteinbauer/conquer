@@ -11,6 +11,7 @@ import android.os.IBinder;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +23,7 @@ import at.acid.conquer.R;
 import at.acid.conquer.data.Areas;
 import at.acid.conquer.model.Area;
 import at.acid.conquer.model.Route;
+import at.acid.conquer.model.User;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -33,6 +35,9 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -72,7 +77,7 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
     private boolean mIsRunning;
 
     private Route mRoute;
-    private List<Area> mAreas = new ArrayList<>();
+    private SparseArray<Area> mAreas = new SparseArray<>();
 
     private Location mLastLocation;
     private Area mCurrentArea;
@@ -126,6 +131,8 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
         // Gets to GoogleMap from the MapView and does initialization stuff
         mMapView.getMapAsync(this);
 
+        updateInfo();
+
         return rootView;
     }
 
@@ -154,7 +161,6 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
 
     //----------------------------------------------------------------------------------------------
     public void startTimer() {
-
         mTimerTask = new TimerTask() {
             Calendar startTimeCalendar = Calendar.getInstance();
             final long startTime = startTimeCalendar.getTimeInMillis();
@@ -212,12 +218,18 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
         mGoogleMap.moveCamera(CameraUpdateFactory.newLatLng(getLatLng(loc)));
 
         mCurrentArea = null;
-        for (Area area : mAreas) {
+        for (int i = 0; i < mAreas.size(); i++) {
+            Area area = mAreas.valueAt(i);
             if (area.inArea(getLatLng(loc))) {
                 area.addDistance(distance);
                 mCurrentArea = area;
                 break;
             }
+        }
+
+        if( mCurrentArea != null ) {
+            User user = mMainActivity.getUser();
+            user.updateArea(mCurrentArea.getId(), distance, (long)distance / 10);
         }
 
         mLastLocation = loc;
@@ -232,22 +244,17 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
         mGoogleMap = googleMap;
         MapsInitializer.initialize(getContext());
 
-        PolylineOptions mPathLineOptions = new PolylineOptions()
-                .width(ROUTE_WIDTH)
-                .color(ROUTE_COLOR);
-        mRoute = (new Route(googleMap, mPathLineOptions));
+        mAreas = loadAreasFromAssets("areas");
+
+        for (int i = 0; i < mAreas.size(); i++) {
+            Area area = mAreas.valueAt(i);
+            area.draw(mGoogleMap, AREA_COLOR_UNKNOWN, AREA_COLOR_BORDER);
+        }
 
         // default locatin: graz
         Location location = new Location("Wikipedia");
         location.setLatitude(47.067);
         location.setLongitude(15.433);
-
-        for (String json : Areas.mAreas) {
-            Area area = new Area("");
-            area.loadJson(json);
-            mAreas.add(area);
-            area.draw(googleMap, AREA_COLOR_UNKNOWN, AREA_COLOR_BORDER);
-        }
 
         mLastLocation = location;
         LatLng latlng = new LatLng(location.getLatitude(), location.getLongitude());
@@ -256,7 +263,6 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
         mMarker = googleMap.addMarker(new MarkerOptions()
                 .position(latlng)
                 .title("me"));
-
     }
 
     //----------------------------------------------------------------------------------------------
@@ -267,6 +273,11 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
         context.startService(intent);
         context.bindService(intent, mLocationServiceConnection, Context.BIND_AUTO_CREATE);
         startTimer();
+
+        PolylineOptions mPathLineOptions = new PolylineOptions()
+                .width(ROUTE_WIDTH)
+                .color(ROUTE_COLOR);
+        mRoute = new Route(mGoogleMap, mPathLineOptions);
     }
 
     //----------------------------------------------------------------------------------------------
@@ -277,6 +288,13 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
         context.unbindService(mLocationServiceConnection);
         context.stopService(intent);
         stopTimer();
+
+        User user = mMainActivity.getUser();
+        user.addRoute(mRoute.getStartTime(),
+                mRoute.getRunTime(),
+                mRoute.getDistance(),
+                (long)mRoute.getDistance() / 10);
+        user.saveData();
     }
 
     //----------------------------------------------------------------------------------------------
@@ -296,8 +314,8 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
         String distance = "0.00";
 
         if (mRoute != null) {
-            points = Integer.toString((int) mRoute.getDistance() / 10);
-            distance = String.format("%.2f", mRoute.getDistance());
+            points = Integer.toString((int) mRoute.getDistance() / 100);
+            distance = String.format("%.2f", mRoute.getDistance() / 1000);
         }
 
         if (mCurrentArea != null) {
@@ -342,6 +360,37 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
     public void onLowMemory() {
         super.onLowMemory();
         mMapView.onLowMemory();
+    }
+
+    //----------------------------------------------------------------------------------------------
+    SparseArray<Area> loadAreasFromAssets(String path){
+        ArrayList<String> areas_json = new ArrayList<String>();
+        try {
+            String[] area_files;
+            area_files = getContext().getAssets().list(path);
+            for (String filename : area_files) {
+                StringBuilder buf = new StringBuilder();
+                InputStream file = getContext().getAssets().open(path + "/" + filename);
+                BufferedReader in = new BufferedReader(new InputStreamReader(file, "UTF-8"));
+                String str;
+                while ((str = in.readLine()) != null) {
+                    buf.append(str);
+                }
+                in.close();
+                areas_json.add(buf.toString());
+                //Log.d(TAG, filename + " : " + buf.toString());
+            }
+        } catch (Exception e) {
+            Log.d(TAG, "Failed to load area file \n" + e.getMessage());
+        }
+
+        for (String json : areas_json) {
+            Area area = new Area();
+            area.loadJson(json);
+            mAreas.put(area.getId(), area);
+        }
+
+        return mAreas;
     }
 }
 

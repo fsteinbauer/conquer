@@ -14,9 +14,9 @@ import at.acid.conquer.model.User;
 
 public class MainActivity extends FragmentActivity implements TabLayout.OnTabSelectedListener {
     public static final String TAG = "MapsActivity";
-    public final static int TAB_MAP = 0;
-    public final static int TAB_HIGHSCORE = 1;
-    public final static int TAB_ACCOUNT = 2;
+    public static final int TAB_MAP = 0;
+    public static final int TAB_HIGHSCORE = 1;
+    public static final int TAB_ACCOUNT = 2;
 
     private TabLayout mTabLayout;
     private MapFragment mMapFragment;
@@ -26,8 +26,6 @@ public class MainActivity extends FragmentActivity implements TabLayout.OnTabSel
 
     User mUser;
 
-
-
     @Override//-------------------------------------------------------------------------------------
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,6 +34,7 @@ public class MainActivity extends FragmentActivity implements TabLayout.OnTabSel
         //Log.d(TAG, "Got to Line: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
 
         mUser = new User(getBaseContext());
+        //mUser.clearStoredData();
 
         initGUIElements();
     }

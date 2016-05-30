@@ -26,7 +26,7 @@ public class AreaTest {
         LatLng bBoxMin = new LatLng(-10, -10);
         LatLng bBoxMax = new LatLng(10, 10);
 
-        Area area = new Area("Graz", bBoxMin, bBoxMax, polygon);
+        Area area = new Area("Graz", 0, bBoxMin, bBoxMax, polygon);
 
         assertEquals("Name", "Graz", area.getName());
     }
@@ -41,7 +41,7 @@ public class AreaTest {
         LatLng bBoxMin = new LatLng(-10, -10);
         LatLng bBoxMax = new LatLng(10, 10);
 
-        Area area = new Area("Graz", bBoxMin, bBoxMax, polygon);
+        Area area = new Area("Graz", 0, bBoxMin, bBoxMax, polygon);
 
         assertEquals("Point outside 1", false, area.inArea(new LatLng(10, 11)));
         assertEquals("Point outside 2", false, area.inArea(new LatLng(11, 10)));
@@ -85,7 +85,7 @@ public class AreaTest {
         LatLng bBoxMin = new LatLng(-10, -10);
         LatLng bBoxMax = new LatLng(10, 10);
 
-        Area area = new Area("Graz", bBoxMin, bBoxMax, polygon);
+        Area area = new Area("Graz", 0, bBoxMin, bBoxMax, polygon);
         assertEquals("Point inside 1", true, area.inArea(new LatLng(1, 5)));
         assertEquals("Point inside 2", true, area.inArea(new LatLng(1, 5.0001)));
         assertEquals("Point inside 3", false, area.inArea(new LatLng(1, 4.999)));
@@ -99,12 +99,63 @@ public class AreaTest {
 
     @Test//-----------------------------------------------------------------------------------------
     public void loadArea(){
-        String json = Areas.mAreas.get(0);
+        String json = "{\"id\":6,\"data\":[\n" +
+                "{\"lon\":15.446295,\"lat\":47.066774},\n" +
+                "{\"lon\":15.446458,\"lat\":47.067621},\n" +
+                "{\"lon\":15.445586,\"lat\":47.068092},\n" +
+                "{\"lon\":15.446021,\"lat\":47.068450},\n" +
+                "{\"lon\":15.447282,\"lat\":47.069765},\n" +
+                "{\"lon\":15.448277,\"lat\":47.071098},\n" +
+                "{\"lon\":15.448294,\"lat\":47.071225},\n" +
+                "{\"lon\":15.448670,\"lat\":47.071828},\n" +
+                "{\"lon\":15.448715,\"lat\":47.072120},\n" +
+                "{\"lon\":15.448463,\"lat\":47.072120},\n" +
+                "{\"lon\":15.448533,\"lat\":47.072350},\n" +
+                "{\"lon\":15.448479,\"lat\":47.072701},\n" +
+                "{\"lon\":15.448195,\"lat\":47.073249},\n" +
+                "{\"lon\":15.447875,\"lat\":47.073809},\n" +
+                "{\"lon\":15.446973,\"lat\":47.073635},\n" +
+                "{\"lon\":15.446716,\"lat\":47.074271},\n" +
+                "{\"lon\":15.443562,\"lat\":47.077829},\n" +
+                "{\"lon\":15.441588,\"lat\":47.078209},\n" +
+                "{\"lon\":15.439893,\"lat\":47.078530},\n" +
+                "{\"lon\":15.439099,\"lat\":47.079085},\n" +
+                "{\"lon\":15.437146,\"lat\":47.078888},\n" +
+                "{\"lon\":15.436556,\"lat\":47.078778},\n" +
+                "{\"lon\":15.436116,\"lat\":47.078625},\n" +
+                "{\"lon\":15.435708,\"lat\":47.078413},\n" +
+                "{\"lon\":15.434648,\"lat\":47.077641},\n" +
+                "{\"lon\":15.433420,\"lat\":47.077332},\n" +
+                "{\"lon\":15.433134,\"lat\":47.077094},\n" +
+                "{\"lon\":15.434348,\"lat\":47.074351},\n" +
+                "{\"lon\":15.434761,\"lat\":47.072349},\n" +
+                "{\"lon\":15.435082,\"lat\":47.070963},\n" +
+                "{\"lon\":15.435146,\"lat\":47.069592},\n" +
+                "{\"lon\":15.435131,\"lat\":47.069499},\n" +
+                "{\"lon\":15.434567,\"lat\":47.064285},\n" +
+                "{\"lon\":15.434760,\"lat\":47.064247},\n" +
+                "{\"lon\":15.435518,\"lat\":47.064212},\n" +
+                "{\"lon\":15.438406,\"lat\":47.064362},\n" +
+                "{\"lon\":15.439677,\"lat\":47.064486},\n" +
+                "{\"lon\":15.440246,\"lat\":47.064592},\n" +
+                "{\"lon\":15.440820,\"lat\":47.064588},\n" +
+                "{\"lon\":15.442263,\"lat\":47.064354},\n" +
+                "{\"lon\":15.442542,\"lat\":47.064409},\n" +
+                "{\"lon\":15.442799,\"lat\":47.064548},\n" +
+                "{\"lon\":15.443287,\"lat\":47.065078},\n" +
+                "{\"lon\":15.443673,\"lat\":47.065429},\n" +
+                "{\"lon\":15.444435,\"lat\":47.065758},\n" +
+                "{\"lon\":15.445250,\"lat\":47.066080},\n" +
+                "{\"lon\":15.446114,\"lat\":47.066358},\n" +
+                "{\"lon\":15.446232,\"lat\":47.066566},\n" +
+                "{\"lon\":15.446286,\"lat\":47.066745}\n" +
+                "], \"name\": \"Graz - Innere Stadt\" }\n";
 
-        Area area = new Area("Area51");
+        Area area = new Area();
         area.loadJson(json);
 
         assertEquals("Name", "Graz - Innere Stadt", area.getName());
+        assertEquals("Id", 6, area.getId());
         assertEquals("Point inside", true, area.inArea(new LatLng(47.067050, 15.442080)));
     }
 }
