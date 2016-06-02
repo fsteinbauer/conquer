@@ -24,6 +24,10 @@
 
     <!--fragment_highscores.xml-->
     <item name="frag_highscore" type="id"/>
+    <item name="iv_city_picture" type="id"/>
+    <item name="spinner_city" type="id"/>
+    <item name="tv_position_in_area" type="id"/>
+    <item name="lv_highscore" type="id"/>
 
 
     <!--fragment_account.xml-->
@@ -32,5 +36,6 @@
     <item name="tv_profile_name" type="id" />
     <item name="ib_name_edit" type="id" />
     <item name="et_profile_name" type="id" />
+
 
 </resources>

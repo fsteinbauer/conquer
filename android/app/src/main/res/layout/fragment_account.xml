@@ -68,10 +68,10 @@
 
     <LinearLayout android:id="@id/ll_trackinginfo_info_info"
         android:layout_width="match_parent"
-        android:layout_height="72dp"
+        android:layout_height="@dimen/secondary_bar_height"
         android:orientation="horizontal"
         android:visibility="visible"
-        android:background="@color/background"
+        android:background="@color/background_secondary"
         android:paddingLeft="16dp"
         android:paddingRight="16dp"
         android:gravity="center"

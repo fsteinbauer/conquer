@@ -1,17 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout android:id="@id/frag_highscore"
-        xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:android="http://schemas.android.com/apk/res/android"
               android:orientation="vertical"
               android:layout_width="match_parent"
               android:layout_height="match_parent"
-              android:background="@color/background"
 >
-
-    <TextView android:layout_width="match_parent"
-              android:layout_height="match_parent"
-              android:text="Highscore"
-              android:gravity="center"
-              android:textSize="50sp"
-              android:textColor="@color/orange"
+    <ImageView
+            android:id="@id/iv_city_picture"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:scaleType="fitStart"
+            android:src="@drawable/profilepic"
     />
+
+    <Spinner android:id="@id/spinner_city"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+    />
+
+    <TextView android:id="@id/tv_position_in_area"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:layout_margin="10dp"
+              android:gravity="center_vertical"
+              android:text="Place 123"
+    />
+
+
+    <ListView android:id="@id/lv_highscore"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+    />
+
 </LinearLayout>
