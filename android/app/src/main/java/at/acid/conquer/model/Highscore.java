@@ -3,6 +3,7 @@ package at.acid.conquer.model;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 
 /**
  * Created by Annie on 18/05/2016.
@@ -10,18 +11,20 @@ import java.util.LinkedList;
 
 
 
-public class Highscore extends ArrayList<ArrayList<Highscore.HighscoreUser>>{
+public class Highscore extends HashMap<Long, Highscore.HighscoreUser> {
 
 
     public class HighscoreUser {
-        final private String mId;
         final private String mUsername;
         final private Long mPoints;
+        final private Boolean mSelf;
 
-        public HighscoreUser(String id, String username, Long points)
-        {
-            mId = id;
-            mUsername = username;
+
+
+        public HighscoreUser(String name, long points, boolean self) {
+
+            mSelf = self;
+            mUsername = name;
             mPoints = points;
         }
 
@@ -30,13 +33,14 @@ public class Highscore extends ArrayList<ArrayList<Highscore.HighscoreUser>>{
             return mUsername;
         }
 
-        public String getID()
-        {
-            return mId;
-        }
 
         public long getPoints(){
             return mPoints;
+        }
+
+        public boolean getSelf ()
+        {
+            return mSelf;
         }
     }
 }
