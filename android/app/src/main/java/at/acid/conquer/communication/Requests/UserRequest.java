@@ -17,13 +17,8 @@ import at.acid.conquer.model.PowerUP;
  * Created by Annie on 18/05/2016.
  */
 public abstract  class UserRequest extends Request{
-    @Override
-    public String getURLExtension() {
-        return "user/" + this.getURLExtension();
-    }
 
-
-    public List<PowerUP> parsePowerUps(JSONArray JSONPowrUps) throws JSONException {
+   /* public List<PowerUP> parsePowerUps(JSONArray JSONPowrUps) throws JSONException {
 
         List<PowerUP> powerUPs;
         powerUPs = new LinkedList<>();
@@ -42,8 +37,8 @@ public abstract  class UserRequest extends Request{
         }
         return powerUPs;
     }
-
-    public Highscore parseHighscore(JSONArray JSONHighscore) throws JSONException {
+*/
+   /* public Highscore parseHighscore(JSONArray JSONHighscore) throws JSONException {
         Highscore highscore = new Highscore();
         for( int i = 0; i < JSONHighscore.length(); i++ ) {
             JSONObject JSONArea = JSONHighscore.getJSONObject(i);
@@ -65,6 +60,6 @@ public abstract  class UserRequest extends Request{
 
         }
     return highscore;
-    }
+    }*/
 
 }

@@ -14,7 +14,7 @@ import java.util.Map;
 public class Highscore extends HashMap<Long, Highscore.HighscoreUser> {
 
 
-    public class HighscoreUser {
+    public static class HighscoreUser {
         final private String mUsername;
         final private Long mPoints;
         final private Boolean mSelf;

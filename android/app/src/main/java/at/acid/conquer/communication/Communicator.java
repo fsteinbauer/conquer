@@ -9,7 +9,6 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-import at.acid.conquer.communication.Requests.RegisterRequest;
 import at.acid.conquer.communication.Requests.Request;
 
 /**
@@ -35,6 +34,7 @@ public class Communicator {
 
     public boolean sendRequest(final Request req) {
 
+
         Thread t = new Thread(new Runnable() {
             public void run() {
                 try {
@@ -45,27 +45,40 @@ public class Communicator {
 
                         InputStream in = new BufferedInputStream(urlConnection.getInputStream());
                         req.parseReturn(readStream(in));
+
+
                     } finally {
                         urlConnection.disconnect();
+
                     }
 
 
                 } catch (IOException ioe) {
                     Log.d(TAG, ioe.getMessage());
+                    ioe.printStackTrace();
+                    req.setSuccess(Request.ReturnValue.IO_ERROR);
                 }
             }
         });
 
         t.start();
 
+
         try {
-            t.join(500);
+            t.join(5000);
         } catch (InterruptedException e) {
 
-            Log.d(TAG, "THREAD INTERUPT");
+
+            req.setSuccess(Request.ReturnValue.TIME_OUT);
             return false;
         }
 
+        if(t.isAlive()) {
+            req.setSuccess(Request.ReturnValue.TIME_OUT);
+            t.interrupt();
+
+            return false;
+        }
 
         return true;
 
