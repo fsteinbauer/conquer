@@ -33,6 +33,10 @@ public class RankingAdapter extends BaseAdapter{
         mItems.putAll(ranking);
     }
 
+    public void updateItems(Map<String, List<Pair>> ranking){
+        mItems.clear();
+        mItems.putAll(ranking);
+    }
 
     @Override
     public int getCount(){

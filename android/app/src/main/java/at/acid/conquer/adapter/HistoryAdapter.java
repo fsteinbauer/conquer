@@ -7,10 +7,12 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 import at.acid.conquer.R;
+import at.acid.conquer.model.User;
 
-import java.util.ArrayList;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
-import java.util.Random;
+import java.util.Locale;
 
 /**
  * Created by Trey
@@ -19,15 +21,12 @@ import java.util.Random;
 public class HistoryAdapter extends BaseAdapter{
 
     private final LayoutInflater mInflater;
-    private final List<String> mItems;
+    private final List<User.RouteStore> mItems;
+    private static final SimpleDateFormat dateSDF = new SimpleDateFormat("dd.MM.yyyy - HH:mm", Locale.GERMAN);
 
-    public HistoryAdapter(Context context){
-        mItems = new ArrayList();
+    public HistoryAdapter(Context context, List<User.RouteStore> items){
+        mItems = items;
         mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-    }
-
-    public void addAll(ArrayList<String> objects){
-        mItems.addAll(objects);
     }
 
     @Override
@@ -55,11 +54,16 @@ public class HistoryAdapter extends BaseAdapter{
         TextView duration = (TextView) view.findViewById(R.id.tv_history_duration);
         TextView points = (TextView) view.findViewById(R.id.tv_history_points);
 
-        date.setText("12.Juni 2016");
-        duration.setText("12.5km - 01:24:38");
-        Random randomGenerator = new Random();
+        User.RouteStore currentItem = mItems.get(position);
+        date.setText(dateSDF.format(new Date(currentItem.mDate)));
 
-        points.setText(Integer.toString(randomGenerator.nextInt(20000)));
+        long time = currentItem.mRunningTime;
+        long second = (time / 1000) % 60;
+        long minute = (time / (1000 * 60)) % 60;
+        long hour = (time / (1000 * 60 * 60));
+
+        duration.setText(String.format("%.2fkm - %d:%02d:%02d", currentItem.mDistance, hour, minute, second));
+        points.setText(Long.toString(currentItem.mPoints));
 
         return view;
     }

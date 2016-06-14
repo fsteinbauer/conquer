@@ -9,7 +9,6 @@ import android.location.Location;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
@@ -44,7 +43,7 @@ import static at.acid.conquer.LocationUtility.validDistance;
  * Created by trewurm
  * 04.05.2016.
  */
-public class MapFragment extends Fragment implements View.OnClickListener, OnMapReadyCallback, LocationService.LocationServiceClient {
+public class MapFragment extends BaseClass implements View.OnClickListener, OnMapReadyCallback, LocationService.LocationServiceClient{
     public static final String TAG = "MapFragment";
     public static final float MAP_DEFAULT_ZOOM = 16f;
     public static final int AREA_COLOR_BORDER  = Color.argb(192, 128, 128, 128);
@@ -384,6 +383,11 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
         }
 
         return mAreas;
+    }
+
+    @Override
+    public void onFragmentSelected(){
+
     }
 }
 

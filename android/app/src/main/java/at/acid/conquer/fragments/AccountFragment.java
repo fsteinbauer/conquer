@@ -3,7 +3,6 @@ package at.acid.conquer.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,14 +23,20 @@ import at.acid.conquer.model.User;
  */
 
 
-public class AccountFragment extends Fragment implements View.OnClickListener{
+public class AccountFragment extends BaseClass implements View.OnClickListener{
 
     private boolean mEditMode;
     private ImageButton mButtonEditName;
     private TextView mTextFieldName;
     private EditText mEditTextName;
+    private HistoryAdapter mHistoryAdapter;
+    private TextView mTVDistance;
+    private TextView mTVPoints;
+    private TextView mTVDuration;
+
 
     private User mUser;
+    public AccountFragment(){}
 
 
     @Override
@@ -42,6 +47,10 @@ public class AccountFragment extends Fragment implements View.OnClickListener{
         mEditTextName = (EditText) rootView.findViewById(R.id.et_profile_name);
         ListView history = (ListView) rootView.findViewById(R.id.lv_history);
         TextView tvEmptyHistory = (TextView) rootView.findViewById(R.id.tv_empty_history);
+
+        mTVDistance = (TextView) rootView.findViewById(R.id.tv_trackinginfo_info_distance);
+        mTVPoints = (TextView) rootView.findViewById(R.id.tv_trackinginfo_info_points);
+        mTVDuration = (TextView) rootView.findViewById(R.id.tv_trackinginfo_info_duration);
 
         mUser = ((MainActivity) getActivity()).getUser();
         mUser.setName("Johannes der Läufer");
@@ -54,18 +63,18 @@ public class AccountFragment extends Fragment implements View.OnClickListener{
 
         mEditMode = false;
 
-        HistoryAdapter historyAdapter = new HistoryAdapter(getContext());
-        String[] names = {"Robena", "Isela", "Jake", "Margarete", "Hyo", "Yael", "Winnifred", "Kimberely", "Arleen", "Merilyn", "Vergie", "Isidro", "Sixta", "Harriett", "Alden", "Mai", "Lara", "Romelia", "Golden", "Nancy",};
-//        historyAdapter.addAll(new ArrayList<>(Arrays.asList(names)));
-
-        history.setAdapter(historyAdapter);
+        mHistoryAdapter = new HistoryAdapter(getContext(), mUser.getRoutes());
+        history.setAdapter(mHistoryAdapter);
         history.setEmptyView(tvEmptyHistory);
 
-
-        // Inflate the layout for this fragment
         return rootView;
     }
 
+    @Override
+    public void onResume(){
+        super.onResume();
+        mHistoryAdapter.notifyDataSetChanged();
+    }
 
     @Override
     public void onClick(View v){
@@ -103,4 +112,29 @@ public class AccountFragment extends Fragment implements View.OnClickListener{
         }
     }
 
+    @Override
+    public void onFragmentSelected(){
+        mHistoryAdapter.notifyDataSetChanged();
+        updateOverallHighscore();
+    }
+
+    private void updateOverallHighscore(){
+        long km = 0L;
+        int points = 0;
+        long duration = 0L;
+
+        for(User.RouteStore routeStore : mUser.getRoutes()){
+            km += routeStore.mDistance;
+            points += routeStore.mPoints;
+            duration += routeStore.mRunningTime;
+        }
+
+        long second = (duration / 1000) % 60;
+        long minute = (duration / (1000 * 60)) % 60;
+        long hour = (duration / (1000 * 60 * 60));
+
+        mTVDistance.setText(Long.toString(km) + "km");
+        mTVPoints.setText(Integer.toString(points));
+        mTVDuration.setText(String.format("%d:%02d:%02d", hour, minute, second));
+    }
 }

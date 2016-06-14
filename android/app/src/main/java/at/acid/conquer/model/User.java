@@ -37,7 +37,7 @@ public class User {
             return obj;
         }
     }
-    private class RouteStore{
+    public class RouteStore{
         public long mDate;
         public long mRunningTime;
         public double mDistance;

@@ -2,11 +2,10 @@ package at.acid.conquer;
 
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
-
 import at.acid.conquer.fragments.AccountFragment;
+import at.acid.conquer.fragments.BaseClass;
 import at.acid.conquer.fragments.HighscoreFragment;
 import at.acid.conquer.fragments.MapFragment;
 import at.acid.conquer.model.User;
@@ -24,7 +23,7 @@ public class MainActivity extends FragmentActivity implements TabLayout.OnTabSel
     private MapFragment mMapFragment;
     private HighscoreFragment mHighscoreFragment;
     private AccountFragment mAccountFragment;
-    private Fragment mCurrentFragment;
+    private BaseClass mCurrentFragment;
 
     public ArrayList<String> areaNames;
     User mUser;
@@ -94,6 +93,7 @@ public class MainActivity extends FragmentActivity implements TabLayout.OnTabSel
                 mCurrentFragment = mAccountFragment;
                 break;
         }
+        mCurrentFragment.onFragmentSelected();
     }
 
     @Override//-------------------------------------------------------------------------------------

@@ -1,7 +1,6 @@
 package at.acid.conquer.fragments;
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,10 +23,11 @@ import java.util.Random;
  * Created by trewurm
  * 04.05.2016.
  */
-public class HighscoreFragment extends Fragment implements AdapterView.OnItemSelectedListener{
+public class HighscoreFragment extends BaseClass implements AdapterView.OnItemSelectedListener{
 
     private SpinnerAdapter mAreaAdapter;
     private RankingAdapter mHighscoreAdapter;
+    private TextView mTVCurrentRank;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
@@ -36,24 +36,31 @@ public class HighscoreFragment extends Fragment implements AdapterView.OnItemSel
         Spinner spinnerCity = (Spinner) rootView.findViewById(R.id.spinner_city);
         ListView listviewHighscore = (ListView) rootView.findViewById(R.id.lv_highscore);
         TextView tvEmptyHighscore = (TextView) rootView.findViewById(R.id.tv_empty_highscore);
-
-        String[] names = {"Robena", "Isela", "Jake", "Margarete", "Hyo", "Yael", "Winnifred", "Kimberely", "Arleen", "Merilyn", "Vergie", "Isidro", "Sixta", "Harriett", "Alden", "Mai", "Lara", "Romelia", "Golden", "Nancy"};
+        mTVCurrentRank = (TextView) rootView.findViewById(R.id.tv_current_ranking);
 
         mAreaAdapter = new SpinnerAdapter(getContext());
 
         List<String> areaNames = ((MainActivity) getActivity()).areaNames;
-
         mAreaAdapter.addItems(areaNames);
         spinnerCity.setAdapter(mAreaAdapter);
         spinnerCity.setOnItemSelectedListener(this);
 
         mHighscoreAdapter = new RankingAdapter(getContext());
 
+        // TODO: remove this line if dummy data are not needed
+        mHighscoreAdapter.addAll(createDummyData(areaNames));
 
-        HashMap<String, List<Pair>> map = new HashMap<>();
+        listviewHighscore.setAdapter(mHighscoreAdapter);
 
-        Random randomGenerator = new Random();
+        listviewHighscore.setEmptyView(tvEmptyHighscore);
+        return rootView;
+    }
+
+    private HashMap<String, List<Pair>> createDummyData(List<String> areaNames){
+        String[] names = {"Robena", "Isela", "Jake", "Margarete", "Hyo", "Yael", "Winnifred", "Kimberely", "Arleen", "Merilyn", "Vergie", "Isidro", "Sixta", "Harriett", "Alden", "Mai", "Lara", "Romelia", "Golden", "Nancy"};
         Pair<String, String> pair;
+        HashMap<String, List<Pair>> map = new HashMap<>();
+        Random randomGenerator = new Random();
 
         for(String area : areaNames){
             List<Pair> pairs = new ArrayList<>();
@@ -72,12 +79,7 @@ public class HighscoreFragment extends Fragment implements AdapterView.OnItemSel
             map.put(area, pairs);
         }
 
-        mHighscoreAdapter.addAll(map);
-        listviewHighscore.setAdapter(mHighscoreAdapter);
-        listviewHighscore.setEmptyView(tvEmptyHighscore);
-
-
-        return rootView;
+        return map;
     }
 
     @Override
@@ -89,5 +91,11 @@ public class HighscoreFragment extends Fragment implements AdapterView.OnItemSel
     @Override
     public void onNothingSelected(AdapterView<?> parent){
 
+    }
+
+    @Override
+    public void onFragmentSelected(){
+        // TODO: get highscores from server -> mHighscoreAdapter.updateItems(); -> set mTVCurrentRank
+        mHighscoreAdapter.notifyDataSetChanged();
     }
 }
