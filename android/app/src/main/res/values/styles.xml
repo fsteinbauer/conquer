@@ -7,6 +7,8 @@
     <!-- Application theme. -->
     <style name="AppTheme" parent="AppBaseTheme">
 
+        <item name="android:textColor">@color/textcolor_light</item>
+
         <!--&lt;!&ndash; For the resting Spinner style &ndash;&gt;-->
         <!--<item name="android:spinnerItemStyle">@style/spinnerItemStyle</item>-->
 

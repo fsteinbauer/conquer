@@ -1,86 +1,93 @@
 package at.acid.conquer.fragments;
 
-import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
-import android.widget.*;
+import android.widget.AdapterView;
+import android.widget.ListView;
+import android.widget.Spinner;
+import android.widget.TextView;
 import at.acid.conquer.MainActivity;
+import at.acid.conquer.Pair;
 import at.acid.conquer.R;
+import at.acid.conquer.adapter.RankingAdapter;
 import at.acid.conquer.adapter.SpinnerAdapter;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Random;
 
 /**
  * Created by trewurm
  * 04.05.2016.
  */
-public class HighscoreFragment extends Fragment implements AdapterView.OnItemSelectedListener {
+public class HighscoreFragment extends Fragment implements AdapterView.OnItemSelectedListener{
 
-    private MainActivity mMainActivity;
-    private Spinner mSpinnerCity;
-    private ListView mLVHighscore;
-
+    private SpinnerAdapter mAreaAdapter;
+    private RankingAdapter mHighscoreAdapter;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        mMainActivity = ((MainActivity) getActivity());
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
 
         View rootView = inflater.inflate(R.layout.fragment_highscores, container, false);
-        mSpinnerCity = (Spinner) rootView.findViewById(R.id.spinner_city);
-        mLVHighscore = (ListView) rootView.findViewById(R.id.lv_highscore);
+        Spinner spinnerCity = (Spinner) rootView.findViewById(R.id.spinner_city);
+        ListView listviewHighscore = (ListView) rootView.findViewById(R.id.lv_highscore);
+        TextView tvEmptyHighscore = (TextView) rootView.findViewById(R.id.tv_empty_highscore);
 
-        String[] objects = {
-                "Graz-Andritz",
-                "Graz-Eggenberg",
-                "Graz-Geidorf",
-                "Graz-Goesting",
-                "Graz-Gries",
-                "Graz-InnereStadt",
-                "Graz-Jakomini",
-                "Graz-Lend",
-                "Graz-Liebenau",
-                "Graz-Mariatrost",
-                "Graz-Peter",
-                "Graz-Puntigam",
-                "Graz-Ries",
-                "Graz-StLeonhard",
-                "Graz-Strassgang",
-                "Graz-Waltendorf",
-                "Graz-Wetzelsdorf"
-        };
+        String[] names = {"Robena", "Isela", "Jake", "Margarete", "Hyo", "Yael", "Winnifred", "Kimberely", "Arleen", "Merilyn", "Vergie", "Isidro", "Sixta", "Harriett", "Alden", "Mai", "Lara", "Romelia", "Golden", "Nancy"};
 
-        String[] values = new String[]{"Android", "iPhone", "WindowsMobile",
-                "Blackberry", "WebOS", "Ubuntu", "Windows7", "Max OS X",
-                "Linux", "OS/2", "Ubuntu", "Windows7", "Max OS X", "Linux",
-                "OS/2", "Ubuntu", "Windows7", "Max OS X", "Linux", "OS/2",
-                "Android", "iPhone", "WindowsMobile"};
+        mAreaAdapter = new SpinnerAdapter(getContext());
 
-        final ArrayList<String> list = new ArrayList<String>(Arrays.asList(values));
+        List<String> areaNames = ((MainActivity) getActivity()).areaNames;
 
-        final SpinnerAdapter areaAdapter = new SpinnerAdapter(getContext());
-        areaAdapter.addItems(Arrays.asList(objects));
-        mSpinnerCity.setAdapter(areaAdapter);
-        mSpinnerCity.setOnItemSelectedListener(this);
+        mAreaAdapter.addItems(areaNames);
+        spinnerCity.setAdapter(mAreaAdapter);
+        spinnerCity.setOnItemSelectedListener(this);
 
-        final ArrayAdapter highscoreAdapter = new ArrayAdapter(getContext(), android.R.layout.simple_list_item_1, list);
-        mLVHighscore.setAdapter(highscoreAdapter);
+        mHighscoreAdapter = new RankingAdapter(getContext());
+
+
+        HashMap<String, List<Pair>> map = new HashMap<>();
+
+        Random randomGenerator = new Random();
+        Pair<String, String> pair;
+
+        for(String area : areaNames){
+            List<Pair> pairs = new ArrayList<>();
+            for(int idx = 1; idx <= 35; ++idx){
+                int randomInt = randomGenerator.nextInt(100000);
+                if(idx == 1){
+                    pair = new Pair<>("asdfasdfhljkasdhfjklhasjdkfhljkashdfjlhasljkdhflöasjdölkfjköalsdjfköljasdköfjöklasdjfökjasdfökljasdöklfj", Integer.toString(randomInt));
+                    pairs.add(pair);
+
+                } else{
+                    int rand = randomGenerator.nextInt(20);
+                    pair = new Pair<>(names[rand], Integer.toString(randomInt));
+                    pairs.add(pair);
+                }
+            }
+            map.put(area, pairs);
+        }
+
+        mHighscoreAdapter.addAll(map);
+        listviewHighscore.setAdapter(mHighscoreAdapter);
+        listviewHighscore.setEmptyView(tvEmptyHighscore);
 
 
         return rootView;
     }
 
     @Override
-    public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+    public void onItemSelected(AdapterView<?> parent, View view, int position, long id){
+        mHighscoreAdapter.setCurrentArea(mAreaAdapter.getItem(position));
     }
 
 
     @Override
-    public void onNothingSelected(AdapterView<?> parent) {
+    public void onNothingSelected(AdapterView<?> parent){
 
     }
 }

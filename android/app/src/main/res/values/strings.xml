@@ -11,4 +11,8 @@
     <string name="ac_map">Map</string>
     <string name="ac_highscores">Highscores</string>
     <string name="ac_account">Account</string>
+    <string name="tv_ranking"><b>Current rank: </b></string>
+    <string name="tv_empty_history">No runs yet</string>
+    <string name="tv_empty_highscore">No highscore yet</string>
+
 </resources>

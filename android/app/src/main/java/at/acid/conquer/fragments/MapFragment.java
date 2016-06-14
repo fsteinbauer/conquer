@@ -16,20 +16,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 import at.acid.conquer.LocationService;
 import at.acid.conquer.MainActivity;
 import at.acid.conquer.R;
-import at.acid.conquer.data.Areas;
 import at.acid.conquer.model.Area;
 import at.acid.conquer.model.Route;
 import at.acid.conquer.model.User;
-
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapView;
-import com.google.android.gms.maps.MapsInitializer;
-import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.*;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -40,7 +33,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -121,6 +113,8 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
         mTVDistance = (TextView) rootView.findViewById(R.id.tv_trackinginfo_info_distance);
         mTVPoints = (TextView) rootView.findViewById(R.id.tv_trackinginfo_info_points);
         mTVArea = (TextView) rootView.findViewById(R.id.tv_trackinginfo_info_place);
+
+        mAreas = loadAreasFromAssets("areas");
 
 
         // Gets the MapView from the XML layout and creates it
@@ -243,8 +237,6 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
         Log.d(TAG, "onMapReady()");
         mGoogleMap = googleMap;
         MapsInitializer.initialize(getContext());
-
-        mAreas = loadAreasFromAssets("areas");
 
         for (int i = 0; i < mAreas.size(); i++) {
             Area area = mAreas.valueAt(i);
@@ -387,6 +379,7 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
         for (String json : areas_json) {
             Area area = new Area();
             area.loadJson(json);
+            mMainActivity.areaNames.add(area.getName());
             mAreas.put(area.getId(), area);
         }
 

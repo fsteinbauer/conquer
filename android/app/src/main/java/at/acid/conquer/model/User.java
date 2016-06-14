@@ -4,18 +4,12 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 import android.util.SparseArray;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
-import at.acid.conquer.data.Areas;
 
 /**
  * Created by florian on 10.05.2016.
@@ -65,6 +59,8 @@ public class User {
 
     private String mId;
     private String mName;
+
+
     private SparseArray<AreaStore> mAreas = new SparseArray<AreaStore>();
     private List<RouteStore> mRoutes = new ArrayList<RouteStore>();
     private long mLastAvtivity;
@@ -193,6 +189,12 @@ public class User {
     //----------------------------------------------------------------------------------------------
     public String getId() { return mId; }
     public String getName() { return mName; }
+    public SparseArray<AreaStore> getAreas(){
+        return mAreas;
+    }
+    public List<RouteStore> getRoutes(){
+        return mRoutes;
+    }
 
     //----------------------------------------------------------------------------------------------
     public void setId(String id) { this.mId = id; }

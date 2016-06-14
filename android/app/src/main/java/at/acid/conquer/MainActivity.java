@@ -11,6 +11,8 @@ import at.acid.conquer.fragments.HighscoreFragment;
 import at.acid.conquer.fragments.MapFragment;
 import at.acid.conquer.model.User;
 
+import java.util.ArrayList;
+
 
 public class MainActivity extends FragmentActivity implements TabLayout.OnTabSelectedListener {
     public static final String TAG = "MapsActivity";
@@ -24,7 +26,9 @@ public class MainActivity extends FragmentActivity implements TabLayout.OnTabSel
     private AccountFragment mAccountFragment;
     private Fragment mCurrentFragment;
 
+    public ArrayList<String> areaNames;
     User mUser;
+
 
     @Override//-------------------------------------------------------------------------------------
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +36,7 @@ public class MainActivity extends FragmentActivity implements TabLayout.OnTabSel
         setContentView(R.layout.activity_maps);
         //?
         //Log.d(TAG, "Got to Line: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
+        areaNames = new ArrayList<>();
 
         mUser = new User(getBaseContext());
         //mUser.clearStoredData();

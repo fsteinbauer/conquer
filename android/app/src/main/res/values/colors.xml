@@ -4,6 +4,7 @@
 
     <color name="background">#001725</color>
     <color name="background_secondary">#054267</color>
+    <color name="textcolor_light">#000</color>
     <!--<color name="accent">#E36767</color>-->
     <color name="accent">@color/orange</color>
 
