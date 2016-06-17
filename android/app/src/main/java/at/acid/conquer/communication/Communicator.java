@@ -16,7 +16,7 @@ import at.acid.conquer.communication.Requests.Request;
  */
 public class Communicator {
 
-    final static String URL_STRING = "http://conquer.menzi.at/";
+    final static String URL_STRING = "http://conquer2.menzi.at/";
     final static String TAG = "Communicator";
 
 
