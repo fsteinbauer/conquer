@@ -5,6 +5,7 @@ import junit.framework.Assert;
 import org.junit.Test;
 
 import at.acid.conquer.communication.Requests.HighscoreRequest;
+import at.acid.conquer.communication.Requests.RegisterRequest;
 import at.acid.conquer.communication.Requests.Request;
 
 import static junit.framework.Assert.assertEquals;
@@ -16,20 +17,26 @@ import static junit.framework.Assert.assertTrue;
  */
 public class HighscoreRequestTest {
 
-    
+
     @Test
     public void sendRegisterRequest() throws Exception {
         Communicator c = new Communicator();
 
-        final HighscoreRequest hgR = new HighscoreRequest("f8ff4f85-2806-11e6-8f63-3f8e087f657c", -1);
 
-        assertTrue(c.sendRequest(hgR));
+        final RegisterRequest rr = new RegisterRequest();
 
-        assertEquals(hgR.getmSuccess(), Request.ReturnValue.SUCCESS);
+        c.sendRequest(rr);
 
-        assertNotNull(hgR.getmHighscore());
+        Assert.assertEquals(Request.ReturnValue.SUCCESS, rr.getResult().mSuccess);
 
-        assertEquals(hgR.getmHighscore().size(), 10);
+
+        final HighscoreRequest hgR = new HighscoreRequest(0,rr.getResult().mID );
+
+        c.sendRequest(hgR);
+
+        assertEquals(Request.ReturnValue.SUCCESS, hgR.getResult().mSuccess);
+
+
 
 
 
