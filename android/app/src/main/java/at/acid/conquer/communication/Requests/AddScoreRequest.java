@@ -1,6 +1,5 @@
 package at.acid.conquer.communication.Requests;
 
-import android.util.JsonWriter;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -12,22 +11,30 @@ import at.acid.conquer.model.Highscore;
 /**
  * Created by Annie on 17/06/2016.
  */
-public class HighscoreRequest extends Request {
+public class AddScoreRequest extends Request {
 
-    private final String TAG = "HighscoreRequest";
+    private final String TAG = "AddScoreRequest";
 
-    private final int mArea;
+    private final long mPoints;
     private final String mUserID;
 
     private final Result mResult;
 
-    public HighscoreRequest(int Area, String userID) {
+    private final int mArea;
+
+    public AddScoreRequest(String userID, long Points, int Area) {
+        if (Points < 0) {
+            throw new IllegalArgumentException("Points may not be negative!");
+
+        }
         if (Area < 0) {
             throw new IllegalArgumentException("Area may not be negative!");
 
         }
+        mPoints = Points;
 
         mArea = Area;
+
         mUserID = userID;
         mResult = new Result();
         mResult.mSuccess = ReturnValue.NOT_INITIALIZED;
@@ -37,7 +44,7 @@ public class HighscoreRequest extends Request {
 
     @Override
     public String getURLExtension() {
-        return "highscore/" + mUserID + "/" + mArea;
+        return "addscore/" + mUserID + "/" + mArea + "/" + mPoints;
     }
 
     @Override
@@ -45,19 +52,12 @@ public class HighscoreRequest extends Request {
 
         try {
             JSONObject obj = new JSONObject(s);
-            JSONArray arr = obj.getJSONArray("highscore");
-
-            for(int i = 0; i < arr.length(); i++)
+            if(obj.getBoolean("success"))
             {
-                JSONObject user = arr.getJSONObject(i);
-                long rank = user.getLong("rank");
-
-                String name = user.getString("username");
-
-                Long points = user.getLong("points");
-
-                Boolean is_user = user.getBoolean("is_user");
-                mResult.mHgs.put(rank, new Highscore.HighscoreUser(name, points, is_user));
+                mResult.mSuccess = ReturnValue.SUCCESS;
+            }else
+            {
+                mResult.mSuccess = ReturnValue.DATABASE_ERROR;
             }
 
 
@@ -79,6 +79,6 @@ public class HighscoreRequest extends Request {
     public static class Result {
         public ReturnValue mSuccess;
 
-        public Highscore mHgs;
+
     }
 }

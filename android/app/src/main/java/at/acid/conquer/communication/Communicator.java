@@ -39,7 +39,7 @@ public class Communicator {
             public void run() {
                 try {
                     final java.net.URL url = new URL(URL_STRING + req.getURLExtension());
-                    System.out.println(url);
+
                     HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
                     try {
 
