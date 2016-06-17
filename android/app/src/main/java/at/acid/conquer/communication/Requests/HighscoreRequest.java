@@ -42,7 +42,7 @@ public class HighscoreRequest extends Request {
 
     @Override
     public void parseReturn(String s) {
-
+        mResult.mHgs = new Highscore();
         try {
             JSONObject obj = new JSONObject(s);
             JSONArray arr = obj.getJSONArray("highscores");
@@ -58,9 +58,11 @@ public class HighscoreRequest extends Request {
 
                 Boolean is_user = user.getBoolean("is_user");
 
-                mResult.mHgs = new Highscore();
-                mResult.mHgs.put(rank, new Highscore.HighscoreUser(name, points, is_user));
+
+                mResult.mHgs.add( new Highscore.HighscoreUser(name, points, is_user, rank));
             }
+
+            Log.d(TAG, "parsed "+ mResult.mHgs.size() + " entries");
 
             mResult.mSuccess = ReturnValue.SUCCESS;
 

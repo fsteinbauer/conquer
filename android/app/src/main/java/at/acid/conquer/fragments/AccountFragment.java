@@ -53,7 +53,7 @@ public class AccountFragment extends BaseClass implements View.OnClickListener{
         mTVDuration = (TextView) rootView.findViewById(R.id.tv_trackinginfo_info_duration);
 
         mUser = ((MainActivity) getActivity()).getUser();
-        mUser.setName("Johannes der Läufer");
+
 
         mButtonEditName.setOnClickListener(this);
         mTextFieldName.setOnClickListener(this);

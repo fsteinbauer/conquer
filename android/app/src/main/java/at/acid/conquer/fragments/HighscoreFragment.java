@@ -42,11 +42,16 @@ public class HighscoreFragment extends BaseClass implements AdapterView.OnItemSe
         mAreaAdapter = new SpinnerAdapter(getContext());
 
         List<String> areaNames = ((MainActivity) getActivity()).areaNames;
+        mAreaAdapter.addItem("Graz");
         mAreaAdapter.addItems(areaNames);
         spinnerCity.setAdapter(mAreaAdapter);
         spinnerCity.setOnItemSelectedListener(this);
 
         mHighscoreAdapter = new RankingAdapter(getContext(),((MainActivity) getActivity()).getUser());
+
+       setCurrentRank(mHighscoreAdapter.getCurrentRank());
+
+
 
         //// TODO: remove this line if dummy data are not needed
         //mHighscoreAdapter.addAll(createDummyData(areaNames));
@@ -96,8 +101,20 @@ public class HighscoreFragment extends BaseClass implements AdapterView.OnItemSe
 
     }
 
+    public void setCurrentRank(Long rank)
+    {
+        if(rank == null)
+        {
+            this.mTVCurrentRank.setText("-");
+            return;
+        }
+        this.mTVCurrentRank.setText(rank.toString());
+    }
+
     @Override
     public void onFragmentSelected(){
+
+
         // TODO: get highscores from server -> mHighscoreAdapter.updateItems(); -> set mTVCurrentRank
         mHighscoreAdapter.notifyDataSetChanged();
     }
