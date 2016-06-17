@@ -11,6 +11,10 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import at.acid.conquer.communication.Communicator;
+import at.acid.conquer.communication.Requests.RegisterRequest;
+import at.acid.conquer.communication.Requests.Request;
+
 /**
  * Created by florian on 10.05.2016.
  */
@@ -82,6 +86,21 @@ public class User {
         String areasJson = store.getString("areas", "[]");
         mName = store.getString("name", "Name");
         mId = store.getString("id", "");
+
+        if(mId.isEmpty())
+        {
+            Communicator c = new Communicator(Communicator.PRODUCTION_URL);
+
+            RegisterRequest rr = new RegisterRequest();
+
+            c.sendRequest(rr);
+
+            if(rr.getResult().mSuccess == Request.ReturnValue.SUCCESS)
+            {
+                mId = rr.getResult().mID;
+                mName = rr.getResult().mName;
+            }
+        }
         mLastAvtivity = store.getLong("last_activity", 0);
         mLastServerConnect = store.getLong("last_server_connect", 0);
 

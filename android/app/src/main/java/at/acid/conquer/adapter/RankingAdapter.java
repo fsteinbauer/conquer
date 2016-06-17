@@ -8,6 +8,11 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 import at.acid.conquer.Pair;
 import at.acid.conquer.R;
+import at.acid.conquer.communication.Communicator;
+import at.acid.conquer.communication.Requests.HighscoreRequest;
+import at.acid.conquer.communication.Requests.Request;
+import at.acid.conquer.model.Highscore;
+import at.acid.conquer.model.User;
 
 import java.util.HashMap;
 import java.util.List;
@@ -20,28 +25,49 @@ import java.util.Map;
 public class RankingAdapter extends BaseAdapter{
 
     private final LayoutInflater mInflater;
-    private final Map<String, List<Pair>> mItems;
-    private String mCurrentArea = "Graz-Andritz";
+    private Highscore mHighScore;
 
-    public RankingAdapter(Context context){
-        mItems = new HashMap<>();
+    private int mCurrentAreaID = 0;
+
+    private String mCurrentArea = "Graz";
+
+    private final User mSelf;
+
+
+    Communicator c = new Communicator(Communicator.PRODUCTION_URL);
+    public void setHighscore(Highscore highscore)
+    {
+        this.mHighScore = highscore;
+    }
+
+    public RankingAdapter(Context context, User self){
+        mHighScore = new Highscore();
         mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+        mSelf = self;
+
+        HighscoreRequest hgr = new HighscoreRequest(mCurrentAreaID, mSelf.getId());
+
+        c.sendRequest(hgr);
+
+        if(hgr.getResult().mSuccess == Request.ReturnValue.SUCCESS)
+        {
+            updateItems(hgr.getResult().mHgs);
+        }
     }
 
 
-    public void addAll(Map<String, List<Pair>> ranking){
-        mItems.putAll(ranking);
-    }
 
-    public void updateItems(Map<String, List<Pair>> ranking){
-        mItems.clear();
-        mItems.putAll(ranking);
+
+    public void updateItems(Highscore ranking){
+        mHighScore.clear();
+        mHighScore.putAll(ranking);
     }
 
     @Override
     public int getCount(){
-        if(mItems.get(mCurrentArea) != null){
-            return mItems.get(mCurrentArea).size();
+        if(mHighScore != null){
+            return mHighScore.size();
         }
         return 0;
     }
@@ -62,18 +88,29 @@ public class RankingAdapter extends BaseAdapter{
             view = mInflater.inflate(R.layout.ranking_list_item, parent, false);
         }
 
-        Pair currentRunner = mItems.get(mCurrentArea).get(position);
+        Long currentRunner = mHighScore.getSelf();
+
+
         TextView name = (TextView) view.findViewById(R.id.tv_ranking_name);
         TextView points = (TextView) view.findViewById(R.id.tv_ranking_points);
 
-        name.setText(position + 1 + ". " + currentRunner.getFirst());
-        points.setText(currentRunner.getSecond().toString());
+        name.setText(position + currentRunner + ". " + mHighScore.get(currentRunner).getUsername());
+        points.setText(mHighScore.get(currentRunner).getPoints().toString());
 
         return view;
     }
 
-    public void setCurrentArea(String area){
-        mCurrentArea = area;
+    public void setCurrentArea(String areaName, int AreaID){
+        mCurrentArea = areaName;
+        mCurrentAreaID = AreaID;
+        HighscoreRequest hgr = new HighscoreRequest(mCurrentAreaID, mSelf.getId());
+
+        c.sendRequest(hgr);
+
+        if(hgr.getResult().mSuccess == Request.ReturnValue.SUCCESS)
+        {
+            updateItems(hgr.getResult().mHgs);
+        }
         this.notifyDataSetChanged();
     }
 }

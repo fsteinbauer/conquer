@@ -19,6 +19,10 @@ public class Communicator {
     final static String TAG = "Communicator";
     private String mServerUrl;
 
+    public final String TESTING_URL = "conquer2.menzi.at";
+
+    public final String PRODUCTION_URL = "conquer.menzi.at";
+
     public Communicator(String server_url){
         mServerUrl = server_url;
     }
@@ -36,6 +40,9 @@ public class Communicator {
 
 
     public boolean sendRequest(final Request req) {
+
+        Log.d(TAG, "Sending request: " + mServerUrl + req.getURLExtension());
+
         Thread t = new Thread(new Runnable() {
             public void run() {
                 try {

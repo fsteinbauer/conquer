@@ -13,6 +13,7 @@ import at.acid.conquer.Pair;
 import at.acid.conquer.R;
 import at.acid.conquer.adapter.RankingAdapter;
 import at.acid.conquer.adapter.SpinnerAdapter;
+import at.acid.conquer.model.Highscore;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,16 +46,18 @@ public class HighscoreFragment extends BaseClass implements AdapterView.OnItemSe
         spinnerCity.setAdapter(mAreaAdapter);
         spinnerCity.setOnItemSelectedListener(this);
 
-        mHighscoreAdapter = new RankingAdapter(getContext());
+        mHighscoreAdapter = new RankingAdapter(getContext(),((MainActivity) getActivity()).getUser());
 
-        // TODO: remove this line if dummy data are not needed
-        mHighscoreAdapter.addAll(createDummyData(areaNames));
+        //// TODO: remove this line if dummy data are not needed
+        //mHighscoreAdapter.addAll(createDummyData(areaNames));
 
         listviewHighscore.setAdapter(mHighscoreAdapter);
 
         listviewHighscore.setEmptyView(tvEmptyHighscore);
         return rootView;
     }
+
+
 
     private HashMap<String, List<Pair>> createDummyData(List<String> areaNames){
         String[] names = {"Robena", "Isela", "Jake", "Margarete", "Hyo", "Yael", "Winnifred", "Kimberely", "Arleen", "Merilyn", "Vergie", "Isidro", "Sixta", "Harriett", "Alden", "Mai", "Lara", "Romelia", "Golden", "Nancy"};
@@ -84,7 +87,7 @@ public class HighscoreFragment extends BaseClass implements AdapterView.OnItemSe
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id){
-        mHighscoreAdapter.setCurrentArea(mAreaAdapter.getItem(position));
+        mHighscoreAdapter.setCurrentArea(mAreaAdapter.getItem(position), position);
     }
 
 
