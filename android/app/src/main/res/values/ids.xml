@@ -16,15 +16,24 @@
     <item name="ll_trackinginfo" type="id"/>
     <item name="tv_trackinginfo_info_place" type="id"/>
     <item name="ll_trackinginfo_info_info" type="id"/>
-    <item name="tv_trackinginfo_info_speed" type="id"/>
     <item name="tv_trackinginfo_info_points" type="id"/>
+    <item name="tv_trackinginfo_info_distance" type="id"/>
     <item name="tv_trackinginfo_info_duration" type="id"/>
     <item name="fab_run_stop" type="id"/>
 
 
     <!--fragment_highscores.xml-->
     <item name="frag_highscore" type="id"/>
-
+    <item name="iv_city_picture" type="id"/>
+    <item name="spinner_city" type="id"/>
+    <item name="tv_place" type="id"/>
+    <item name="lv_highscore" type="id"/>
+    <item name="spinner_account" type="id"/>
+    <item name="tv_current_ranking" type="id"/>
+    <item name="rl_ranking" type="id"/>
+    <item name="tv_ranking_name" type="id"/>
+    <item name="tv_ranking_points" type="id"/>
+    <item name="tv_empty_highscore" type="id"/>
 
     <!--fragment_account.xml-->
     <item name="frag_account" type="id"/>
@@ -32,5 +41,13 @@
     <item name="tv_profile_name" type="id" />
     <item name="ib_name_edit" type="id" />
     <item name="et_profile_name" type="id" />
+    <item name="lv_history" type="id"/>
+    <item name="tv_empty_history" type="id"/>
+
+    <!--history_list_item.xml-->
+    <item name="tv_history_date" type="id"/>
+    <item name="tv_history_duration" type="id"/>
+    <item name="tv_history_points" type="id"/>
+
 
 </resources>

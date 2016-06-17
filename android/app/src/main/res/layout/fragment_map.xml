@@ -43,17 +43,6 @@
         >
 
 
-            <TextView android:id="@id/tv_trackinginfo_info_speed"
-                      android:layout_width="0dp"
-                      android:layout_height="match_parent"
-                      android:layout_weight="1"
-                      android:text="1.87km/h"
-                      android:textColor="@color/white"
-                      android:textAppearance="?android:attr/textAppearanceLarge"
-                      android:gravity="center_horizontal"
-            />
-
-
             <TextView android:id="@id/tv_trackinginfo_info_points"
                       android:layout_width="0dp"
                       android:layout_height="match_parent"
@@ -63,6 +52,16 @@
                       android:textAppearance="?android:attr/textAppearanceLarge"
                       android:gravity="center_horizontal"
 
+            />
+
+            <TextView android:id="@id/tv_trackinginfo_info_distance"
+                      android:layout_width="0dp"
+                      android:layout_height="match_parent"
+                      android:layout_weight="1"
+                      android:text="1.87km/h"
+                      android:textColor="@color/white"
+                      android:textAppearance="?android:attr/textAppearanceLarge"
+                      android:gravity="center_horizontal"
             />
 
             <TextView android:id="@id/tv_trackinginfo_info_duration"
@@ -87,7 +86,6 @@
                                                         app:layout_anchorGravity="top|right|end"
                                                         android:layout_margin="8dp"
                                                         app:backgroundTint="@color/orange"
-                                                        android:src="@drawable/ic_run"
                                                         android:adjustViewBounds="false"/>
 
 </android.support.design.widget.CoordinatorLayout>

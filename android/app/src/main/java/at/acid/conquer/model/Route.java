@@ -12,7 +12,7 @@ import com.google.android.gms.maps.model.PolylineOptions;
 import java.util.ArrayList;
 import java.util.List;
 
-import static at.acid.conquer.Utility.getLatLng;
+import static at.acid.conquer.LocationUtility.getLatLng;
 
 /**
  * Created by florian on 09.03.2016.
@@ -23,7 +23,8 @@ public class Route {
 
     private PolylineOptions mPolylineOptions;
     private GoogleMap mMap;
-    private float mDistance;
+    private float mDistance; //in m
+    private long mStartTime;
 
     private List<Polyline> mPolylines = new ArrayList<Polyline>();
     private List<List<Location>> mPaths = new ArrayList<List<Location>>();
@@ -32,6 +33,7 @@ public class Route {
     public Route(@NonNull GoogleMap map, @NonNull PolylineOptions options) {
         mMap = map;
         mPolylineOptions = options;
+        mStartTime = System.currentTimeMillis();
     }
 
     //----------------------------------------------------------------------------------------------
@@ -98,4 +100,6 @@ public class Route {
     public float getDistance(){
         return mDistance;
     }
+    public long getStartTime() { return mStartTime; }
+    public long getRunTime(){ return System.currentTimeMillis() - mStartTime; }
 }

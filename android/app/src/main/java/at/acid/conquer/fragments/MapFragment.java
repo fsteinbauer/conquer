@@ -4,69 +4,79 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
-
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.Fragment;
-
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import at.acid.conquer.LocationService;
+import at.acid.conquer.MainActivity;
 import at.acid.conquer.R;
-import at.acid.conquer.data.Areas;
 import at.acid.conquer.model.Area;
 import at.acid.conquer.model.Route;
-
+import at.acid.conquer.model.User;
 import com.google.android.gms.maps.*;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Calendar;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import static at.acid.conquer.Utility.getLatLng;
-import static at.acid.conquer.Utility.getSpeed;
-import static at.acid.conquer.Utility.validDistance;
-
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
-
+import static at.acid.conquer.LocationUtility.getLatLng;
+import static at.acid.conquer.LocationUtility.validDistance;
 
 
 /**
  * Created by trewurm
  * 04.05.2016.
  */
-public class MapFragment extends Fragment implements View.OnClickListener, OnMapReadyCallback, LocationService.LocationServiceClient {
+public class MapFragment extends BaseClass implements View.OnClickListener, OnMapReadyCallback, LocationService.LocationServiceClient{
     public static final String TAG = "MapFragment";
-    public static final float DEFAULT_ZOOM = 16.0f;
+    public static final float MAP_DEFAULT_ZOOM = 16f;
+    public static final int AREA_COLOR_BORDER  = Color.argb(192, 128, 128, 128);
+    public static final int AREA_COLOR_UNKNOWN = Color.argb( 64, 128, 128, 128);
+    public static final int AREA_COLOR_GOOD    = Color.argb( 64,   0, 255,   0);
+    public static final int AREA_COLOR_AVERAGE = Color.argb( 64, 255, 255,   0);
+    public static final int AREA_COLOR_BAD     = Color.argb( 64, 255,   0,   0);
+    public static final int ROUTE_COLOR        = Color.argb( 255,   0,   0, 255);
+    public static final float ROUTE_WIDTH      = 10f;
 
-    private MapView mMapView;
+    private MainActivity mMainActivity;
 
-    private Marker mMarker;
-
-    private GoogleMap mGoogleMap;
     private FloatingActionButton mFABTrackingInfo;
 
-    private PolylineOptions mPathLineOptions = new PolylineOptions().width(10.0f).color(Color.RED);
-    private Route mRoute;
-    private List<Area> mAreas = new ArrayList<>();
+    private TextView mTVDuration;
+    private TextView mTVDistance;
+    private TextView mTVPoints;
+    private TextView mTVArea;
 
-    private Location mLastLocation;
-    private LocationService mLocationService;
-
+    private Timer mTimer;
+    private TimerTask mTimerTask;
     private boolean mIsRunning;
 
+    private Route mRoute;
+    private SparseArray<Area> mAreas = new SparseArray<>();
+
+    private Location mLastLocation;
+    private Area mCurrentArea;
+    private Marker mMarker;
+
+    private MapView mMapView;
+    private GoogleMap mGoogleMap;
+    private LocationService mLocationService;
 
     // handle bidirection connection to LocationService
     private ServiceConnection mLocationServiceConnection = new ServiceConnection() {
@@ -84,17 +94,26 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
 
     };
 
-    @Override
+    @Override//-------------------------------------------------------------------------------------
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        Log.d(TAG, "Got to Line: "+Thread.currentThread().getStackTrace()[2].getLineNumber());
-
-
-        // Inflate the layout for this fragment
+        mMainActivity = ((MainActivity) getActivity());
         View rootView = inflater.inflate(R.layout.fragment_map, container, false);
+
         mFABTrackingInfo = (FloatingActionButton) rootView.findViewById(R.id.fab_run_stop);
+        if (mIsRunning) {
+            mFABTrackingInfo.setImageResource(R.drawable.ic_hotel);
+        } else {
+            mFABTrackingInfo.setImageResource(R.drawable.ic_run);
+        }
         mFABTrackingInfo.setOnClickListener(this);
 
+        mTVDuration = (TextView) rootView.findViewById(R.id.tv_trackinginfo_info_duration);
+        mTVDistance = (TextView) rootView.findViewById(R.id.tv_trackinginfo_info_distance);
+        mTVPoints = (TextView) rootView.findViewById(R.id.tv_trackinginfo_info_points);
+        mTVArea = (TextView) rootView.findViewById(R.id.tv_trackinginfo_info_place);
+
+        mAreas = loadAreasFromAssets("areas");
 
 
         // Gets the MapView from the XML layout and creates it
@@ -105,11 +124,13 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
         // Gets to GoogleMap from the MapView and does initialization stuff
         mMapView.getMapAsync(this);
 
+        updateInfo();
+
         return rootView;
     }
 
 
-    @Override
+    @Override//-------------------------------------------------------------------------------------
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.fab_run_stop:
@@ -131,61 +152,45 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
         }
     }
 
-    @Override//-------------------------------------------------------------------------------------
-    public void onMapReady(GoogleMap googleMap) {
-        Log.d(TAG, "onMapReady()");
-        mGoogleMap = googleMap;
-        MapsInitializer.initialize(getActivity());
-
-        mRoute = new Route(mGoogleMap, mPathLineOptions);
-
-        // default locatin: graz
-        Location location = new Location("Wikipedia");
-        location.setLatitude(47.067);
-        location.setLongitude(15.433);
-
-        for (String json : Areas.mAreas) {
-            Area area = new Area("");
-            area.loadJson(json);
-            mAreas.add(area);
-            area.draw(mGoogleMap, Color.BLUE);
-        }
+    //----------------------------------------------------------------------------------------------
+    public void startTimer() {
+        mTimerTask = new TimerTask() {
+            Calendar startTimeCalendar = Calendar.getInstance();
+            final long startTime = startTimeCalendar.getTimeInMillis();
 
 
-        if (mLastLocation != null) {
-            location = mLocationService.getLocation();
-        }
+            @Override
+            public void run() {
+                mMainActivity.runOnUiThread(new Runnable() {
 
+                    @Override
+                    public void run() {
+                        Calendar calendar = Calendar.getInstance();
+                        long endTime = calendar.getTimeInMillis();
+                        long difference = endTime - startTime;
+                        updateDuration(difference);
+                    }
+                });
+            }
+        };
 
-        mLastLocation = location;
-        LatLng latlng = new LatLng(location.getLatitude(), location.getLongitude());
-        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latlng, DEFAULT_ZOOM));
-
-        mMarker = mGoogleMap.addMarker(new MarkerOptions()
-                .position(latlng)
-                .title("me"));
-
+        updateDuration(0);
+        mTimer = new Timer();
+        mTimer.schedule(mTimerTask, 0, 1000);
     }
 
-    @Override
+    //----------------------------------------------------------------------------------------------
+    public void stopTimer() {
+        mTimer.cancel();
+    }
+
+
+    @Override//-------------------------------------------------------------------------------------
     public void onLocationUpdate(final Location location) {
         if (location == null) {
             Log.d(TAG, "onLocationUpdate(): unknown position");
             return;
         }
-
-        if (mGoogleMap == null) {
-            Log.d(TAG, "onLocationUpdate(): wait for map");
-
-            Timer timer = new Timer();
-            timer.schedule(new TimerTask() {
-                public void run() {
-                    onLocationUpdate(location);
-                }
-            }, 1000);
-            return;
-        }
-
 
         Log.d(TAG, "onLocationUpdate(): " + location.toString());
 
@@ -205,66 +210,116 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
         mMarker.setPosition(getLatLng(loc));
         mGoogleMap.moveCamera(CameraUpdateFactory.newLatLng(getLatLng(loc)));
 
-        Area currentArea = null;
-        for (Area area : mAreas) {
+        mCurrentArea = null;
+        for (int i = 0; i < mAreas.size(); i++) {
+            Area area = mAreas.valueAt(i);
             if (area.inArea(getLatLng(loc))) {
                 area.addDistance(distance);
-                currentArea = area;
+                mCurrentArea = area;
                 break;
             }
         }
 
+        if( mCurrentArea != null ) {
+            User user = mMainActivity.getUser();
+            user.updateArea(mCurrentArea.getId(), distance, (long)distance / 10);
+        }
+
         mLastLocation = loc;
 
-        List<Location> path = mRoute.getCurrentPath();
-        if (path != null && path.size() > 1) {
-            Location loc1 = path.get(path.size() - 1);
-            Location loc2 = path.get(path.size() - 2);
-            float kmh = getSpeed(loc1, loc2);
-            if (currentArea != null) {
-                updateInfo(kmh, currentArea.getTravelDistance() / 1000);
-                updateArea(currentArea.getName());
-            } else {
-                updateInfo(kmh, mRoute.getDistance() / 1000);
-                updateArea("unknown");
-            }
-        }
+        updateInfo();
     }
 
-    private void startTracking() {
+
+    @Override//-------------------------------------------------------------------------------------
+    public void onMapReady(GoogleMap googleMap) {
+        Log.d(TAG, "onMapReady()");
+        mGoogleMap = googleMap;
+        MapsInitializer.initialize(getContext());
+
+        for (int i = 0; i < mAreas.size(); i++) {
+            Area area = mAreas.valueAt(i);
+            area.draw(mGoogleMap, AREA_COLOR_UNKNOWN, AREA_COLOR_BORDER);
+        }
+
+        // default locatin: graz
+        Location location = new Location("Wikipedia");
+        location.setLatitude(47.067);
+        location.setLongitude(15.433);
+
+        mLastLocation = location;
+        LatLng latlng = new LatLng(location.getLatitude(), location.getLongitude());
+        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latlng, MAP_DEFAULT_ZOOM));
+
+        mMarker = googleMap.addMarker(new MarkerOptions()
+                .position(latlng)
+                .title("me"));
+    }
+
+    //----------------------------------------------------------------------------------------------
+    public void startTracking() {
         Log.d(TAG, "startTracking()");
         Context context = getContext();
         Intent intent = new Intent(context, LocationService.class);
         context.startService(intent);
         context.bindService(intent, mLocationServiceConnection, Context.BIND_AUTO_CREATE);
+        startTimer();
 
+        PolylineOptions mPathLineOptions = new PolylineOptions()
+                .width(ROUTE_WIDTH)
+                .color(ROUTE_COLOR);
+        mRoute = new Route(mGoogleMap, mPathLineOptions);
     }
 
-    private void stopTracking() {
+    //----------------------------------------------------------------------------------------------
+    public void stopTracking() {
         Log.d(TAG, "stopTracking()");
         Context context = getContext();
         Intent intent = new Intent(context, LocationService.class);
         context.unbindService(mLocationServiceConnection);
         context.stopService(intent);
-    }
+        stopTimer();
 
+        User user = mMainActivity.getUser();
+        user.addRoute(mRoute.getStartTime(),
+                mRoute.getRunTime(),
+                mRoute.getDistance(),
+                (long)mRoute.getDistance() / 10);
+        user.saveData();
+    }
 
     //----------------------------------------------------------------------------------------------
-    private void updateInfo(float kmh, float distance) {
-        String text = "Speed: " + String.format("%.3f", kmh) + " km/h";
-        text += "\nDistance: " + String.format("%.3f", distance) + " km";
-//        mTextInfo.setText(text);
+    public void updateDuration(long difference) {
+        long second = (difference / 1000) % 60;
+        long minute = (difference / (1000 * 60)) % 60;
+        long hour = (difference / (1000 * 60 * 60));
 
+        String time = String.format("%d:%02d:%02d", hour, minute, second);
+        mTVDuration.setText(time);
     }
-
 
     //----------------------------------------------------------------------------------------------
-    private void updateArea(CharSequence area) {
-//        mTextArea.setText(area);
+    public void updateInfo() {
+        String areaName = "unknown";
+        String points = "0";
+        String distance = "0.00";
+
+        if (mRoute != null) {
+            points = Integer.toString((int) mRoute.getDistance() / 100);
+            distance = String.format("%.2f", mRoute.getDistance() / 1000);
+        }
+
+        if (mCurrentArea != null) {
+            areaName = mCurrentArea.getName();
+        }
+
+        mTVArea.setText(areaName);
+        mTVPoints.setText(points);
+        mTVDistance.setText(distance + "km");
     }
 
 
-    @Override
+    @Override//-------------------------------------------------------------------------------------
     public void onSaveInstanceState(Bundle outState) {
         //This MUST be done before saving any of your own or your base class's variables
         final Bundle mapViewSaveState = new Bundle(outState);
@@ -274,28 +329,65 @@ public class MapFragment extends Fragment implements View.OnClickListener, OnMap
         super.onSaveInstanceState(outState);
     }
 
-    @Override
+    @Override//-------------------------------------------------------------------------------------
     public final void onPause() {
         super.onPause();
         mMapView.onPause();
     }
 
-    @Override
+    @Override//-------------------------------------------------------------------------------------
     public void onResume() {
         super.onResume();
         mMapView.onResume();
     }
 
-    @Override
+    @Override//-------------------------------------------------------------------------------------
     public void onDestroy() {
         super.onDestroy();
         mMapView.onDestroy();
     }
 
-    @Override
+    @Override//-------------------------------------------------------------------------------------
     public void onLowMemory() {
         super.onLowMemory();
         mMapView.onLowMemory();
+    }
+
+    //----------------------------------------------------------------------------------------------
+    SparseArray<Area> loadAreasFromAssets(String path){
+        ArrayList<String> areas_json = new ArrayList<String>();
+        try {
+            String[] area_files;
+            area_files = getContext().getAssets().list(path);
+            for (String filename : area_files) {
+                StringBuilder buf = new StringBuilder();
+                InputStream file = getContext().getAssets().open(path + "/" + filename);
+                BufferedReader in = new BufferedReader(new InputStreamReader(file, "UTF-8"));
+                String str;
+                while ((str = in.readLine()) != null) {
+                    buf.append(str);
+                }
+                in.close();
+                areas_json.add(buf.toString());
+                //Log.d(TAG, filename + " : " + buf.toString());
+            }
+        } catch (Exception e) {
+            Log.d(TAG, "Failed to load area file \n" + e.getMessage());
+        }
+
+        for (String json : areas_json) {
+            Area area = new Area();
+            area.loadJson(json);
+            mMainActivity.areaNames.add(area.getName());
+            mAreas.put(area.getId(), area);
+        }
+
+        return mAreas;
+    }
+
+    @Override
+    public void onFragmentSelected(){
+
     }
 }
 
