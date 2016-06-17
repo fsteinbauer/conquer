@@ -25,7 +25,7 @@ public class RegisterRequestTest {
         final RegisterRequest rr = new RegisterRequest();
         c.sendRequest(rr);
 
-        Assert.assertEquals(rr.getResult().mSuccess, Request.ReturnValue.SUCCESS);
+        Assert.assertEquals(Request.ReturnValue.SUCCESS,rr.getResult().mSuccess);
 
         Assert.assertNotNull(rr.getResult().mID);
         Assert.assertTrue(!rr.getResult().mID.isEmpty());
