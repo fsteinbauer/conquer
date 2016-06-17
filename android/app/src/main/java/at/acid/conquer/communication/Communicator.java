@@ -19,9 +19,9 @@ public class Communicator {
     final static String TAG = "Communicator";
     private String mServerUrl;
 
-    public final String TESTING_URL = "conquer2.menzi.at";
+    public final static String TESTING_URL = "http://conquer2.menzi.at/";
 
-    public final String PRODUCTION_URL = "conquer.menzi.at";
+    public final static String PRODUCTION_URL = "http://conquer.menzi.at/";
 
     public Communicator(String server_url){
         mServerUrl = server_url;
