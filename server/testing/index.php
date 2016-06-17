@@ -1,5 +1,5 @@
 <?php
-require_once('settings.php');
+require_once('../settings.php');
 
 //------------------------------------------------------------------------------
 class DB{
@@ -200,6 +200,23 @@ try{
         ");
       }
       
+      echo json_encode(['success' => true]);
+      break;
+    }
+    
+    //--------------------------------------------------------------------------
+    case 'cleardata':{ //for debugging, call after added new scores manually
+      if(count($data) != 2)
+        throw new Exception("'{$data[0]}' expects {password}");
+      if($data[1] != CLEAR_PW)
+        throw new Exception("wrong password");
+      
+      $db->multi_query("
+          TRUNCATE TABLE area;
+          TRUNCATE TABLE highscore;
+          TRUNCATE TABLE user;
+        ");
+        
       echo json_encode(['success' => true]);
       break;
     }

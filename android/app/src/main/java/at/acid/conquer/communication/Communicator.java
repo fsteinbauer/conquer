@@ -17,6 +17,11 @@ import at.acid.conquer.communication.Requests.Request;
  */
 public class Communicator {
     final static String TAG = "Communicator";
+    private String mServerUrl;
+
+    public Communicator(String server_url){
+        mServerUrl = server_url;
+    }
 
     private String readStream(InputStream in) throws IOException {
         int bytesRead = 0;
@@ -31,12 +36,10 @@ public class Communicator {
 
 
     public boolean sendRequest(final Request req) {
-
-
         Thread t = new Thread(new Runnable() {
             public void run() {
                 try {
-                    final java.net.URL url = new URL(R.string.server_url + req.getURLExtension());
+                    final java.net.URL url = new URL(mServerUrl + req.getURLExtension());
 
                     HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
                     try {

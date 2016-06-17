@@ -7,6 +7,7 @@ import org.junit.Test;
 import at.acid.conquer.communication.Requests.HighscoreRequest;
 import at.acid.conquer.communication.Requests.RegisterRequest;
 import at.acid.conquer.communication.Requests.Request;
+import at.acid.conquer.data.SecretData;
 
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
@@ -20,7 +21,7 @@ public class HighscoreRequestTest {
 
     @Test
     public void sendHighscoreRequest() throws Exception {
-        Communicator c = new Communicator();
+        Communicator c = new Communicator(SecretData.mServerTestUrl);
 
 
         final RegisterRequest rr = new RegisterRequest();
