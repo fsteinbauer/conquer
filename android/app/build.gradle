@@ -29,7 +29,12 @@ dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.+'
     testCompile 'org.json:json:20140107'
-    androidTestCompile 'com.android.support:support-annotations:23.+' // can't get the 21 version to work...
+
+    testCompile 'org.hamcrest:hamcrest-core:1.1',
+    testCompile 'org.hamcrest:hamcrest-integration:1.1',
+    testCompile 'org.hamcrest:hamcrest-library:1.1'
+    androidTestCompile 'com.android.support:support-annotations:23.+'
+    // can't get the 21 version to work...
     androidTestCompile 'com.android.support.test:runner:0.4.1'
     androidTestCompile 'com.android.support.test:rules:0.4.1'
     compile 'com.android.support:appcompat-v7:21.0.3'
