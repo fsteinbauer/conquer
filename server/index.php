@@ -1,4 +1,5 @@
 <?php
+require_once('settings.php');
 
 //------------------------------------------------------------------------------
 class DB{
@@ -78,7 +79,7 @@ function getArea($string){
 
 //------------------------------------------------------------------------------
 try{
-  $db = new DB('mysqlsvr48.world4you.com', 'sql7994336', 'sqn+rxw', '7994336db13');
+  $db = new DB(DB_SERVER, DB_USER, DB_PW, DB_DATABASE);
   
   if(!isset($_GET['data']))
     throw new Exception("invalid request");
@@ -139,11 +140,11 @@ try{
           'rank' => intval($run['rank']), 
           'points' => intval($run['points']), 
           'name' => $run['name'], 
-          'user' => intval($run['user'])
+          'is_user' => boolval($run['user'])
         ]);
       }
       
-      echo json_encode($runs_trimmed);
+      echo json_encode(['highscores' => $runs_trimmed]);
       break;
     }
   
@@ -154,6 +155,9 @@ try{
       $user = getUser($data[1]);
       $area = getArea($data[2]);
       $points = getUInt($data[3]);
+      
+      if($area == 0)
+        throw new Exception("'area' is not allowed to be 0");
       
       $db->multi_query("
         INSERT INTO highscore
@@ -196,6 +200,23 @@ try{
         ");
       }
       
+      echo json_encode(['success' => true]);
+      break;
+    }
+    
+    //--------------------------------------------------------------------------
+    case 'cleardata':{ //for debugging, call after added new scores manually
+      if(count($data) != 2)
+        throw new Exception("'{$data[0]}' expects {password}");
+      if($data[1] != CLEAR_PW)
+        throw new Exception("wrong password");
+      
+      $db->multi_query("
+          TRUNCATE TABLE area;
+          TRUNCATE TABLE highscore;
+          TRUNCATE TABLE user;
+        ");
+        
       echo json_encode(['success' => true]);
       break;
     }
