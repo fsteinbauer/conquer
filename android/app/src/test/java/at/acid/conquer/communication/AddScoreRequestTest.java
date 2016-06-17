@@ -18,7 +18,7 @@ public class AddScoreRequestTest {
 
 
     @Test
-    public void sendRegisterRequest() throws Exception {
+    public void sendAddScoreRequest() throws Exception {
         Communicator c = new Communicator();
 
 
@@ -39,7 +39,7 @@ public class AddScoreRequestTest {
     }
 
     @Test
-    public void FaultysendRegisterRequest() throws Exception {
+    public void FaultySendAddScoreRequest() throws Exception {
         Communicator c = new Communicator();
 
 

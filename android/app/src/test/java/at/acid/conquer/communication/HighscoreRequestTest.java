@@ -19,7 +19,7 @@ public class HighscoreRequestTest {
 
 
     @Test
-    public void sendRegisterRequest() throws Exception {
+    public void sendHighscoreRequest() throws Exception {
         Communicator c = new Communicator();
 
 
