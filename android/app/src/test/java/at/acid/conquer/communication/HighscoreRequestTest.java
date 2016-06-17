@@ -36,10 +36,6 @@ public class HighscoreRequestTest {
 
         assertEquals(Request.ReturnValue.SUCCESS, hgR.getResult().mSuccess);
 
-
-
-
-
     }
 
 }

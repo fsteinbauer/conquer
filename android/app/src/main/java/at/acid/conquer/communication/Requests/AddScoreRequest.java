@@ -76,6 +76,10 @@ public class AddScoreRequest extends Request {
         mResult.mSuccess = success;
     }
 
+    public Result getResult() {
+        return mResult;
+    }
+
     public static class Result {
         public ReturnValue mSuccess;
 

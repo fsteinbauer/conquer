@@ -45,26 +45,32 @@ public class HighscoreRequest extends Request {
 
         try {
             JSONObject obj = new JSONObject(s);
-            JSONArray arr = obj.getJSONArray("highscore");
+            JSONArray arr = obj.getJSONArray("highscores");
 
             for(int i = 0; i < arr.length(); i++)
             {
                 JSONObject user = arr.getJSONObject(i);
                 long rank = user.getLong("rank");
 
-                String name = user.getString("username");
+                String name = user.getString("name");
 
                 Long points = user.getLong("points");
 
                 Boolean is_user = user.getBoolean("is_user");
+
+                mResult.mHgs = new Highscore();
                 mResult.mHgs.put(rank, new Highscore.HighscoreUser(name, points, is_user));
             }
+
+            mResult.mSuccess = ReturnValue.SUCCESS;
 
 
         } catch (JSONException e) {
 
             mResult.mSuccess = ReturnValue.JSON_ERROR;
             Log.e(TAG, "parseReturn(): " + e.getMessage());
+            Log.e(TAG, "return String was: " + s);
+            System.out.println( "return String was: " + s);
             e.printStackTrace();
 
         }
@@ -74,6 +80,10 @@ public class HighscoreRequest extends Request {
     @Override
     public void setSuccess(ReturnValue success) {
         mResult.mSuccess = success;
+    }
+
+    public Result getResult() {
+        return mResult;
     }
 
     public static class Result {
