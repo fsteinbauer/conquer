@@ -1,5 +1,5 @@
 <?php
-require_once('../settings.php');
+require_once('settings.php');
 
 //------------------------------------------------------------------------------
 class DB{
@@ -206,10 +206,8 @@ try{
     
     //--------------------------------------------------------------------------
     case 'cleardata':{ //for debugging, call after added new scores manually
-      if(count($data) != 2)
-        throw new Exception("'{$data[0]}' expects {password}");
-      if($data[1] != CLEAR_PW)
-        throw new Exception("wrong password");
+      if(count($data) != 1)
+        throw new Exception("'{$data[0]}' expects no parameters");
       
       $db->multi_query("
           TRUNCATE TABLE area;

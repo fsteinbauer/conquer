@@ -6,8 +6,6 @@ import org.junit.Test;
 
 import at.acid.conquer.communication.Requests.RegisterRequest;
 import at.acid.conquer.communication.Requests.Request;
-import at.acid.conquer.data.SecretData;
-import at.acid.conquer.model.Area;
 
 import static junit.framework.Assert.assertTrue;
 import static org.junit.Assert.assertEquals;
@@ -21,7 +19,7 @@ public class RegisterRequestTest {
 
     @Test
     public void sendRegisterRequest() throws Exception {
-        Communicator c = new Communicator(SecretData.mServerTestUrl);
+        Communicator c = new Communicator("http://conquer2.menzi.at/");
 
         final RegisterRequest rr = new RegisterRequest();
         c.sendRequest(rr);

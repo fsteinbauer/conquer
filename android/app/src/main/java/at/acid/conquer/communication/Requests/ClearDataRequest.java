@@ -5,9 +5,6 @@ import android.util.Log;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import at.acid.conquer.R;
-import at.acid.conquer.data.SecretData;
-
 /**
  * Created by Menzi on 17/06/2016.
  */
@@ -26,7 +23,7 @@ public class ClearDataRequest extends Request {
 
     @Override
     public String getURLExtension() {
-        return "cleardata/" + SecretData.mServerTestResetPasswort;
+        return "cleardata";
     }
 
     @Override
