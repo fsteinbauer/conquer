@@ -9,16 +9,14 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import at.acid.conquer.R;
 import at.acid.conquer.communication.Requests.Request;
 
 /**
  * Created by Annie on 04/05/2016.
  */
 public class Communicator {
-
-    final static String URL_STRING = "http://conquer2.menzi.at/";
     final static String TAG = "Communicator";
-
 
     private String readStream(InputStream in) throws IOException {
         int bytesRead = 0;
@@ -38,7 +36,7 @@ public class Communicator {
         Thread t = new Thread(new Runnable() {
             public void run() {
                 try {
-                    final java.net.URL url = new URL(URL_STRING + req.getURLExtension());
+                    final java.net.URL url = new URL(R.string.server_url + req.getURLExtension());
 
                     HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
                     try {
