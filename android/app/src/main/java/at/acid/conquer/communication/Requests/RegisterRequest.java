@@ -6,6 +6,8 @@ import android.util.Log;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import at.acid.conquer.model.User;
+
 /**
  * Created by Annie on 04/05/2016.
  */
@@ -14,67 +16,51 @@ public class RegisterRequest extends Request {
 
     final static String TAG = "RegisterRequest";
 
-    // final double mLatitude;
-    //final double mLongitude;
 
-    private Result mResult;
+    private ReturnValue mResult;
 
-    public RegisterRequest() {
-        this.mResult = new Result();
-        this.mResult.mSuccess = ReturnValue.NOT_INITIALIZED;
-        // mLatitude = latitude;
-        //mLongitude = longitude;
-    }
+    private User mUser;
 
-    public Result getResult() {
-        return mResult;
-    }
+    public RegisterRequest(User user) {
 
-    public static class Result {
-        public String mID;
-
-        public ReturnValue mSuccess;
-
-        public String mName;
+        this.mResult = ReturnValue.NOT_INITIALIZED;
+        this.mUser = user;
 
     }
+
+
+
 
 
     @Override
     public String getURLExtension() {
-        return "register"; //"+ mLatitude + "/"  + mLongitude;
-    }
+        return "register"; }
 
+    public ReturnValue getResult()
+    {
+        return mResult;
+    }
     @Override
     public void parseReturn(String returnString) {
-        Result result = this.mResult;
+
         try {
             JSONObject obj = new JSONObject(returnString);
 
-            result.mID = obj.getString("id");
-            result.mSuccess = ReturnValue.SUCCESS;
+            this.mUser.setId(obj.getString("id"));
+            this.mUser.setName(obj.getString("name"));
 
-            result.mName = obj.getString("name");
-
+            this.mResult = ReturnValue.SUCCESS;
 
         } catch (JSONException e) {
-            Log.d(TAG, "parseReturn(): Error " + e.getMessage());
 
-            Log.d(TAG, "parseReturn(): " + returnString);
 
             System.out.println(returnString);
 
-            this.mResult.mSuccess = Request.ReturnValue.JSON_ERROR;
+            this.mResult = Request.ReturnValue.JSON_ERROR;
             e.printStackTrace();
 
         }
 
     }
-
-    @Override
-    public void setSuccess(ReturnValue success) {
-        this.mResult.mSuccess = success;
-    }
-
 
 }

@@ -12,11 +12,10 @@ public class ClearDataRequest extends Request {
 
     private final String TAG = "ClearDataRequest";
 
-    private final Result mResult;
+    private ReturnValue mResult;
 
     public ClearDataRequest() {
-        mResult = new Result();
-        mResult.mSuccess = ReturnValue.NOT_INITIALIZED;
+        mResult = ReturnValue.NOT_INITIALIZED;
 
     }
 
@@ -30,31 +29,21 @@ public class ClearDataRequest extends Request {
     public void parseReturn(String s) {
         try {
             JSONObject obj = new JSONObject(s);
-            if(obj.getBoolean("success"))
-            {
-                mResult.mSuccess = ReturnValue.SUCCESS;
-            }else
-            {
-                mResult.mSuccess = ReturnValue.DATABASE_ERROR;
+            if (obj.getBoolean("success")) {
+                mResult = ReturnValue.SUCCESS;
+            } else {
+                mResult = ReturnValue.DATABASE_ERROR;
             }
         } catch (JSONException e) {
-            mResult.mSuccess = ReturnValue.JSON_ERROR;
+            mResult = ReturnValue.JSON_ERROR;
             Log.e(TAG, "parseReturn(): " + e.getMessage());
             e.printStackTrace();
         }
 
     }
 
-    @Override
-    public void setSuccess(ReturnValue success) {
-        mResult.mSuccess = success;
-    }
 
-    public Result getResult() {
+    public ReturnValue getResult() {
         return mResult;
-    }
-
-    public static class Result {
-        public ReturnValue mSuccess;
     }
 }

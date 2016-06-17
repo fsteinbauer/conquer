@@ -3,92 +3,63 @@ package at.acid.conquer.communication;
 
 import android.util.Log;
 
-import java.io.BufferedInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.AsyncHttpResponseHandler;
 
-import at.acid.conquer.R;
 import at.acid.conquer.communication.Requests.Request;
+import cz.msebera.android.httpclient.Header;
 
 /**
  * Created by Annie on 04/05/2016.
  */
 public class Communicator {
+
+    private class AsyncHelper extends AsyncHttpResponseHandler {
+
+        public final Request mRequest;
+
+        AsyncHelper(Request req) {
+            mRequest = req;
+        }
+
+        @Override
+        public boolean getUseSynchronousMode() {
+            return false;
+        }
+
+        @Override
+        public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+
+            mRequest.parseReturn(new String(responseBody));
+        }
+
+        @Override
+        public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+            error.printStackTrace();
+            Log.d(TAG, "Connection Error: ", error);
+        }
+
+    }
+
+
     final static String TAG = "Communicator";
-    private String mServerUrl;
+    private final String mServerUrl;
 
     public final static String TESTING_URL = "http://conquer2.menzi.at/";
 
     public final static String PRODUCTION_URL = "http://conquer.menzi.at/";
 
-    public Communicator(String server_url){
+    public Communicator(String server_url) {
         mServerUrl = server_url;
     }
 
-    private String readStream(InputStream in) throws IOException {
-        int bytesRead = 0;
-        byte[] read = new byte[1024];
-        StringBuilder sb = new StringBuilder();
-        while ((bytesRead = in.read(read)) != -1) {
-            sb.append(new String(read, 0, bytesRead));
-        }
-
-        return sb.toString();
-    }
+    private AsyncHttpClient client = new AsyncHttpClient();
 
 
-    public boolean sendRequest(final Request req) {
-
-        Log.d(TAG, "Sending request: " + mServerUrl + req.getURLExtension());
-
-        Thread t = new Thread(new Runnable() {
-            public void run() {
-                try {
-                    final java.net.URL url = new URL(mServerUrl + req.getURLExtension());
-
-                    HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-                    try {
-
-                        InputStream in = new BufferedInputStream(urlConnection.getInputStream());
-                        req.parseReturn(readStream(in));
+    public void sendRequest(final Request req) {
 
 
-                    } finally {
-                        urlConnection.disconnect();
-
-                    }
-
-
-                } catch (IOException ioe) {
-                    Log.d(TAG, ioe.getMessage());
-                    ioe.printStackTrace();
-                    req.setSuccess(Request.ReturnValue.IO_ERROR);
-                }
-            }
-        });
-
-        t.start();
-
-
-        try {
-            t.join(5000);
-        } catch (InterruptedException e) {
-
-
-            req.setSuccess(Request.ReturnValue.TIME_OUT);
-            return false;
-        }
-
-        if(t.isAlive()) {
-            req.setSuccess(Request.ReturnValue.TIME_OUT);
-            t.interrupt();
-
-            return false;
-        }
-
-        return true;
+        client.get(mServerUrl + req.getURLExtension(), new AsyncHelper(req));
 
 
     }

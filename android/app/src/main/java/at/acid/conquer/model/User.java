@@ -12,8 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import at.acid.conquer.communication.Communicator;
+import at.acid.conquer.communication.Requests.AddScoreRequest;
 import at.acid.conquer.communication.Requests.RegisterRequest;
-import at.acid.conquer.communication.Requests.Request;
 
 /**
  * Created by florian on 10.05.2016.
@@ -91,15 +91,11 @@ public class User {
         {
             Communicator c = new Communicator(Communicator.PRODUCTION_URL);
 
-            RegisterRequest rr = new RegisterRequest();
+            RegisterRequest rr = new RegisterRequest(this);
 
             c.sendRequest(rr);
 
-            if(rr.getResult().mSuccess == Request.ReturnValue.SUCCESS)
-            {
-                mId = rr.getResult().mID;
-                mName = rr.getResult().mName;
-            }
+
         }
         mLastAvtivity = store.getLong("last_activity", 0);
         mLastServerConnect = store.getLong("last_server_connect", 0);
@@ -164,6 +160,17 @@ public class User {
         //Log.d(TAG, areas.toString());
 
         return store.commit();
+    }
+
+    public void updateScore() {
+        Communicator c = new Communicator(Communicator.PRODUCTION_URL);
+
+        for(int i = 0; i < this.mAreas.size(); i++)
+        {
+            AreaStore r = this.mAreas.valueAt(i);
+            c.sendRequest(new AddScoreRequest(this.getId(), r.mPoints, r.mId ));
+        }
+
     }
 
     //----------------------------------------------------------------------------------------------

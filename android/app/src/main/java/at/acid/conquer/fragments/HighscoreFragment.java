@@ -1,5 +1,6 @@
 package at.acid.conquer.fragments;
 
+import android.content.SyncAdapterType;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,10 +29,19 @@ public class HighscoreFragment extends BaseClass implements AdapterView.OnItemSe
 
     private SpinnerAdapter mAreaAdapter;
     private RankingAdapter mHighscoreAdapter;
+
+
+
+    public RankingAdapter getRanking()
+    {
+        return mHighscoreAdapter;
+    }
     private TextView mTVCurrentRank;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
+
+
 
         View rootView = inflater.inflate(R.layout.fragment_highscores, container, false);
         Spinner spinnerCity = (Spinner) rootView.findViewById(R.id.spinner_city);
@@ -59,6 +69,8 @@ public class HighscoreFragment extends BaseClass implements AdapterView.OnItemSe
         listviewHighscore.setAdapter(mHighscoreAdapter);
 
         listviewHighscore.setEmptyView(tvEmptyHighscore);
+
+
         return rootView;
     }
 
@@ -113,7 +125,6 @@ public class HighscoreFragment extends BaseClass implements AdapterView.OnItemSe
 
     @Override
     public void onFragmentSelected(){
-
 
         // TODO: get highscores from server -> mHighscoreAdapter.updateItems(); -> set mTVCurrentRank
         mHighscoreAdapter.notifyDataSetChanged();

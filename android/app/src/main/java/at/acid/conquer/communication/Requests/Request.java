@@ -23,7 +23,6 @@ public abstract class Request {
     public abstract void parseReturn(String s);
 
 
-    public abstract void setSuccess(ReturnValue success);
 }
 
 

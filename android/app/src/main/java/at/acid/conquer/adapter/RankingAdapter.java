@@ -7,14 +7,9 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import at.acid.conquer.R;
 import at.acid.conquer.communication.Communicator;
 import at.acid.conquer.communication.Requests.HighscoreRequest;
-import at.acid.conquer.communication.Requests.Request;
 import at.acid.conquer.model.Highscore;
 import at.acid.conquer.model.User;
 
@@ -29,11 +24,9 @@ public class RankingAdapter extends BaseAdapter {
 
     private int mCurrentAreaID;
 
-    private String mCurrentArea ;
+    private String mCurrentArea;
 
     private final User mSelf;
-
-
 
 
     Communicator c = new Communicator(Communicator.PRODUCTION_URL);
@@ -52,8 +45,17 @@ public class RankingAdapter extends BaseAdapter {
 
 
     public void updateItems(Highscore ranking) {
+
         mHighscore.clear();
+
+        if (ranking == null) {
+
+            this.notifyDataSetChanged();
+            return;
+        }
         mHighscore.addAll(ranking);
+
+        this.notifyDataSetChanged();
 
     }
 
@@ -98,25 +100,16 @@ public class RankingAdapter extends BaseAdapter {
     public void setCurrentArea(String areaName, int AreaID) {
         mCurrentArea = areaName;
         mCurrentAreaID = AreaID;
-        HighscoreRequest hgr = new HighscoreRequest(mCurrentAreaID, mSelf.getId());
+        HighscoreRequest hgr = new HighscoreRequest(mCurrentAreaID, mSelf.getId(), this);
 
         c.sendRequest(hgr);
 
-        if (hgr.getResult().mSuccess == Request.ReturnValue.SUCCESS) {
-            updateItems(hgr.getResult().mHgs);
-        }
-
-
-
-
-        this.notifyDataSetChanged();
     }
 
     public Long getCurrentRank() {
 
         Highscore.HighscoreUser self = mHighscore.findSelf();
-        if(self == null)
-        {
+        if (self == null) {
             return null;
         }
 
