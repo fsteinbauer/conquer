@@ -58,7 +58,7 @@ public class HighscoreRequest extends Request {
 
     @Override
     public String getURLExtension() {
-        return "highscore/" + mUserID + "/" + mArea;
+        return "/highscore/" + mUserID + "/" + mArea;
     }
 
     @Override

@@ -68,43 +68,29 @@ public class HighscoreRequestTest {
     @Test
     public void sendHighscoreRequest() throws Exception {
 
-        TabLayout tl = (TabLayout) mActivityRule.getActivity().findViewById(R.id.tl_tabs);
-
-        mActivityRule.getActivity().onTabSelected(tl.getTabAt(1));
-
-        Thread.sleep(500);
 
 
 
         User user = new User(mActivityRule.getActivity().getApplicationContext());
         final RegisterRequest rr = new RegisterRequest();
 
-        c.sendRequest(rr);
-        Thread.sleep(3000);
+        Thread t = c.sendRequest(rr);
+        t.join(3000);
 
         Assert.assertEquals(Request.ReturnValue.SUCCESS, rr.getResult().mSuccess);
 
 
-        HighscoreFragment hf = null;
-
-        for (Fragment f : mActivityRule.getActivity().getSupportFragmentManager().getFragments()) {
-            if (f instanceof HighscoreFragment) {
-                hf = (HighscoreFragment) f;
-            }
-        }
-
-        assertNotNull(hf);
 
 
-        HighscoreRequest hgR = new HighscoreRequest(0, user.getId());
+        HighscoreRequest hgR = new HighscoreRequest(0, rr.getResult().mID);
 
-        c.sendRequest(hgR);
+        t = c.sendRequest(hgR);
 
-        Thread.sleep(3000);
+        t.join(5000);
 
         assertEquals(Request.ReturnValue.SUCCESS, hgR.getResult().mReturn);
 
-        assertTrue(hf.getRanking().getCurrentRank() != null);
+
 //
     }
 
