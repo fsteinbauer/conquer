@@ -1,5 +1,5 @@
 <?php
-require_once('settings.php');
+require_once('../settings.php');
 
 //------------------------------------------------------------------------------
 class DB{
@@ -79,7 +79,7 @@ function getArea($string){
 
 //------------------------------------------------------------------------------
 try{
-  $db = new DB(DB_SERVER, DB_USER, DB_PW, DB_DATABASE);
+  $db = new DB(DB_SERVER, DB_USER, DB_PW, DB_DATABASE_TESTING);
   
   if(!isset($_GET['data']))
     throw new Exception("invalid request");
@@ -186,6 +186,25 @@ try{
     }
     
     //--------------------------------------------------------------------------
+    case 'rename':{
+      if(count($data) != 3)
+        throw new Exception("'{$data[0]}' expects {user}/{name}");
+      
+      $user = getUser($data[1]);
+      $name = $db->mask($data[2]);
+      
+      $db->query("
+          UPDATE user 
+          SET name = '$name'
+          WHERE id = '$user'
+          LIMIT 1
+      ");
+      
+      echo json_encode(['success' => true]);
+      break;
+    }
+    
+    //--------------------------------------------------------------------------
     case 'updateranks':{ //for debugging, call after added new scores manually
       if(count($data) != 1)
         throw new Exception("'{$data[0]}' expects no parameters");
@@ -210,7 +229,6 @@ try{
         throw new Exception("'{$data[0]}' expects no parameters");
       
       $db->multi_query("
-          TRUNCATE TABLE area;
           TRUNCATE TABLE highscore;
           TRUNCATE TABLE user;
         ");

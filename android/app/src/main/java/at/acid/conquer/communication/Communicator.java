@@ -19,7 +19,14 @@ public class Communicator {
     final static String TAG = "Communicator";
     private String mServerUrl;
 
-    public Communicator(String server_url){
+    private CummunicatorClient mClient;
+    public interface CummunicatorClient {
+        void onRequestReady(Request r);
+        void onRequestTimeOut(Request r);
+    }
+
+    public Communicator(CummunicatorClient client, String server_url){
+        mClient = client;
         mServerUrl = server_url;
     }
 
@@ -43,17 +50,12 @@ public class Communicator {
 
                     HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
                     try {
-
                         InputStream in = new BufferedInputStream(urlConnection.getInputStream());
                         req.parseReturn(readStream(in));
-
-
                     } finally {
+                        mClient.onRequestReady(req);
                         urlConnection.disconnect();
-
                     }
-
-
                 } catch (IOException ioe) {
                     Log.d(TAG, ioe.getMessage());
                     ioe.printStackTrace();
@@ -63,6 +65,7 @@ public class Communicator {
         });
 
         t.start();
+
 
 
         try {
