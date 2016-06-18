@@ -7,7 +7,9 @@ import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
+import java.net.SocketTimeoutException;
 import java.net.URL;
+import java.util.List;
 
 import at.acid.conquer.R;
 import at.acid.conquer.communication.Requests.Request;
@@ -18,11 +20,13 @@ import at.acid.conquer.communication.Requests.Request;
 public class Communicator {
     final static String TAG = "Communicator";
     private String mServerUrl;
+    private Thread mLastRequest;
 
     private CummunicatorClient mClient;
     public interface CummunicatorClient {
         void onRequestReady(Request r);
         void onRequestTimeOut(Request r);
+        void onRequestError(Request r);
     }
 
     public Communicator(CummunicatorClient client, String server_url){
@@ -42,13 +46,15 @@ public class Communicator {
     }
 
 
-    public boolean sendRequest(final Request req) {
-        Thread t = new Thread(new Runnable() {
+    public Thread sendRequest(final Request req) {
+        mLastRequest  = new Thread(new Runnable() {
             public void run() {
                 try {
                     final java.net.URL url = new URL(mServerUrl + req.getURLExtension());
 
                     HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+                    urlConnection.setConnectTimeout(3000);
+                    urlConnection.setReadTimeout(3000);
                     try {
                         InputStream in = new BufferedInputStream(urlConnection.getInputStream());
                         req.parseReturn(readStream(in));
@@ -56,38 +62,31 @@ public class Communicator {
                         mClient.onRequestReady(req);
                         urlConnection.disconnect();
                     }
-                } catch (IOException ioe) {
+                }
+                catch (SocketTimeoutException e) {
+                    req.setSuccess(Request.ReturnValue.TIME_OUT);
+                    mClient.onRequestTimeOut(req);
+                }
+                catch (IOException ioe) {
                     Log.d(TAG, ioe.getMessage());
                     ioe.printStackTrace();
                     req.setSuccess(Request.ReturnValue.IO_ERROR);
+                    mClient.onRequestError(req);
                 }
             }
         });
 
-        t.start();
-
-
-
-        try {
-            t.join(5000);
-        } catch (InterruptedException e) {
-
-
-            req.setSuccess(Request.ReturnValue.TIME_OUT);
-            return false;
-        }
-
-        if(t.isAlive()) {
-            req.setSuccess(Request.ReturnValue.TIME_OUT);
-            t.interrupt();
-
-            return false;
-        }
-
-        return true;
-
-
+        mLastRequest.start();
+        return mLastRequest;
     }
 
-
+    void waitForResponse(){
+        try {
+            mLastRequest.join();
+        }
+        catch(InterruptedException e){
+            Log.d(TAG, e.getMessage());
+            e.printStackTrace();
+        }
+    }
 }
