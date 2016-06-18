@@ -29,7 +29,6 @@ public class Communicator {
 
         @Override
         public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-
             mRequest.parseReturn(new String(responseBody));
         }
 
@@ -38,6 +37,7 @@ public class Communicator {
             error.printStackTrace();
             Log.d(TAG, "Connection Error: ", error);
         }
+
 
     }
 
