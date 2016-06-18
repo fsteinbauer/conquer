@@ -1,9 +1,7 @@
 package at.acid.conquer.communication;
 
-import android.support.design.widget.TabLayout;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
-import android.support.v4.app.Fragment;
 import android.test.suitebuilder.annotation.LargeTest;
 
 import junit.framework.Assert;
@@ -14,13 +12,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import at.acid.conquer.MainActivity;
-import at.acid.conquer.R;
-import at.acid.conquer.adapter.RankingAdapter;
 import at.acid.conquer.communication.Requests.ClearDataRequest;
 import at.acid.conquer.communication.Requests.HighscoreRequest;
 import at.acid.conquer.communication.Requests.RegisterRequest;
 import at.acid.conquer.communication.Requests.Request;
-import at.acid.conquer.fragments.HighscoreFragment;
 import at.acid.conquer.model.User;
 
 import static junit.framework.Assert.assertEquals;
@@ -88,7 +83,7 @@ public class HighscoreRequestTest {
 
         t.join(5000);
 
-        assertEquals(Request.ReturnValue.SUCCESS, hgR.getResult().mReturn);
+        assertEquals(Request.ReturnValue.SUCCESS, hgR.getResult().mSuccess);
 
 
 //

@@ -8,10 +8,7 @@ import java.util.ArrayList;
 
 
 public class Highscore extends ArrayList<Highscore.HighscoreUser> {
-
-
     public HighscoreUser findSelf() {
-
         for (HighscoreUser user : this) {
             if (user.getSelf() == true) {
                 return user;
@@ -27,29 +24,23 @@ public class Highscore extends ArrayList<Highscore.HighscoreUser> {
 
         final private long mRank;
 
-
         public HighscoreUser(String name, long points, boolean self, long rank) {
-
             mSelf = self;
             mUsername = name;
             mPoints = points;
             mRank = rank;
         }
 
-
         public String getUsername() {
             return mUsername;
         }
-
 
         public Long getPoints() {
             return mPoints;
         }
 
         public boolean getSelf() {
-
             return mSelf;
-
         }
 
         public Long getRank() {

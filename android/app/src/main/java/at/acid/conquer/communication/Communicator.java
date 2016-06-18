@@ -53,8 +53,8 @@ public class Communicator {
                     final java.net.URL url = new URL(mServerUrl + req.getURLExtension());
 
                     HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-                    urlConnection.setConnectTimeout(3000);
-                    urlConnection.setReadTimeout(3000);
+                    urlConnection.setConnectTimeout(5000);
+                    urlConnection.setReadTimeout(5000);
                     try {
                         InputStream in = new BufferedInputStream(urlConnection.getInputStream());
                         req.parseReturn(readStream(in));

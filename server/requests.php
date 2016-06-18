@@ -103,7 +103,7 @@ $REQUESTS = [
     if(count($data) != 3)
       throw new Exception("'{$data[0]}' expects {user}/{name}");
     $user = getUser($data[1]);
-    $name = $db->mask(data[2]);
+    $name = $db->mask($data[2]);
     
     $db->query("
       UPDATE user 

@@ -1,13 +1,11 @@
 package at.acid.conquer.communication.Requests;
 
-import android.database.CursorJoiner;
 import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import at.acid.conquer.adapter.RankingAdapter;
 import at.acid.conquer.model.Highscore;
 
 /**
@@ -17,18 +15,14 @@ public class HighscoreRequest extends Request {
 
     private final String TAG = "HighscoreRequest";
 
-    private final int mArea;
-    private final String mUserID;
-
-
+    private int mArea;
+    private String mUserID;
 
     private Result mResult;
 
-
-
     public static class Result{
         public Highscore mHighScore;
-        public ReturnValue mReturn;
+        public ReturnValue mSuccess;
     }
 
     public Result getResult()
@@ -39,21 +33,18 @@ public class HighscoreRequest extends Request {
     public HighscoreRequest(int Area, String userID) {
         if (Area < 0) {
             throw new IllegalArgumentException("Area may not be negative!");
-
         }
 
         mArea = Area;
         mUserID = userID;
         mResult = new Result();
-        mResult.mReturn = ReturnValue.NOT_INITIALIZED;
-
-
+        mResult.mSuccess = ReturnValue.NOT_INITIALIZED;
     }
 
 
     @Override
     public void setSuccess(ReturnValue success) {
-        mResult.mReturn = success;
+        mResult.mSuccess = success;
     }
 
     @Override
@@ -84,29 +75,17 @@ public class HighscoreRequest extends Request {
 
 
             }
-
             Log.d(TAG, "self contained:" + hghs.findSelf());
             Log.d(TAG, "parsed " + hghs.size() + " entries");
 
-            mResult.mReturn = ReturnValue.SUCCESS;
+            mResult.mSuccess = ReturnValue.SUCCESS;
             mResult.mHighScore = hghs;
-
-
-
-
         } catch (JSONException e) {
-
-            mResult.mReturn = ReturnValue.JSON_ERROR;
+            mResult.mSuccess = ReturnValue.JSON_ERROR;
             Log.e(TAG, "parseReturn(): " + e.getMessage());
             Log.e(TAG, "return String was: " + s);
             System.out.println("return String was: " + s);
             e.printStackTrace();
-
         }
-
-
-
     }
-
-
 }
