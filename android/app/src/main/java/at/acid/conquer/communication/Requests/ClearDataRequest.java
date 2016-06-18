@@ -12,13 +12,25 @@ public class ClearDataRequest extends Request {
 
     private final String TAG = "ClearDataRequest";
 
-    private ReturnValue mResult;
+    private final Result mResult;
+
+
+    public static class Result
+    {
+        public ReturnValue mSuccess;
+    }
 
     public ClearDataRequest() {
-        mResult = ReturnValue.NOT_INITIALIZED;
+        mResult = new Result();
+        mResult.mSuccess = ReturnValue.NOT_INITIALIZED;
 
     }
 
+
+    @Override
+    public void setSuccess(ReturnValue success) {
+        mResult.mSuccess = success;
+    }
 
     @Override
     public String getURLExtension() {
@@ -29,13 +41,14 @@ public class ClearDataRequest extends Request {
     public void parseReturn(String s) {
         try {
             JSONObject obj = new JSONObject(s);
-            if (obj.getBoolean("success")) {
-                mResult = ReturnValue.SUCCESS;
+            if(obj.getBoolean("success"))
+            {
+                mResult.mSuccess = ReturnValue.SUCCESS;
             } else {
-                mResult = ReturnValue.DATABASE_ERROR;
+                mResult.mSuccess = ReturnValue.DATABASE_ERROR;
             }
         } catch (JSONException e) {
-            mResult = ReturnValue.JSON_ERROR;
+            mResult.mSuccess = ReturnValue.JSON_ERROR;
             Log.e(TAG, "parseReturn(): " + e.getMessage());
             e.printStackTrace();
         }
@@ -43,7 +56,7 @@ public class ClearDataRequest extends Request {
     }
 
 
-    public ReturnValue getResult() {
+    public Result getResult() {
         return mResult;
     }
 }

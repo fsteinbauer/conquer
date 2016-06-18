@@ -33,11 +33,26 @@ public class RegisterRequestTest {
    public void sendRegisterRequest() throws Exception
    {
        MainActivity mActivity = mActivityRule.getActivity();
-       Communicator c = new Communicator("http://conquer2.menzi.at/");
+       Communicator c = new Communicator(new Communicator.CummunicatorClient() {
+           @Override
+           public void onRequestReady(Request r) {
+
+           }
+
+           @Override
+           public void onRequestTimeOut(Request r) {
+
+           }
+
+           @Override
+           public void onRequestError(Request r) {
+
+           }
+       },"http://conquer2.menzi.at/");
 
        User user = new User(mActivity.getApplicationContext());
 
-       final RegisterRequest rr = new RegisterRequest(user);
+       final RegisterRequest rr = new RegisterRequest();
        c.sendRequest(rr);
 
        Thread.sleep(3000);

@@ -10,8 +10,12 @@ import android.widget.TextView;
 import at.acid.conquer.R;
 import at.acid.conquer.communication.Communicator;
 import at.acid.conquer.communication.Requests.HighscoreRequest;
+import at.acid.conquer.communication.Requests.Request;
+import at.acid.conquer.fragments.HighscoreFragment;
 import at.acid.conquer.model.Highscore;
 import at.acid.conquer.model.User;
+
+import static com.google.android.gms.internal.zzid.runOnUiThread;
 
 /**
  * Created by Trey
@@ -29,15 +33,40 @@ public class RankingAdapter extends BaseAdapter {
     private final User mSelf;
 
 
-    Communicator c = new Communicator(Communicator.PRODUCTION_URL);
+    Communicator c = new Communicator(new Communicator.CummunicatorClient() {
+        @Override
+        public void onRequestReady(Request r) {
+            HighscoreRequest hr = (HighscoreRequest) r;
 
 
-    public RankingAdapter(Context context, User self) {
+            updateItems(hr.getResult().mHighScore);
+
+
+        }
+
+        @Override
+        public void onRequestTimeOut(Request r) {
+
+        }
+
+        @Override
+        public void onRequestError(Request r) {
+
+        }
+
+
+    }, "http://conquer.menzi.at");
+
+    private HighscoreFragment mParent;
+
+
+    public RankingAdapter(Context context, User self, HighscoreFragment hf) {
         mHighscore = new Highscore();
         mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         mSelf = self;
 
+        mParent = hf;
         this.setCurrentArea("Graz", 0);
     }
 
@@ -48,14 +77,22 @@ public class RankingAdapter extends BaseAdapter {
 
         mHighscore.clear();
 
-        if (ranking == null) {
+        if (ranking != null) {
 
-            this.notifyDataSetChanged();
-            return;
+            mHighscore.addAll(ranking);
         }
-        mHighscore.addAll(ranking);
 
-        this.notifyDataSetChanged();
+
+        final Long currentRank = this.getCurrentRank();
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                notifyDataSetChanged();
+                mParent.setCurrentRank(currentRank);
+
+            }
+        });
 
     }
 
@@ -100,7 +137,9 @@ public class RankingAdapter extends BaseAdapter {
     public void setCurrentArea(String areaName, int AreaID) {
         mCurrentArea = areaName;
         mCurrentAreaID = AreaID;
-        HighscoreRequest hgr = new HighscoreRequest(mCurrentAreaID, mSelf.getId(), this);
+
+        this.updateItems(null);
+        HighscoreRequest hgr = new HighscoreRequest(mCurrentAreaID, mSelf.getId());
 
         c.sendRequest(hgr);
 

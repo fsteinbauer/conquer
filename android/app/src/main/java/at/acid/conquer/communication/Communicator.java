@@ -3,66 +3,95 @@ package at.acid.conquer.communication;
 
 import android.util.Log;
 
-import com.loopj.android.http.AsyncHttpClient;
-import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.google.android.gms.cast.Cast;
 
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.SocketTimeoutException;
+import java.net.URL;
+import java.util.List;
+
+import at.acid.conquer.R;
 import at.acid.conquer.communication.Requests.Request;
-import cz.msebera.android.httpclient.Header;
 
 /**
  * Created by Annie on 04/05/2016.
  */
 public class Communicator {
+    final static String TAG = "Communicator";
+    private String mServerUrl;
+    private Thread mLastRequest;
 
-    private class AsyncHelper extends AsyncHttpResponseHandler {
-
-        public final Request mRequest;
-
-        AsyncHelper(Request req) {
-            mRequest = req;
-        }
-
-        @Override
-        public boolean getUseSynchronousMode() {
-            return false;
-        }
-
-        @Override
-        public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-            mRequest.parseReturn(new String(responseBody));
-        }
-
-        @Override
-        public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-            error.printStackTrace();
-            Log.d(TAG, "Connection Error: ", error);
-        }
-
-
+    private CummunicatorClient mClient;
+    public interface CummunicatorClient {
+        void onRequestReady(Request r);
+        void onRequestTimeOut(Request r);
+        void onRequestError(Request r);
     }
 
 
-    final static String TAG = "Communicator";
-    private final String mServerUrl;
 
-    public final static String TESTING_URL = "http://conquer2.menzi.at/";
 
-    public final static String PRODUCTION_URL = "http://conquer.menzi.at/";
-
-    public Communicator(String server_url) {
+    public Communicator(CummunicatorClient client, String server_url){
+        mClient = client;
         mServerUrl = server_url;
     }
 
-    private AsyncHttpClient client = new AsyncHttpClient();
+    private String readStream(InputStream in) throws IOException {
+        int bytesRead = 0;
+        byte[] read = new byte[1024];
+        StringBuilder sb = new StringBuilder();
+        while ((bytesRead = in.read(read)) != -1) {
+            sb.append(new String(read, 0, bytesRead));
+        }
 
-
-    public void sendRequest(final Request req) {
-
-
-        client.get(mServerUrl + req.getURLExtension(), new AsyncHelper(req));
-
-
+        return sb.toString();
     }
 
 
+    public Thread sendRequest(final Request req) {
+        mLastRequest  = new Thread(new Runnable() {
+            public void run() {
+                try {
+                    final java.net.URL url = new URL(mServerUrl + req.getURLExtension());
+
+                    HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+                    urlConnection.setConnectTimeout(5000);
+                    urlConnection.setReadTimeout(5000);
+                    try {
+                        InputStream in = new BufferedInputStream(urlConnection.getInputStream());
+                        req.parseReturn(readStream(in));
+                    } finally {
+                        mClient.onRequestReady(req);
+                        urlConnection.disconnect();
+                    }
+                }
+                catch (SocketTimeoutException e) {
+                    req.setSuccess(Request.ReturnValue.TIME_OUT);
+                    mClient.onRequestTimeOut(req);
+                }
+                catch (IOException ioe) {
+                    Log.d(TAG, ioe.getMessage());
+                    ioe.printStackTrace();
+                    req.setSuccess(Request.ReturnValue.IO_ERROR);
+                    mClient.onRequestError(req);
+                }
+            }
+        });
+
+        mLastRequest.start();
+        return mLastRequest;
+    }
+
+    void waitForResponse(){
+        try {
+            mLastRequest.join();
+        }
+        catch(InterruptedException e){
+            Log.d(TAG, e.getMessage());
+            e.printStackTrace();
+        }
+    }
 }

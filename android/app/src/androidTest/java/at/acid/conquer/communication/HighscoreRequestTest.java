@@ -1,9 +1,7 @@
 package at.acid.conquer.communication;
 
-import android.support.design.widget.TabLayout;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
-import android.support.v4.app.Fragment;
 import android.test.suitebuilder.annotation.LargeTest;
 
 import junit.framework.Assert;
@@ -14,13 +12,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import at.acid.conquer.MainActivity;
-import at.acid.conquer.R;
-import at.acid.conquer.adapter.RankingAdapter;
 import at.acid.conquer.communication.Requests.ClearDataRequest;
 import at.acid.conquer.communication.Requests.HighscoreRequest;
 import at.acid.conquer.communication.Requests.RegisterRequest;
 import at.acid.conquer.communication.Requests.Request;
-import at.acid.conquer.fragments.HighscoreFragment;
 import at.acid.conquer.model.User;
 
 import static junit.framework.Assert.assertEquals;
@@ -39,7 +34,22 @@ public class HighscoreRequestTest {
             MainActivity.class);
 
 
-    private Communicator c = new Communicator("http://conquer2.menzi.at/");
+    private Communicator c = new Communicator(new Communicator.CummunicatorClient() {
+        @Override
+        public void onRequestReady(Request r) {
+
+        }
+
+        @Override
+        public void onRequestTimeOut(Request r) {
+
+        }
+
+        @Override
+        public void onRequestError(Request r) {
+
+        }
+    },"http://conquer2.menzi.at/");
 
 
     @Before
@@ -53,43 +63,29 @@ public class HighscoreRequestTest {
     @Test
     public void sendHighscoreRequest() throws Exception {
 
-        TabLayout tl = (TabLayout) mActivityRule.getActivity().findViewById(R.id.tl_tabs);
-
-        mActivityRule.getActivity().onTabSelected(tl.getTabAt(1));
-
-        Thread.sleep(500);
 
 
 
         User user = new User(mActivityRule.getActivity().getApplicationContext());
-        final RegisterRequest rr = new RegisterRequest(user);
+        final RegisterRequest rr = new RegisterRequest();
 
-        c.sendRequest(rr);
-        Thread.sleep(3000);
+        Thread t = c.sendRequest(rr);
+        t.join(3000);
 
-        Assert.assertEquals(Request.ReturnValue.SUCCESS, rr.getResult());
-
-
-        HighscoreFragment hf = null;
-
-        for (Fragment f : mActivityRule.getActivity().getSupportFragmentManager().getFragments()) {
-            if (f instanceof HighscoreFragment) {
-                hf = (HighscoreFragment) f;
-            }
-        }
-
-        assertNotNull(hf);
+        Assert.assertEquals(Request.ReturnValue.SUCCESS, rr.getResult().mSuccess);
 
 
-        HighscoreRequest hgR = new HighscoreRequest(0, user.getId(), new RankingAdapter(mActivityRule.getActivity().getApplicationContext(), user));
 
-        c.sendRequest(hgR);
 
-        Thread.sleep(3000);
+        HighscoreRequest hgR = new HighscoreRequest(0, rr.getResult().mID);
 
-        assertEquals(Request.ReturnValue.SUCCESS, hgR.getResult());
+        t = c.sendRequest(hgR);
 
-        assertTrue(hf.getRanking().getCurrentRank() != null);
+        t.join(5000);
+
+        assertEquals(Request.ReturnValue.SUCCESS, hgR.getResult().mSuccess);
+
+
 //
     }
 

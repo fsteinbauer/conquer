@@ -2,49 +2,31 @@ package at.acid.conquer.communication.Requests;
 
 import android.util.Log;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import at.acid.conquer.model.Highscore;
 
 /**
  * Created by Annie on 17/06/2016.
  */
-public class AddScoreRequest extends Request {
+public class RenameRequest extends Request {
 
-    private final String TAG = "AddScoreRequest";
+    private final String TAG = "RenameRequest";
 
-    private final long mPoints;
-    private final String mUserID;
+    private String mUserID;
+    private String mName;
 
-    private final Result mResult;
+    private Result mResult;
 
-    private final int mArea;
-
-    public AddScoreRequest(String userID, long Points, int Area) {
-        if (Points < 0) {
-            throw new IllegalArgumentException("Points may not be negative!");
-
-        }
-        if (Area < 0) {
-            throw new IllegalArgumentException("Area may not be negative!");
-
-        }
-        mPoints = Points;
-
-        mArea = Area;
-
+    public RenameRequest(String userID, String name) {
         mUserID = userID;
+        mName = name;
         mResult = new Result();
         mResult.mSuccess = ReturnValue.NOT_INITIALIZED;
-
     }
-
 
     @Override
     public String getURLExtension() {
-        return "addscore/" + mUserID + "/" + mArea + "/" + mPoints;
+        return "/rename/" + mUserID + "/" + mName;
     }
 
     @Override
@@ -82,7 +64,5 @@ public class AddScoreRequest extends Request {
 
     public static class Result {
         public ReturnValue mSuccess;
-
-
     }
 }

@@ -14,6 +14,8 @@ import java.util.List;
 import at.acid.conquer.communication.Communicator;
 import at.acid.conquer.communication.Requests.AddScoreRequest;
 import at.acid.conquer.communication.Requests.RegisterRequest;
+import at.acid.conquer.communication.Requests.RenameRequest;
+import at.acid.conquer.communication.Requests.Request;
 
 /**
  * Created by florian on 10.05.2016.
@@ -65,6 +67,27 @@ public class User {
     private String mName;
 
 
+    private Communicator c = new Communicator(new Communicator.CummunicatorClient() {
+        @Override
+        public void onRequestReady(Request r) {
+            RegisterRequest rr = (RegisterRequest) r;
+
+            setId(rr.getResult().mID);
+            setName(rr.getResult().mName);
+        }
+
+        @Override
+        public void onRequestTimeOut(Request r) {
+
+        }
+
+        @Override
+        public void onRequestError(Request r) {
+
+        }
+    }, "http://conquer.menzi.at");
+
+
     private SparseArray<AreaStore> mAreas = new SparseArray<AreaStore>();
     private List<RouteStore> mRoutes = new ArrayList<RouteStore>();
     private long mLastAvtivity;
@@ -89,13 +112,9 @@ public class User {
 
         if(mId.isEmpty())
         {
-            Communicator c = new Communicator(Communicator.PRODUCTION_URL);
-
-            RegisterRequest rr = new RegisterRequest(this);
+            RegisterRequest rr = new RegisterRequest();
 
             c.sendRequest(rr);
-
-
         }
         mLastAvtivity = store.getLong("last_activity", 0);
         mLastServerConnect = store.getLong("last_server_connect", 0);
@@ -162,13 +181,29 @@ public class User {
         return store.commit();
     }
 
-    public void updateScore() {
-        Communicator c = new Communicator(Communicator.PRODUCTION_URL);
 
+    Communicator c2 = new Communicator(new Communicator.CummunicatorClient() {
+        @Override
+        public void onRequestReady(Request r) {
+
+        }
+
+        @Override
+        public void onRequestTimeOut(Request r) {
+
+        }
+
+        @Override
+        public void onRequestError(Request r) {
+
+        }
+    }, "http://conquer.menzi.at");
+
+    public void updateScore() {
         for(int i = 0; i < this.mAreas.size(); i++)
         {
             AreaStore r = this.mAreas.valueAt(i);
-            c.sendRequest(new AddScoreRequest(this.getId(), r.mPoints, r.mId ));
+            c2.sendRequest(new AddScoreRequest(this.getId(), r.mPoints, r.mId ));
         }
 
     }
@@ -224,5 +259,28 @@ public class User {
 
     //----------------------------------------------------------------------------------------------
     public void setId(String id) { this.mId = id; }
-    public void setName(String name) { this.mName = name; }
+
+
+    private Communicator c3 = new Communicator(new Communicator.CummunicatorClient() {
+        @Override
+        public void onRequestReady(Request r) {
+
+        }
+
+        @Override
+        public void onRequestTimeOut(Request r) {
+
+        }
+
+        @Override
+        public void onRequestError(Request r) {
+
+        }
+    }, "http://conquer.menzi.at");
+    public void setName(String name) { this.mName = name;
+
+        RenameRequest ncr = new RenameRequest(this.getId(), name);
+
+        c3.sendRequest(ncr);
+    }
 }

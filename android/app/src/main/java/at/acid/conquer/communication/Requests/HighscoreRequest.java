@@ -6,7 +6,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import at.acid.conquer.adapter.RankingAdapter;
 import at.acid.conquer.model.Highscore;
 
 /**
@@ -16,37 +15,41 @@ public class HighscoreRequest extends Request {
 
     private final String TAG = "HighscoreRequest";
 
-    private final int mArea;
-    private final String mUserID;
+    private int mArea;
+    private String mUserID;
 
+    private Result mResult;
 
-    private final RankingAdapter mRankingAdapter;
-    private  ReturnValue mResult;
+    public static class Result{
+        public Highscore mHighScore;
+        public ReturnValue mSuccess;
+    }
 
-    public ReturnValue getResult()
+    public Result getResult()
     {
         return mResult;
     }
 
-    public HighscoreRequest(int Area, String userID, RankingAdapter rankingAdapter) {
+    public HighscoreRequest(int Area, String userID) {
         if (Area < 0) {
             throw new IllegalArgumentException("Area may not be negative!");
-
         }
-        mRankingAdapter = rankingAdapter;
+
         mArea = Area;
         mUserID = userID;
-        mResult = ReturnValue.NOT_INITIALIZED;
-
-
-        this.mRankingAdapter.updateItems(null);
-
+        mResult = new Result();
+        mResult.mSuccess = ReturnValue.NOT_INITIALIZED;
     }
 
 
     @Override
+    public void setSuccess(ReturnValue success) {
+        mResult.mSuccess = success;
+    }
+
+    @Override
     public String getURLExtension() {
-        return "highscore/" + mUserID + "/" + mArea;
+        return "/highscore/" + mUserID + "/" + mArea;
     }
 
     @Override
@@ -72,28 +75,17 @@ public class HighscoreRequest extends Request {
 
 
             }
-
             Log.d(TAG, "self contained:" + hghs.findSelf());
             Log.d(TAG, "parsed " + hghs.size() + " entries");
 
-            this.mRankingAdapter.updateItems(hghs);
-
-            mResult = ReturnValue.SUCCESS;
-
-
+            mResult.mSuccess = ReturnValue.SUCCESS;
+            mResult.mHighScore = hghs;
         } catch (JSONException e) {
-
-            mResult = ReturnValue.JSON_ERROR;
+            mResult.mSuccess = ReturnValue.JSON_ERROR;
             Log.e(TAG, "parseReturn(): " + e.getMessage());
             Log.e(TAG, "return String was: " + s);
             System.out.println("return String was: " + s);
             e.printStackTrace();
-
         }
-
-
-
     }
-
-
 }

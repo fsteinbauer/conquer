@@ -57,7 +57,9 @@ public class HighscoreFragment extends BaseClass implements AdapterView.OnItemSe
         spinnerCity.setAdapter(mAreaAdapter);
         spinnerCity.setOnItemSelectedListener(this);
 
-        mHighscoreAdapter = new RankingAdapter(getContext(),((MainActivity) getActivity()).getUser());
+        mHighscoreAdapter = new RankingAdapter(getContext(),((MainActivity) getActivity()).getUser(), this);
+
+
 
        setCurrentRank(mHighscoreAdapter.getCurrentRank());
 
@@ -104,7 +106,12 @@ public class HighscoreFragment extends BaseClass implements AdapterView.OnItemSe
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id){
+
+
         mHighscoreAdapter.setCurrentArea(mAreaAdapter.getItem(position), position);
+
+
+
     }
 
 
@@ -121,6 +128,8 @@ public class HighscoreFragment extends BaseClass implements AdapterView.OnItemSe
             return;
         }
         this.mTVCurrentRank.setText(rank.toString());
+
+
     }
 
     @Override

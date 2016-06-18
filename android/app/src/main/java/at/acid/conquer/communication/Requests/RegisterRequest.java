@@ -6,8 +6,6 @@ import android.util.Log;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import at.acid.conquer.model.User;
-
 /**
  * Created by Annie on 04/05/2016.
  */
@@ -17,50 +15,65 @@ public class RegisterRequest extends Request {
     final static String TAG = "RegisterRequest";
 
 
-    private ReturnValue mResult;
+    private Result mResult;
 
-    private User mUser;
+    public RegisterRequest() {
+        this.mResult = new Result();
+        this.mResult.mSuccess = ReturnValue.NOT_INITIALIZED;
 
-    public RegisterRequest(User user) {
+    }
 
-        this.mResult = ReturnValue.NOT_INITIALIZED;
-        this.mUser = user;
+    public Result getResult() {
+        return mResult;
+    }
+
+    public static class Result {
+        public String mID;
+
+        public ReturnValue mSuccess;
+
+        public String mName;
 
     }
 
 
-
-
+    @Override
+    public void setSuccess(ReturnValue success) {
+        mResult.mSuccess = success;
+    }
 
     @Override
     public String getURLExtension() {
-        return "register"; }
-
-    public ReturnValue getResult()
-    {
-        return mResult;
+        return "register"; //"+ mLatitude + "/"  + mLongitude;
     }
+
     @Override
     public void parseReturn(String returnString) {
-
+        Result result = this.mResult;
         try {
             JSONObject obj = new JSONObject(returnString);
 
-            this.mUser.setId(obj.getString("id"));
-            this.mUser.setName(obj.getString("name"));
+            result.mID = obj.getString("id");
+            result.mSuccess = ReturnValue.SUCCESS;
 
-            this.mResult = ReturnValue.SUCCESS;
+            result.mName = obj.getString("name");
+
 
         } catch (JSONException e) {
+            Log.d(TAG, "parseReturn(): Error " + e.getMessage());
 
+            Log.d(TAG, "parseReturn(): " + returnString);
 
             System.out.println(returnString);
 
-            this.mResult = Request.ReturnValue.JSON_ERROR;
+            this.mResult.mSuccess = Request.ReturnValue.JSON_ERROR;
             e.printStackTrace();
 
         }
 
     }
+
+
+
 
 }
