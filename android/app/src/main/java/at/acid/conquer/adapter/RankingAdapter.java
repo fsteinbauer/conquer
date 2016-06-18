@@ -11,8 +11,11 @@ import at.acid.conquer.R;
 import at.acid.conquer.communication.Communicator;
 import at.acid.conquer.communication.Requests.HighscoreRequest;
 import at.acid.conquer.communication.Requests.Request;
+import at.acid.conquer.fragments.HighscoreFragment;
 import at.acid.conquer.model.Highscore;
 import at.acid.conquer.model.User;
+
+import static com.google.android.gms.internal.zzid.runOnUiThread;
 
 /**
  * Created by Trey
@@ -30,12 +33,15 @@ public class RankingAdapter extends BaseAdapter {
     private final User mSelf;
 
 
-    Communicator c = new Communicator( new Communicator.CummunicatorClient(){
+    Communicator c = new Communicator(new Communicator.CummunicatorClient() {
         @Override
         public void onRequestReady(Request r) {
             HighscoreRequest hr = (HighscoreRequest) r;
 
+
             updateItems(hr.getResult().mHighScore);
+
+
         }
 
         @Override
@@ -47,16 +53,20 @@ public class RankingAdapter extends BaseAdapter {
         public void onRequestError(Request r) {
 
         }
-    }, "http://conquer.menzi.at")
-            ;
 
 
-    public RankingAdapter(Context context, User self) {
+    }, "http://conquer.menzi.at");
+
+    private HighscoreFragment mParent;
+
+
+    public RankingAdapter(Context context, User self, HighscoreFragment hf) {
         mHighscore = new Highscore();
         mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         mSelf = self;
 
+        mParent = hf;
         this.setCurrentArea("Graz", 0);
     }
 
@@ -67,14 +77,22 @@ public class RankingAdapter extends BaseAdapter {
 
         mHighscore.clear();
 
-        if (ranking == null) {
+        if (ranking != null) {
 
-            this.notifyDataSetChanged();
-            return;
+            mHighscore.addAll(ranking);
         }
-        mHighscore.addAll(ranking);
 
-        this.notifyDataSetChanged();
+
+        final Long currentRank = this.getCurrentRank();
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                notifyDataSetChanged();
+                mParent.setCurrentRank(currentRank);
+
+            }
+        });
 
     }
 

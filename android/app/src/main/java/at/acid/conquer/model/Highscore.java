@@ -10,7 +10,7 @@ import java.util.ArrayList;
 public class Highscore extends ArrayList<Highscore.HighscoreUser> {
     public HighscoreUser findSelf() {
         for (HighscoreUser user : this) {
-            if (user.getSelf() == true) {
+            if (user.getSelf()) {
                 return user;
             }
         }

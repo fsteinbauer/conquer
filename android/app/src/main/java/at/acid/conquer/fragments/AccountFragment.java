@@ -87,6 +87,13 @@ public class AccountFragment extends BaseClass implements View.OnClickListener{
     }
 
 
+
+    private void SendNameChange()
+    {
+
+    }
+
+
     private void handleEditButtonClick(){
         if(mEditMode){
             mEditMode = false;
@@ -95,6 +102,8 @@ public class AccountFragment extends BaseClass implements View.OnClickListener{
             mEditTextName.setVisibility(View.GONE);
 
             mUser.setName(mEditTextName.getText().toString());
+
+
             mUser.persist();
 
             mTextFieldName.setText(mUser.getName());

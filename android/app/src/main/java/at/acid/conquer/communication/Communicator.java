@@ -3,6 +3,8 @@ package at.acid.conquer.communication;
 
 import android.util.Log;
 
+import com.google.android.gms.cast.Cast;
+
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,6 +30,9 @@ public class Communicator {
         void onRequestTimeOut(Request r);
         void onRequestError(Request r);
     }
+
+
+
 
     public Communicator(CummunicatorClient client, String server_url){
         mClient = client;

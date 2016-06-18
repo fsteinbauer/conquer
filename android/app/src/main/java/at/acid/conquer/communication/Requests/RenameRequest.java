@@ -26,7 +26,7 @@ public class RenameRequest extends Request {
 
     @Override
     public String getURLExtension() {
-        return "rename/" + mUserID + "/" + mName;
+        return "/rename/" + mUserID + "/" + mName;
     }
 
     @Override

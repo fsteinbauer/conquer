@@ -14,6 +14,7 @@ import java.util.List;
 import at.acid.conquer.communication.Communicator;
 import at.acid.conquer.communication.Requests.AddScoreRequest;
 import at.acid.conquer.communication.Requests.RegisterRequest;
+import at.acid.conquer.communication.Requests.RenameRequest;
 import at.acid.conquer.communication.Requests.Request;
 
 /**
@@ -258,5 +259,28 @@ public class User {
 
     //----------------------------------------------------------------------------------------------
     public void setId(String id) { this.mId = id; }
-    public void setName(String name) { this.mName = name; }
+
+
+    private Communicator c3 = new Communicator(new Communicator.CummunicatorClient() {
+        @Override
+        public void onRequestReady(Request r) {
+
+        }
+
+        @Override
+        public void onRequestTimeOut(Request r) {
+
+        }
+
+        @Override
+        public void onRequestError(Request r) {
+
+        }
+    }, "http://conquer.menzi.at");
+    public void setName(String name) { this.mName = name;
+
+        RenameRequest ncr = new RenameRequest(this.getId(), name);
+
+        c3.sendRequest(ncr);
+    }
 }
