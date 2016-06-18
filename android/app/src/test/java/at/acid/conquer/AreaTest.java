@@ -7,7 +7,6 @@ import org.junit.Test;
 import java.util.ArrayList;
 import java.util.List;
 
-import at.acid.conquer.data.Areas;
 import at.acid.conquer.model.Area;
 
 import static org.junit.Assert.*;
