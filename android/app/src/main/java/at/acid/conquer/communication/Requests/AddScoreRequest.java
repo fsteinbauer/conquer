@@ -44,7 +44,7 @@ public class AddScoreRequest extends Request {
 
     @Override
     public String getURLExtension() {
-        return "addscore/" + mUserID + "/" + mArea + "/" + mPoints;
+        return "/addscore/" + mUserID + "/" + mArea + "/" + mPoints;
     }
 
     @Override

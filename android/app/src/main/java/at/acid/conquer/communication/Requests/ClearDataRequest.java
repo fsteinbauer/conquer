@@ -34,7 +34,7 @@ public class ClearDataRequest extends Request {
 
     @Override
     public String getURLExtension() {
-        return "cleardata";
+        return "/cleardata";
     }
 
     @Override

@@ -14,6 +14,9 @@ import android.widget.TextView;
 import at.acid.conquer.MainActivity;
 import at.acid.conquer.R;
 import at.acid.conquer.adapter.HistoryAdapter;
+import at.acid.conquer.communication.Communicator;
+import at.acid.conquer.communication.Requests.RegisterRequest;
+import at.acid.conquer.communication.Requests.Request;
 import at.acid.conquer.model.User;
 
 
@@ -58,6 +61,8 @@ public class AccountFragment extends BaseClass implements View.OnClickListener{
         mButtonEditName.setOnClickListener(this);
         mTextFieldName.setOnClickListener(this);
 
+this.registerUser();
+
         mTextFieldName.setText(mUser.getName());
         mEditTextName.setText(mUser.getName());
 
@@ -88,9 +93,43 @@ public class AccountFragment extends BaseClass implements View.OnClickListener{
 
 
 
-    private void SendNameChange()
+    public void registerUser()
     {
+        if(mUser.getId().isEmpty())
+        {
+                RegisterRequest rr = new RegisterRequest();
 
+                Communicator c = new Communicator(new Communicator.CummunicatorClient() {
+                    @Override
+                    public void onRequestReady(Request r) {
+                        RegisterRequest rr = (RegisterRequest) r;
+
+                        if(rr.getResult().mSuccess != Request.ReturnValue.SUCCESS)
+                        {
+                            return;
+                        }
+
+                        mUser.setId(rr.getResult().mID);
+
+                        mUser.setName(rr.getResult().mName);
+
+                        mTextFieldName.setText(mUser.getName());
+                    }
+
+                    @Override
+                    public void onRequestTimeOut(Request r) {
+
+                    }
+
+                    @Override
+                    public void onRequestError(Request r) {
+
+                    }
+                }, "http://conquer.menzi.at");
+
+            c.sendRequest(rr);
+
+        }
     }
 
 
@@ -101,7 +140,7 @@ public class AccountFragment extends BaseClass implements View.OnClickListener{
             mTextFieldName.setVisibility(View.VISIBLE);
             mEditTextName.setVisibility(View.GONE);
 
-            mUser.setName(mEditTextName.getText().toString());
+            mUser.changeName(mEditTextName.getText().toString());
 
 
             mUser.persist();
@@ -146,4 +185,6 @@ public class AccountFragment extends BaseClass implements View.OnClickListener{
         mTVPoints.setText(Integer.toString(points));
         mTVDuration.setText(String.format("%d:%02d:%02d", hour, minute, second));
     }
+
+
 }

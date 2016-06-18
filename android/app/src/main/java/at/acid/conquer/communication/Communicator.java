@@ -58,6 +58,7 @@ public class Communicator {
                     final java.net.URL url = new URL(mServerUrl + req.getURLExtension());
 
                     HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+                    Log.d(TAG, "Sending request:" + url.toString());
                     urlConnection.setConnectTimeout(5000);
                     urlConnection.setReadTimeout(5000);
                     try {

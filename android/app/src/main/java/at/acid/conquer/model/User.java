@@ -72,8 +72,8 @@ public class User {
         public void onRequestReady(Request r) {
             RegisterRequest rr = (RegisterRequest) r;
 
-            setId(rr.getResult().mID);
-            setName(rr.getResult().mName);
+            mId = rr.getResult().mID;
+            mName = rr.getResult().mName;
         }
 
         @Override
@@ -110,12 +110,7 @@ public class User {
         mName = store.getString("name", "Name");
         mId = store.getString("id", "");
 
-        if(mId.isEmpty())
-        {
-            RegisterRequest rr = new RegisterRequest();
 
-            c.sendRequest(rr);
-        }
         mLastAvtivity = store.getLong("last_activity", 0);
         mLastServerConnect = store.getLong("last_server_connect", 0);
 
@@ -277,10 +272,16 @@ public class User {
 
         }
     }, "http://conquer.menzi.at");
-    public void setName(String name) { this.mName = name;
 
+
+    public void changeName(String name){
+        this.setName(name);
         RenameRequest ncr = new RenameRequest(this.getId(), name);
 
         c3.sendRequest(ncr);
+    }
+    public void setName(String name) { this.mName = name;
+
+
     }
 }
