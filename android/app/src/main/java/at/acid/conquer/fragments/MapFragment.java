@@ -286,6 +286,8 @@ public class MapFragment extends BaseClass implements View.OnClickListener, OnMa
                 mRoute.getDistance(),
                 (long)mRoute.getDistance() / 10);
         user.saveData();
+
+        user.updateScore();
     }
 
     //----------------------------------------------------------------------------------------------

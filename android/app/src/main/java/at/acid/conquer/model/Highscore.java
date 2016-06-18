@@ -1,31 +1,39 @@
 package at.acid.conquer.model;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
 
 /**
  * Created by Annie on 18/05/2016.
  */
 
 
+public class Highscore extends ArrayList<Highscore.HighscoreUser> {
 
-public class Highscore extends HashMap<Long, Highscore.HighscoreUser> {
 
+    public HighscoreUser findSelf() {
+
+        for (HighscoreUser user : this) {
+            if (user.getSelf() == true) {
+                return user;
+            }
+        }
+        return null;
+    }
 
     public static class HighscoreUser {
         final private String mUsername;
         final private Long mPoints;
         final private Boolean mSelf;
 
+        final private long mRank;
 
 
-        public HighscoreUser(String name, long points, boolean self) {
+        public HighscoreUser(String name, long points, boolean self, long rank) {
 
             mSelf = self;
             mUsername = name;
             mPoints = points;
+            mRank = rank;
         }
 
 
@@ -34,13 +42,18 @@ public class Highscore extends HashMap<Long, Highscore.HighscoreUser> {
         }
 
 
-        public long getPoints(){
+        public Long getPoints() {
             return mPoints;
         }
 
-        public boolean getSelf ()
-        {
+        public boolean getSelf() {
+
             return mSelf;
+
+        }
+
+        public Long getRank() {
+            return mRank;
         }
     }
 }

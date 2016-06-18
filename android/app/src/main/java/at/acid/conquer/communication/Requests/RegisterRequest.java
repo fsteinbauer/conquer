@@ -14,16 +14,13 @@ public class RegisterRequest extends Request {
 
     final static String TAG = "RegisterRequest";
 
-    // final double mLatitude;
-    //final double mLongitude;
 
     private Result mResult;
 
     public RegisterRequest() {
         this.mResult = new Result();
         this.mResult.mSuccess = ReturnValue.NOT_INITIALIZED;
-        // mLatitude = latitude;
-        //mLongitude = longitude;
+
     }
 
     public Result getResult() {
@@ -39,6 +36,11 @@ public class RegisterRequest extends Request {
 
     }
 
+
+    @Override
+    public void setSuccess(ReturnValue success) {
+        mResult.mSuccess = success;
+    }
 
     @Override
     public String getURLExtension() {
@@ -71,10 +73,7 @@ public class RegisterRequest extends Request {
 
     }
 
-    @Override
-    public void setSuccess(ReturnValue success) {
-        this.mResult.mSuccess = success;
-    }
+
 
 
 }

@@ -14,12 +14,23 @@ public class ClearDataRequest extends Request {
 
     private final Result mResult;
 
+
+    public static class Result
+    {
+        public ReturnValue mSuccess;
+    }
+
     public ClearDataRequest() {
         mResult = new Result();
         mResult.mSuccess = ReturnValue.NOT_INITIALIZED;
 
     }
 
+
+    @Override
+    public void setSuccess(ReturnValue success) {
+        mResult.mSuccess = success;
+    }
 
     @Override
     public String getURLExtension() {
@@ -33,8 +44,7 @@ public class ClearDataRequest extends Request {
             if(obj.getBoolean("success"))
             {
                 mResult.mSuccess = ReturnValue.SUCCESS;
-            }else
-            {
+            } else {
                 mResult.mSuccess = ReturnValue.DATABASE_ERROR;
             }
         } catch (JSONException e) {
@@ -45,16 +55,8 @@ public class ClearDataRequest extends Request {
 
     }
 
-    @Override
-    public void setSuccess(ReturnValue success) {
-        mResult.mSuccess = success;
-    }
 
-    public Result getResult() {
-        return mResult;
-    }
-
-    public static class Result {
-        public ReturnValue mSuccess;
+    public ReturnValue getResult() {
+        return mResult.mSuccess;
     }
 }

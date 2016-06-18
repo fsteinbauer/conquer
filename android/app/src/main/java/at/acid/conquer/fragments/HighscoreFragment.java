@@ -1,5 +1,6 @@
 package at.acid.conquer.fragments;
 
+import android.content.SyncAdapterType;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +14,7 @@ import at.acid.conquer.Pair;
 import at.acid.conquer.R;
 import at.acid.conquer.adapter.RankingAdapter;
 import at.acid.conquer.adapter.SpinnerAdapter;
+import at.acid.conquer.model.Highscore;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,10 +29,19 @@ public class HighscoreFragment extends BaseClass implements AdapterView.OnItemSe
 
     private SpinnerAdapter mAreaAdapter;
     private RankingAdapter mHighscoreAdapter;
+
+
+
+    public RankingAdapter getRanking()
+    {
+        return mHighscoreAdapter;
+    }
     private TextView mTVCurrentRank;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
+
+
 
         View rootView = inflater.inflate(R.layout.fragment_highscores, container, false);
         Spinner spinnerCity = (Spinner) rootView.findViewById(R.id.spinner_city);
@@ -41,20 +52,29 @@ public class HighscoreFragment extends BaseClass implements AdapterView.OnItemSe
         mAreaAdapter = new SpinnerAdapter(getContext());
 
         List<String> areaNames = ((MainActivity) getActivity()).areaNames;
+        mAreaAdapter.addItem("Graz");
         mAreaAdapter.addItems(areaNames);
         spinnerCity.setAdapter(mAreaAdapter);
         spinnerCity.setOnItemSelectedListener(this);
 
-        mHighscoreAdapter = new RankingAdapter(getContext());
+        mHighscoreAdapter = new RankingAdapter(getContext(),((MainActivity) getActivity()).getUser());
 
-        // TODO: remove this line if dummy data are not needed
-        mHighscoreAdapter.addAll(createDummyData(areaNames));
+       setCurrentRank(mHighscoreAdapter.getCurrentRank());
+
+
+
+        //// TODO: remove this line if dummy data are not needed
+        //mHighscoreAdapter.addAll(createDummyData(areaNames));
 
         listviewHighscore.setAdapter(mHighscoreAdapter);
 
         listviewHighscore.setEmptyView(tvEmptyHighscore);
+
+
         return rootView;
     }
+
+
 
     private HashMap<String, List<Pair>> createDummyData(List<String> areaNames){
         String[] names = {"Robena", "Isela", "Jake", "Margarete", "Hyo", "Yael", "Winnifred", "Kimberely", "Arleen", "Merilyn", "Vergie", "Isidro", "Sixta", "Harriett", "Alden", "Mai", "Lara", "Romelia", "Golden", "Nancy"};
@@ -84,7 +104,7 @@ public class HighscoreFragment extends BaseClass implements AdapterView.OnItemSe
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id){
-        mHighscoreAdapter.setCurrentArea(mAreaAdapter.getItem(position));
+        mHighscoreAdapter.setCurrentArea(mAreaAdapter.getItem(position), position);
     }
 
 
@@ -93,8 +113,19 @@ public class HighscoreFragment extends BaseClass implements AdapterView.OnItemSe
 
     }
 
+    public void setCurrentRank(Long rank)
+    {
+        if(rank == null)
+        {
+            this.mTVCurrentRank.setText("-");
+            return;
+        }
+        this.mTVCurrentRank.setText(rank.toString());
+    }
+
     @Override
     public void onFragmentSelected(){
+
         // TODO: get highscores from server -> mHighscoreAdapter.updateItems(); -> set mTVCurrentRank
         mHighscoreAdapter.notifyDataSetChanged();
     }

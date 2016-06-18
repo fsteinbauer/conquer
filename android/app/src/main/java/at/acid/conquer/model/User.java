@@ -11,6 +11,11 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import at.acid.conquer.communication.Communicator;
+import at.acid.conquer.communication.Requests.AddScoreRequest;
+import at.acid.conquer.communication.Requests.RegisterRequest;
+import at.acid.conquer.communication.Requests.Request;
+
 /**
  * Created by florian on 10.05.2016.
  */
@@ -61,6 +66,27 @@ public class User {
     private String mName;
 
 
+    private Communicator c = new Communicator(new Communicator.CummunicatorClient() {
+        @Override
+        public void onRequestReady(Request r) {
+            RegisterRequest rr = (RegisterRequest) r;
+
+            setId(rr.getResult().mID);
+            setName(rr.getResult().mName);
+        }
+
+        @Override
+        public void onRequestTimeOut(Request r) {
+
+        }
+
+        @Override
+        public void onRequestError(Request r) {
+
+        }
+    }, "http://conquer.menzi.at");
+
+
     private SparseArray<AreaStore> mAreas = new SparseArray<AreaStore>();
     private List<RouteStore> mRoutes = new ArrayList<RouteStore>();
     private long mLastAvtivity;
@@ -82,6 +108,13 @@ public class User {
         String areasJson = store.getString("areas", "[]");
         mName = store.getString("name", "Name");
         mId = store.getString("id", "");
+
+        if(mId.isEmpty())
+        {
+            RegisterRequest rr = new RegisterRequest();
+
+            c.sendRequest(rr);
+        }
         mLastAvtivity = store.getLong("last_activity", 0);
         mLastServerConnect = store.getLong("last_server_connect", 0);
 
@@ -145,6 +178,33 @@ public class User {
         //Log.d(TAG, areas.toString());
 
         return store.commit();
+    }
+
+
+    Communicator c2 = new Communicator(new Communicator.CummunicatorClient() {
+        @Override
+        public void onRequestReady(Request r) {
+
+        }
+
+        @Override
+        public void onRequestTimeOut(Request r) {
+
+        }
+
+        @Override
+        public void onRequestError(Request r) {
+
+        }
+    }, "http://conquer.menzi.at");
+
+    public void updateScore() {
+        for(int i = 0; i < this.mAreas.size(); i++)
+        {
+            AreaStore r = this.mAreas.valueAt(i);
+            c2.sendRequest(new AddScoreRequest(this.getId(), r.mPoints, r.mId ));
+        }
+
     }
 
     //----------------------------------------------------------------------------------------------
