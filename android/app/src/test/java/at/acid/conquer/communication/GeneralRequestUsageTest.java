@@ -42,18 +42,17 @@ public class GeneralRequestUsageTest implements Communicator.CummunicatorClient 
         if(r instanceof RegisterRequest){
             RegisterRequest.Result result = ((RegisterRequest) r).getResult();
             mUsers.add(result.mID);
-
         }
     }
 
     @Override
     public void onRequestTimeOut(Request r) {
-        System.out.println("onRequestTimeOut: " + r.getClass().getName());
+        Assert.fail("onRequestTimeOut: " + r.getClass().getName());
     }
 
     @Override
     public void onRequestError(Request r) {
-        System.out.println("onRequestError: " + r.getClass().getName());
+        Assert.fail("onRequestError: " + r.getClass().getName());
     }
 
     @Before
@@ -90,7 +89,6 @@ public class GeneralRequestUsageTest implements Communicator.CummunicatorClient 
         }
 
         Assert.assertEquals(NUM_USERS, mFinishedRequests);
-        Thread.sleep(500);
     }
 
     @Test
@@ -116,7 +114,6 @@ public class GeneralRequestUsageTest implements Communicator.CummunicatorClient 
         }
 
         Assert.assertEquals(NUM_USERS, mFinishedRequests);
-        Thread.sleep(500);
     }
 
     @Test
@@ -143,7 +140,6 @@ public class GeneralRequestUsageTest implements Communicator.CummunicatorClient 
         }
 
         Assert.assertEquals(NUM_USERS, mFinishedRequests);
-        Thread.sleep(500);
     }
 
     @Test
@@ -153,7 +149,7 @@ public class GeneralRequestUsageTest implements Communicator.CummunicatorClient 
         mFinishedRequests = 0;
 
         int area = 6;
-        String user = mUsers.get(NUM_USERS-7);
+        String user = mUsers.get(NUM_USERS-7-1);
 
         HighscoreRequest r = new HighscoreRequest(area, user);
         mComm.sendRequest(r);
@@ -170,10 +166,8 @@ public class GeneralRequestUsageTest implements Communicator.CummunicatorClient 
             Assert.assertEquals(rank, score.getRank());
             Assert.assertEquals(points, score.getPoints());
             Assert.assertEquals("User_" + id, score.getUsername());
-            /*if( rank == 8 )
-                Assert.assertEquals(true, score.getSelf());
-            else
-                Assert.assertEquals(false, score.getSelf());*/
+            System.out.println(id + " - " + score.getSelf());
+            Assert.assertEquals(id == NUM_USERS-7, score.getSelf());
             rank++;
             id--;
             points /= 2;
