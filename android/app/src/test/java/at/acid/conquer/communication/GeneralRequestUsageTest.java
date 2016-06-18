@@ -166,7 +166,6 @@ public class GeneralRequestUsageTest implements Communicator.CummunicatorClient 
             Assert.assertEquals(rank, score.getRank());
             Assert.assertEquals(points, score.getPoints());
             Assert.assertEquals("User_" + id, score.getUsername());
-            System.out.println(id + " - " + score.getSelf());
             Assert.assertEquals(id == NUM_USERS-7, score.getSelf());
             rank++;
             id--;
