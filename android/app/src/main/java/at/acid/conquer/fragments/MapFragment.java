@@ -258,7 +258,7 @@ public class MapFragment extends BaseClass implements View.OnClickListener, OnMa
 
         if( mCurrentArea != null ) {
             User user = mMainActivity.getUser();
-            user.updateArea(mCurrentArea.getId(), distance, (long)distance / 10);
+            user.updateArea(mCurrentArea.getId(), distance, (long)distance / 100);
         }
 
         mLastLocation = loc;

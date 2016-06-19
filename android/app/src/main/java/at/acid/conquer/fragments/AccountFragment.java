@@ -11,7 +11,6 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
-import at.acid.conquer.MainActivity;
 import at.acid.conquer.R;
 import at.acid.conquer.adapter.HistoryAdapter;
 import at.acid.conquer.communication.Communicator;
@@ -39,6 +38,7 @@ public class AccountFragment extends BaseClass implements View.OnClickListener{
 
 
     private User mUser;
+
     public AccountFragment(){}
 
 
@@ -55,12 +55,8 @@ public class AccountFragment extends BaseClass implements View.OnClickListener{
         mTVPoints = (TextView) rootView.findViewById(R.id.tv_trackinginfo_info_points);
         mTVDuration = (TextView) rootView.findViewById(R.id.tv_trackinginfo_info_duration);
 
-
-
         mButtonEditName.setOnClickListener(this);
         mTextFieldName.setOnClickListener(this);
-
-
 
         mTextFieldName.setText(mUser.getName());
         mEditTextName.setText(mUser.getName());
@@ -74,8 +70,7 @@ public class AccountFragment extends BaseClass implements View.OnClickListener{
         return rootView;
     }
 
-    public void setUser(User user)
-    {
+    public void setUser(User user){
         mUser = user;
     }
 
@@ -96,40 +91,34 @@ public class AccountFragment extends BaseClass implements View.OnClickListener{
     }
 
 
+    public void registerUser(){
+        if(mUser.getId().isEmpty()){
+            RegisterRequest rr = new RegisterRequest();
 
-    public void registerUser()
-    {
-        if(mUser.getId().isEmpty())
-        {
-                RegisterRequest rr = new RegisterRequest();
+            Communicator c = new Communicator(new Communicator.CummunicatorClient(){
+                @Override
+                public void onRequestReady(Request r){
+                    RegisterRequest rr = (RegisterRequest) r;
 
-                Communicator c = new Communicator(new Communicator.CummunicatorClient() {
-                    @Override
-                    public void onRequestReady(Request r) {
-                        RegisterRequest rr = (RegisterRequest) r;
-
-                        if(rr.getResult().mSuccess != Request.ReturnValue.SUCCESS)
-                        {
-                            return;
-                        }
-
-                        mUser.setId(rr.getResult().mID);
-
-                        mUser.setName(rr.getResult().mName);
-
-                        mTextFieldName.setText(mUser.getName());
+                    if(rr.getResult().mSuccess != Request.ReturnValue.SUCCESS){
+                        return;
                     }
 
-                    @Override
-                    public void onRequestTimeOut(Request r) {
+                    mUser.setId(rr.getResult().mID);
+                    mUser.setName(rr.getResult().mName);
+                    mTextFieldName.setText(mUser.getName());
+                }
 
-                    }
+                @Override
+                public void onRequestTimeOut(Request r){
 
-                    @Override
-                    public void onRequestError(Request r) {
+                }
 
-                    }
-                }, "http://conquer.menzi.at");
+                @Override
+                public void onRequestError(Request r){
+
+                }
+            }, "http://conquer.menzi.at");
 
             c.sendRequest(rr);
 
@@ -145,15 +134,10 @@ public class AccountFragment extends BaseClass implements View.OnClickListener{
             mEditTextName.setVisibility(View.GONE);
 
             mUser.changeName(mEditTextName.getText().toString());
-
-
-            mUser.persist();
-
             mTextFieldName.setText(mUser.getName());
 
             InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(mTextFieldName.getWindowToken(), 0);
-
 
         } else{
             mEditMode = true;
@@ -185,10 +169,8 @@ public class AccountFragment extends BaseClass implements View.OnClickListener{
         long minute = (duration / (1000 * 60)) % 60;
         long hour = (duration / (1000 * 60 * 60));
 
-        mTVDistance.setText(String.format("%.2fkm",meters/1000));
+        mTVDistance.setText(String.format("%.2fkm", meters / 1000));
         mTVPoints.setText(Integer.toString(points));
         mTVDuration.setText(String.format("%d:%02d:%02d", hour, minute, second));
     }
-
-
 }
