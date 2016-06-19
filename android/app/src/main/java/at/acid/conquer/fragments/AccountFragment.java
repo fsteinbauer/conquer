@@ -55,13 +55,12 @@ public class AccountFragment extends BaseClass implements View.OnClickListener{
         mTVPoints = (TextView) rootView.findViewById(R.id.tv_trackinginfo_info_points);
         mTVDuration = (TextView) rootView.findViewById(R.id.tv_trackinginfo_info_duration);
 
-        mUser = ((MainActivity) getActivity()).getUser();
 
 
         mButtonEditName.setOnClickListener(this);
         mTextFieldName.setOnClickListener(this);
 
-this.registerUser();
+
 
         mTextFieldName.setText(mUser.getName());
         mEditTextName.setText(mUser.getName());
@@ -73,6 +72,11 @@ this.registerUser();
         history.setEmptyView(tvEmptyHistory);
 
         return rootView;
+    }
+
+    public void setUser(User user)
+    {
+        mUser = user;
     }
 
     @Override

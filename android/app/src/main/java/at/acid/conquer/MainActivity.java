@@ -37,7 +37,6 @@ public class MainActivity extends FragmentActivity implements TabLayout.OnTabSel
         //Log.d(TAG, "Got to Line: " + Thread.currentThread().getStackTrace()[2].getLineNumber());
         areaNames = new ArrayList<>();
 
-        mUser = new User(getBaseContext());
         //mUser.clearStoredData();
 
         initGUIElements();
@@ -58,6 +57,15 @@ public class MainActivity extends FragmentActivity implements TabLayout.OnTabSel
                 .hide(mAccountFragment)
                 .commit();
 
+
+        mUser = new User(getBaseContext());
+
+        Log.d(TAG, "Username: " + mUser.getName());
+        mAccountFragment.setUser(mUser);
+        mAccountFragment.registerUser();
+
+
+        Log.d(TAG, "Username: " + mUser.getName());
         mTabLayout = (TabLayout) findViewById(R.id.tl_tabs);
         mTabLayout.setOnTabSelectedListener(this);
     }

@@ -276,6 +276,7 @@ public class User {
 
     public void changeName(String name){
         this.setName(name);
+        this.saveData();
         RenameRequest ncr = new RenameRequest(this.getId(), name);
 
         c3.sendRequest(ncr);
