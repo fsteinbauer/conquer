@@ -12,10 +12,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import at.acid.conquer.communication.Communicator;
-import at.acid.conquer.communication.Requests.AddScoreRequest;
 import at.acid.conquer.communication.Requests.RegisterRequest;
 import at.acid.conquer.communication.Requests.RenameRequest;
 import at.acid.conquer.communication.Requests.Request;
+import at.acid.conquer.communication.Requests.SetScoreRequest;
 
 /**
  * Created by florian on 10.05.2016.
@@ -198,7 +198,7 @@ public class User {
         for(int i = 0; i < this.mAreas.size(); i++)
         {
             AreaStore r = this.mAreas.valueAt(i);
-            c2.sendRequest(new AddScoreRequest(this.getId(), r.mPoints, r.mId ));
+            c2.sendRequest(new SetScoreRequest(this.getId(), r.mPoints, r.mId ));
         }
 
     }

@@ -21,9 +21,14 @@ class DB{
       throw new Exception("invalid query: {$this->mysqli->error}");
     do {
       $result = $this->mysqli->store_result();
+      if( $this->mysqli->error )
+        throw new Exception("invalid query: {$this->mysqli->error}");
     } while ( $this->mysqli->more_results() && $this->mysqli->next_result());
     if( $last_result and !$result)
         throw new Exception("invalid query: {$this->mysqli->error}");
+    if( $this->mysqli->error )
+        throw new Exception("invalid query: {$this->mysqli->error}");
+    
     return $result;
   }
   

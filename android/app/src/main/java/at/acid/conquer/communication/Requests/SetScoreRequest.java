@@ -2,18 +2,15 @@ package at.acid.conquer.communication.Requests;
 
 import android.util.Log;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import at.acid.conquer.model.Highscore;
 
 /**
  * Created by Annie on 17/06/2016.
  */
-public class AddScoreRequest extends Request {
+public class SetScoreRequest extends Request {
 
-    private final String TAG = "AddScoreRequest";
+    private final String TAG = "SetScoreRequest";
 
     private final long mPoints;
     private final String mUserID;
@@ -22,14 +19,13 @@ public class AddScoreRequest extends Request {
 
     private final int mArea;
 
-    public AddScoreRequest(String userID, long Points, int Area) {
+    public SetScoreRequest(String userID, long Points, int Area) {
         if (Points < 0) {
             throw new IllegalArgumentException("Points may not be negative!");
 
         }
         if (Area <= 0) {
             throw new IllegalArgumentException("Area must be > 0!");
-
         }
         mPoints = Points;
 
@@ -44,7 +40,7 @@ public class AddScoreRequest extends Request {
 
     @Override
     public String getURLExtension() {
-        return "/addscore/" + mUserID + "/" + mArea + "/" + mPoints;
+        return "/setscore/" + mUserID + "/" + mArea + "/" + mPoints;
     }
 
     @Override
