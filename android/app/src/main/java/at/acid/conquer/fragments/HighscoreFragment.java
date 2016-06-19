@@ -61,7 +61,7 @@ public class HighscoreFragment extends BaseClass implements AdapterView.OnItemSe
 
 
 
-       setCurrentRank(mHighscoreAdapter.getCurrentRank());
+
 
 
 
@@ -135,6 +135,10 @@ public class HighscoreFragment extends BaseClass implements AdapterView.OnItemSe
     @Override
     public void onFragmentSelected(){
 
+        mHighscoreAdapter.setCurrentArea("Graz", 0);
+
+
+        setCurrentRank(mHighscoreAdapter.getCurrentRank());
         // TODO: get highscores from server -> mHighscoreAdapter.updateItems(); -> set mTVCurrentRank
         mHighscoreAdapter.notifyDataSetChanged();
     }
