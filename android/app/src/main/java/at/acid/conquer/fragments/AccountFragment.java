@@ -35,7 +35,8 @@ public class AccountFragment extends BaseClass implements View.OnClickListener{
     private TextView mTVDistance;
     private TextView mTVPoints;
     private TextView mTVDuration;
-
+    private ListView mLVHistory;
+    private TextView mTVEmptyList;
 
     private User mUser;
 
@@ -48,8 +49,8 @@ public class AccountFragment extends BaseClass implements View.OnClickListener{
         mButtonEditName = (ImageButton) rootView.findViewById(R.id.ib_name_edit);
         mTextFieldName = (TextView) rootView.findViewById(R.id.tv_profile_name);
         mEditTextName = (EditText) rootView.findViewById(R.id.et_profile_name);
-        ListView history = (ListView) rootView.findViewById(R.id.lv_history);
-        TextView tvEmptyHistory = (TextView) rootView.findViewById(R.id.tv_empty_history);
+        mLVHistory = (ListView) rootView.findViewById(R.id.lv_history);
+        mTVEmptyList = (TextView) rootView.findViewById(R.id.tv_empty_history);
 
         mTVDistance = (TextView) rootView.findViewById(R.id.tv_trackinginfo_info_distance);
         mTVPoints = (TextView) rootView.findViewById(R.id.tv_trackinginfo_info_points);
@@ -58,15 +59,15 @@ public class AccountFragment extends BaseClass implements View.OnClickListener{
         mButtonEditName.setOnClickListener(this);
         mTextFieldName.setOnClickListener(this);
 
+        mEditMode = false;
+
         mTextFieldName.setText(mUser.getName());
         mEditTextName.setText(mUser.getName());
 
-        mEditMode = false;
-
         mHistoryAdapter = new HistoryAdapter(getContext(), mUser.getRoutes());
-        history.setAdapter(mHistoryAdapter);
-        history.setEmptyView(tvEmptyHistory);
 
+        mLVHistory.setAdapter(mHistoryAdapter);
+        mLVHistory.setEmptyView(mTVEmptyList);
         return rootView;
     }
 
@@ -171,6 +172,6 @@ public class AccountFragment extends BaseClass implements View.OnClickListener{
 
         mTVDistance.setText(String.format("%.2fkm", meters / 1000));
         mTVPoints.setText(Integer.toString(points));
-        mTVDuration.setText(String.format("%d:%02d:%02d", hour, minute, second));
+        mTVDuration.setText(String.format("%02d:%02d:%02d", hour, minute, second));
     }
 }

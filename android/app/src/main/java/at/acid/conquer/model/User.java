@@ -106,7 +106,7 @@ public class User {
 
         String routesJson = store.getString("routes", "[]");
         String areasJson = store.getString("areas", "[]");
-        mName = store.getString("name", "Name");
+        mName = store.getString("name", "John Doe");
         mId = store.getString("id", "");
 
 

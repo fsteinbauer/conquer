@@ -13,7 +13,7 @@ import at.acid.conquer.model.User;
 import java.util.ArrayList;
 
 
-public class MainActivity extends FragmentActivity implements TabLayout.OnTabSelectedListener {
+public class MainActivity extends FragmentActivity implements TabLayout.OnTabSelectedListener{
     public static final String TAG = "MapsActivity";
     public static final int TAB_MAP = 0;
     public static final int TAB_HIGHSCORE = 1;
@@ -30,7 +30,7 @@ public class MainActivity extends FragmentActivity implements TabLayout.OnTabSel
 
 
     @Override//-------------------------------------------------------------------------------------
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
         //?
@@ -38,66 +38,53 @@ public class MainActivity extends FragmentActivity implements TabLayout.OnTabSel
         areaNames = new ArrayList<>();
 
         //mUser.clearStoredData();
-
+        mUser = new User(getBaseContext());
         initGUIElements();
     }
 
+    @Override
+    protected void onStart(){
+        super.onStart();
+        Log.d(TAG, "Username: " + mUser.getName());
+        mAccountFragment.registerUser();
+        Log.d(TAG, "Username: " + mUser.getName());
+    }
+
     //----------------------------------------------------------------------------------------------
-    private void initGUIElements() {
+    private void initGUIElements(){
         mMapFragment = new MapFragment();
         mHighscoreFragment = new HighscoreFragment();
+
         mAccountFragment = new AccountFragment();
+        mAccountFragment.setUser(mUser);
+
         mCurrentFragment = mMapFragment;
 
-        getSupportFragmentManager().beginTransaction()
-                .add(R.id.fl_fragment_container, mMapFragment)
-                .add(R.id.fl_fragment_container, mHighscoreFragment)
-                .add(R.id.fl_fragment_container, mAccountFragment)
-                .hide(mHighscoreFragment)
-                .hide(mAccountFragment)
-                .commit();
+        getSupportFragmentManager().beginTransaction().add(R.id.fl_fragment_container, mMapFragment).add(R.id.fl_fragment_container, mHighscoreFragment).add(R.id.fl_fragment_container, mAccountFragment).hide(mHighscoreFragment).hide(mAccountFragment).commit();
 
-
-        mUser = new User(getBaseContext());
-
-        Log.d(TAG, "Username: " + mUser.getName());
-        mAccountFragment.setUser(mUser);
-        mAccountFragment.registerUser();
-
-
-        Log.d(TAG, "Username: " + mUser.getName());
         mTabLayout = (TabLayout) findViewById(R.id.tl_tabs);
         mTabLayout.setOnTabSelectedListener(this);
     }
 
     @Override//-------------------------------------------------------------------------------------
-    public void onTabSelected(TabLayout.Tab tab) {
+    public void onTabSelected(TabLayout.Tab tab){
         final int position = tab.getPosition();
 
-        switch (position) {
+        switch(position){
             case TAB_MAP:
                 Log.d(TAG, "Maps clicked");
-                getSupportFragmentManager().beginTransaction()
-                        .hide(mCurrentFragment)
-                        .show(mMapFragment)
-                        .commit();
+                getSupportFragmentManager().beginTransaction().hide(mCurrentFragment).show(mMapFragment).commit();
                 mCurrentFragment = mMapFragment;
                 break;
 
             case TAB_HIGHSCORE:
                 Log.d(TAG, "Highscores clicked");
-                getSupportFragmentManager().beginTransaction()
-                        .hide(mCurrentFragment)
-                        .show(mHighscoreFragment)
-                        .commit();
+                getSupportFragmentManager().beginTransaction().hide(mCurrentFragment).show(mHighscoreFragment).commit();
                 mCurrentFragment = mHighscoreFragment;
                 break;
             case TAB_ACCOUNT:
                 Log.d(TAG, "Account clicked");
-                getSupportFragmentManager().beginTransaction()
-                        .hide(mCurrentFragment)
-                        .show(mAccountFragment)
-                        .commit();
+                getSupportFragmentManager().beginTransaction().hide(mCurrentFragment).show(mAccountFragment).commit();
                 mCurrentFragment = mAccountFragment;
                 break;
         }
@@ -105,13 +92,13 @@ public class MainActivity extends FragmentActivity implements TabLayout.OnTabSel
     }
 
     @Override//-------------------------------------------------------------------------------------
-    public void onTabUnselected(TabLayout.Tab tab) {
+    public void onTabUnselected(TabLayout.Tab tab){
     }
 
     @Override//-------------------------------------------------------------------------------------
-    public void onTabReselected(TabLayout.Tab tab) {
+    public void onTabReselected(TabLayout.Tab tab){
     }
 
     //----------------------------------------------------------------------------------------------
-    public User getUser() { return mUser; }
+    public User getUser(){ return mUser; }
 }
