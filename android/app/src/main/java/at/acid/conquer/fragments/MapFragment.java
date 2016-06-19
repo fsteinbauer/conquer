@@ -1,14 +1,18 @@
 package at.acid.conquer.fragments;
 
+import android.Manifest;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
@@ -78,6 +82,8 @@ public class MapFragment extends BaseClass implements View.OnClickListener, OnMa
     private GoogleMap mGoogleMap;
     private LocationService mLocationService;
 
+    public static final int MY_LOCATION_PERMISSION = 7;
+
     // handle bidirection connection to LocationService
     private ServiceConnection mLocationServiceConnection = new ServiceConnection() {
         @Override
@@ -126,8 +132,38 @@ public class MapFragment extends BaseClass implements View.OnClickListener, OnMa
 
         updateInfo();
 
+
+
         return rootView;
     }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        Log.d(TAG, "result");
+        switch (requestCode) {
+            case MY_LOCATION_PERMISSION: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+
+                } else {
+
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                }
+                return;
+            }
+
+            // other 'case' lines to check for other
+            // permissions this app might request
+        }
+    }
+
+
 
 
     @Override//-------------------------------------------------------------------------------------
@@ -143,7 +179,7 @@ public class MapFragment extends BaseClass implements View.OnClickListener, OnMa
 
                 } else {
                     mIsRunning = true;
-                    startTracking();
+                    tryStartTracking();
                     mFABTrackingInfo.setImageResource(R.drawable.ic_hotel);
 //                    mFABTrackingInfo.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(v.getContext(), R.color.red)));
                 }
@@ -256,9 +292,49 @@ public class MapFragment extends BaseClass implements View.OnClickListener, OnMa
                 .title("me"));
     }
 
+
+    public void tryStartTracking(){
+
+        Log.d(TAG, "try start tracking");
+        if ( ContextCompat.checkSelfPermission(mMainActivity,
+                Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED){
+
+            Log.d(TAG, "permission not granted");
+
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(mMainActivity,
+                    Manifest.permission.ACCESS_FINE_LOCATION)) {
+
+                // Show an expanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+                Log.d(TAG, "permission not granted1");
+                return;
+
+            } else {
+
+                // No explanation needed, we can request the permission.
+
+                ActivityCompat.requestPermissions(mMainActivity,
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, MY_LOCATION_PERMISSION
+                );
+                Log.d(TAG, "permission not granted2");
+                return;
+
+                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+                // app-defined int constant. The callback method gets the
+                // result of the request.
+            }
+        }
+        startTracking();
+    }
+
     //----------------------------------------------------------------------------------------------
     public void startTracking() {
         Log.d(TAG, "startTracking()");
+
+
         Context context = getContext();
         Intent intent = new Intent(context, LocationService.class);
         context.startService(intent);
