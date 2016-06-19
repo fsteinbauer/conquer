@@ -284,7 +284,7 @@ public class MapFragment extends BaseClass implements View.OnClickListener, OnMa
         user.addRoute(mRoute.getStartTime(),
                 mRoute.getRunTime(),
                 mRoute.getDistance(),
-                (long)mRoute.getDistance() / 10);
+                (long)mRoute.getDistance() / 100);
         user.saveData();
 
         user.updateScore();
@@ -302,7 +302,7 @@ public class MapFragment extends BaseClass implements View.OnClickListener, OnMa
 
     //----------------------------------------------------------------------------------------------
     public void updateInfo() {
-        String areaName = "unknown";
+        String areaName = "Unknown Area";
         String points = "0";
         String distance = "0.00";
 

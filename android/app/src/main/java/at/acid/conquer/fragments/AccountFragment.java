@@ -128,7 +128,7 @@ public class AccountFragment extends BaseClass implements View.OnClickListener{
     }
 
     private void updateOverallHighscore(){
-        long meters = 0L;
+        double meters = 0L;
         int points = 0;
         long duration = 0L;
 
@@ -142,7 +142,7 @@ public class AccountFragment extends BaseClass implements View.OnClickListener{
         long minute = (duration / (1000 * 60)) % 60;
         long hour = (duration / (1000 * 60 * 60));
 
-        mTVDistance.setText(Long.toString(meters/1000) + "km");
+        mTVDistance.setText(String.format("%.2fkm",meters/1000));
         mTVPoints.setText(Integer.toString(points));
         mTVDuration.setText(String.format("%d:%02d:%02d", hour, minute, second));
     }

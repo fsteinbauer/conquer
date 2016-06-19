@@ -31,7 +31,7 @@
                   android:textColor="@color/white"
                   android:textAppearance="?android:attr/textAppearanceLarge"
                   android:gravity="center_vertical"
-
+                  android:paddingLeft="16dp"
         />
 
         <LinearLayout android:id="@id/ll_trackinginfo_info_info"
@@ -47,32 +47,30 @@
                       android:layout_width="0dp"
                       android:layout_height="match_parent"
                       android:layout_weight="1"
-                      android:text="1.85km"
                       android:textColor="@color/white"
                       android:textAppearance="?android:attr/textAppearanceLarge"
-                      android:gravity="center_horizontal"
-
+                      android:gravity="center_vertical|end"
+                      android:drawableEnd="@drawable/ic_stars_white_24dp"
+                      android:drawablePadding="5dp"
             />
 
             <TextView android:id="@id/tv_trackinginfo_info_distance"
                       android:layout_width="0dp"
                       android:layout_height="match_parent"
                       android:layout_weight="1"
-                      android:text="1.87km/h"
                       android:textColor="@color/white"
                       android:textAppearance="?android:attr/textAppearanceLarge"
-                      android:gravity="center_horizontal"
+                      android:gravity="center"
             />
 
             <TextView android:id="@id/tv_trackinginfo_info_duration"
                       android:layout_width="0dp"
                       android:layout_height="match_parent"
                       android:layout_weight="1"
-                      android:text="13:45"
+                      android:text="00:00:00"
                       android:textColor="@color/white"
                       android:textAppearance="?android:attr/textAppearanceLarge"
-                      android:gravity="center_horizontal"
-
+                      android:gravity="center"
             />
 
         </LinearLayout>
