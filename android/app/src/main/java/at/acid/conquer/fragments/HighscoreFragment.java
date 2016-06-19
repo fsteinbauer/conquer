@@ -30,6 +30,8 @@ public class HighscoreFragment extends BaseClass implements AdapterView.OnItemSe
     private SpinnerAdapter mAreaAdapter;
     private RankingAdapter mHighscoreAdapter;
 
+    private Spinner mAreaSpinner;
+
 
 
     public RankingAdapter getRanking()
@@ -44,7 +46,7 @@ public class HighscoreFragment extends BaseClass implements AdapterView.OnItemSe
 
 
         View rootView = inflater.inflate(R.layout.fragment_highscores, container, false);
-        Spinner spinnerCity = (Spinner) rootView.findViewById(R.id.spinner_city);
+        mAreaSpinner = (Spinner) rootView.findViewById(R.id.spinner_city);
         ListView listviewHighscore = (ListView) rootView.findViewById(R.id.lv_highscore);
         TextView tvEmptyHighscore = (TextView) rootView.findViewById(R.id.tv_empty_highscore);
         mTVCurrentRank = (TextView) rootView.findViewById(R.id.tv_current_ranking);
@@ -54,8 +56,8 @@ public class HighscoreFragment extends BaseClass implements AdapterView.OnItemSe
         List<String> areaNames = ((MainActivity) getActivity()).areaNames;
         mAreaAdapter.addItem("Graz");
         mAreaAdapter.addItems(areaNames);
-        spinnerCity.setAdapter(mAreaAdapter);
-        spinnerCity.setOnItemSelectedListener(this);
+        mAreaSpinner.setAdapter(mAreaAdapter);
+        mAreaSpinner.setOnItemSelectedListener(this);
 
         mHighscoreAdapter = new RankingAdapter(getContext(),((MainActivity) getActivity()).getUser(), this);
 
@@ -117,7 +119,7 @@ public class HighscoreFragment extends BaseClass implements AdapterView.OnItemSe
 
     @Override
     public void onNothingSelected(AdapterView<?> parent){
-
+        mHighscoreAdapter.setCurrentArea("Graz", 0);
     }
 
     public void setCurrentRank(Long rank)
@@ -135,7 +137,9 @@ public class HighscoreFragment extends BaseClass implements AdapterView.OnItemSe
     @Override
     public void onFragmentSelected(){
 
-        mHighscoreAdapter.setCurrentArea("Graz", 0);
+
+        mAreaSpinner.setSelection(0);
+
 
 
         setCurrentRank(mHighscoreAdapter.getCurrentRank());
