@@ -5,13 +5,16 @@ import android.test.suitebuilder.annotation.LargeTest;
 
 import junit.framework.Assert;
 
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
 import at.acid.conquer.MainActivity;
 import at.acid.conquer.communication.Communicator;
+import at.acid.conquer.communication.Requests.ClearDataRequest;
 import at.acid.conquer.communication.Requests.RegisterRequest;
 import at.acid.conquer.communication.Requests.Request;
+import at.acid.conquer.fragments.AccountFragment;
 import at.acid.conquer.model.User;
 
 import static junit.framework.Assert.assertTrue;
@@ -29,40 +32,56 @@ public class RegisterRequestTest {
             MainActivity.class);
 
 
-   @Test
+    private Communicator c = new Communicator(new Communicator.CummunicatorClient() {
+        @Override
+        public void onRequestReady(Request r) {
+
+        }
+
+        @Override
+        public void onRequestTimeOut(Request r) {
+
+        }
+
+        @Override
+        public void onRequestError(Request r) {
+
+        }
+    },"http://conquer2.menzi.at/");
+
+
+    private MainActivity mActivity;
+    @Before
+    public void prepareDatabase() throws Exception
+    {
+        ClearDataRequest cdr = new ClearDataRequest();
+        c.sendRequest(cdr);
+        Thread.sleep(3000);
+
+
+    }
+
+    @Test
    public void sendRegisterRequest() throws Exception
    {
-       MainActivity mActivity = mActivityRule.getActivity();
-       Communicator c = new Communicator(new Communicator.CummunicatorClient() {
-           @Override
-           public void onRequestReady(Request r) {
 
-           }
-
-           @Override
-           public void onRequestTimeOut(Request r) {
-
-           }
-
-           @Override
-           public void onRequestError(Request r) {
-
-           }
-       },"http://conquer2.menzi.at/");
-
+       mActivity = mActivityRule.getActivity();
        User user = new User(mActivity.getApplicationContext());
 
-       final RegisterRequest rr = new RegisterRequest();
-       c.sendRequest(rr);
+       user.clearStoredData();
 
-       Thread.sleep(3000);
+       AccountFragment ac = mActivity.getmAccountFragment();
 
+       ac.setUser(user);
+
+       ac.registerUser();
+
+       Thread.sleep(5000);
+
+       Assert.assertEquals("John Doe", user.getName());
 
        Assert.assertNotNull(user.getId());
        Assert.assertTrue(!user.getId().isEmpty());
-       Assert.assertNotNull(user.getName());
-       Assert.assertEquals("John Doe", user.getName());
-
    }
 
 }
