@@ -12,10 +12,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import at.acid.conquer.MainActivity;
+import at.acid.conquer.adapter.RankingAdapter;
 import at.acid.conquer.communication.Requests.ClearDataRequest;
 import at.acid.conquer.communication.Requests.HighscoreRequest;
 import at.acid.conquer.communication.Requests.RegisterRequest;
 import at.acid.conquer.communication.Requests.Request;
+import at.acid.conquer.fragments.AccountFragment;
+import at.acid.conquer.fragments.HighscoreFragment;
 import at.acid.conquer.model.User;
 
 import static junit.framework.Assert.assertEquals;
@@ -52,12 +55,15 @@ public class HighscoreRequestTest {
     },"http://conquer2.menzi.at/");
 
 
+
+    private MainActivity mActivity;
     @Before
     public void prepareDatabase() throws Exception
     {
         ClearDataRequest cdr = new ClearDataRequest();
         c.sendRequest(cdr);
         Thread.sleep(3000);
+        mActivity = mActivityRule.getActivity();
     }
 
     @Test
@@ -65,25 +71,20 @@ public class HighscoreRequestTest {
 
 
 
+        User user = new User(mActivity.getApplicationContext());
 
-        User user = new User(mActivityRule.getActivity().getApplicationContext());
-        final RegisterRequest rr = new RegisterRequest();
-
-        Thread t = c.sendRequest(rr);
-        t.join(3000);
-
-        Assert.assertEquals(Request.ReturnValue.SUCCESS, rr.getResult().mSuccess);
+        AccountFragment ac = mActivity.getmAccountFragment();
 
 
 
+        ac.setUser(user);
 
-        HighscoreRequest hgR = new HighscoreRequest(0, rr.getResult().mID);
+        ac.registerUser();
 
-        t = c.sendRequest(hgR);
 
-        t.join(5000);
+        Thread.sleep(5000);
 
-        assertEquals(Request.ReturnValue.SUCCESS, hgR.getResult().mSuccess);
+        
 
 
 //

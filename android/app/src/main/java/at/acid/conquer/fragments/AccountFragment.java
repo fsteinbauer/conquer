@@ -11,6 +11,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
+
 import at.acid.conquer.R;
 import at.acid.conquer.adapter.HistoryAdapter;
 import at.acid.conquer.communication.Communicator;
@@ -25,7 +26,7 @@ import at.acid.conquer.model.User;
  */
 
 
-public class AccountFragment extends BaseClass implements View.OnClickListener{
+public class AccountFragment extends BaseClass implements View.OnClickListener {
 
     private boolean mEditMode;
     private ImageButton mButtonEditName;
@@ -40,11 +41,12 @@ public class AccountFragment extends BaseClass implements View.OnClickListener{
 
     private User mUser;
 
-    public AccountFragment(){}
+    public AccountFragment() {
+    }
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState){
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_account, container, false);
         mButtonEditName = (ImageButton) rootView.findViewById(R.id.ib_name_edit);
         mTextFieldName = (TextView) rootView.findViewById(R.id.tv_profile_name);
@@ -59,7 +61,9 @@ public class AccountFragment extends BaseClass implements View.OnClickListener{
         mButtonEditName.setOnClickListener(this);
         mTextFieldName.setOnClickListener(this);
 
+
         mEditMode = false;
+
 
         mTextFieldName.setText(mUser.getName());
         mEditTextName.setText(mUser.getName());
@@ -71,19 +75,19 @@ public class AccountFragment extends BaseClass implements View.OnClickListener{
         return rootView;
     }
 
-    public void setUser(User user){
+    public void setUser(User user) {
         mUser = user;
     }
 
     @Override
-    public void onResume(){
+    public void onResume() {
         super.onResume();
         mHistoryAdapter.notifyDataSetChanged();
     }
 
     @Override
-    public void onClick(View v){
-        switch(v.getId()){
+    public void onClick(View v) {
+        switch (v.getId()) {
             case R.id.tv_profile_name:
             case R.id.ib_name_edit:
                 handleEditButtonClick();
@@ -92,17 +96,22 @@ public class AccountFragment extends BaseClass implements View.OnClickListener{
     }
 
 
-    public void registerUser(){
-        if(mUser.getId().isEmpty()){
+    public void registerUser() {
+        if (mUser.getId().isEmpty()) {
             RegisterRequest rr = new RegisterRequest();
 
-            Communicator c = new Communicator(new Communicator.CummunicatorClient(){
+            Communicator c = new Communicator(new Communicator.CummunicatorClient() {
                 @Override
-                public void onRequestReady(Request r){
+                public void onRequestReady(Request r) {
                     RegisterRequest rr = (RegisterRequest) r;
 
-                    if(rr.getResult().mSuccess != Request.ReturnValue.SUCCESS){
+
+                    if (rr.getResult().mSuccess != Request.ReturnValue.SUCCESS) {
                         return;
+                    } else {
+                        mUser.setName(rr.getResult().mName);
+
+
                     }
 
                     mUser.setId(rr.getResult().mID);
@@ -111,12 +120,12 @@ public class AccountFragment extends BaseClass implements View.OnClickListener{
                 }
 
                 @Override
-                public void onRequestTimeOut(Request r){
+                public void onRequestTimeOut(Request r) {
 
                 }
 
                 @Override
-                public void onRequestError(Request r){
+                public void onRequestError(Request r) {
 
                 }
             }, "http://conquer.menzi.at");
@@ -127,20 +136,24 @@ public class AccountFragment extends BaseClass implements View.OnClickListener{
     }
 
 
-    private void handleEditButtonClick(){
-        if(mEditMode){
+    private void handleEditButtonClick() {
+        if (mEditMode) {
             mEditMode = false;
             mButtonEditName.setBackgroundResource(R.drawable.ic_pencil);
             mTextFieldName.setVisibility(View.VISIBLE);
             mEditTextName.setVisibility(View.GONE);
 
             mUser.changeName(mEditTextName.getText().toString());
+
+
+            mUser.saveData();
+
             mTextFieldName.setText(mUser.getName());
 
             InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(mTextFieldName.getWindowToken(), 0);
 
-        } else{
+        } else {
             mEditMode = true;
             mButtonEditName.setBackgroundResource(R.drawable.ic_check);
             mTextFieldName.setVisibility(View.GONE);
@@ -150,17 +163,17 @@ public class AccountFragment extends BaseClass implements View.OnClickListener{
     }
 
     @Override
-    public void onFragmentSelected(){
+    public void onFragmentSelected() {
         mHistoryAdapter.notifyDataSetChanged();
         updateOverallHighscore();
     }
 
-    private void updateOverallHighscore(){
+    private void updateOverallHighscore() {
         double meters = 0L;
         int points = 0;
         long duration = 0L;
 
-        for(User.RouteStore routeStore : mUser.getRoutes()){
+        for (User.RouteStore routeStore : mUser.getRoutes()) {
             meters += routeStore.mDistance;
             points += routeStore.mPoints;
             duration += routeStore.mRunningTime;
