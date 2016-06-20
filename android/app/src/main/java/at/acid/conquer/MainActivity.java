@@ -1,5 +1,6 @@
 package at.acid.conquer;
 
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentActivity;
@@ -98,6 +99,25 @@ public class MainActivity extends FragmentActivity implements TabLayout.OnTabSel
     @Override//-------------------------------------------------------------------------------------
     public void onTabReselected(TabLayout.Tab tab){
     }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        Log.d(TAG, "result");
+        switch (requestCode) {
+            case MapFragment.MY_LOCATION_PERMISSION: {
+
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    mMapFragment.startTracking();
+                }
+                return;
+            }
+
+        }
+    }
+
 
     //----------------------------------------------------------------------------------------------
     public User getUser(){ return mUser; }
