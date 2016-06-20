@@ -66,11 +66,11 @@ public class MainActivityTest{
         assertTrue(mActivityRule.getActivity().mCurrentFragment instanceof HighscoreFragment);
 
         onView(withId(R.id.spinner_city)).perform(click());
-        onData(allOf(is(instanceOf(String.class)))).atPosition(1).perform(click());
+        onData(allOf(is(instanceOf(String.class)), is("Graz - Gries"))).perform(click());
 
         Spinner spinner = (Spinner)mActivityRule.getActivity().findViewById(R.id.spinner_city);
         String text = spinner.getSelectedItem().toString();
-        assertEquals("Graz - Andritz", text);
+        assertEquals("Graz - Gries", text);
     }
 
     @Test
