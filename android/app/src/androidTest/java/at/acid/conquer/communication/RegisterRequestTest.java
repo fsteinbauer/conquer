@@ -70,6 +70,11 @@ public class RegisterRequestTest {
        mActivity = mActivityRule.getActivity();
        User user = new User(mActivity.getApplicationContext());
 
+       user.setName(null);
+       user.setId(null);
+
+       user.getAreas().clear();
+
        user.clearStoredData();
 
        AccountFragment ac = mActivity.getmAccountFragment();
