@@ -46,7 +46,7 @@ public class MainActivity extends FragmentActivity implements TabLayout.OnTabSel
     protected void onStart(){
         super.onStart();
         Log.d(TAG, "Username: " + mUser.getName());
-        mAccountFragment.registerUser();
+        getmAccountFragment().registerUser();
         Log.d(TAG, "Username: " + mUser.getName());
     }
 
@@ -56,11 +56,11 @@ public class MainActivity extends FragmentActivity implements TabLayout.OnTabSel
         mHighscoreFragment = new HighscoreFragment();
 
         mAccountFragment = new AccountFragment();
-        mAccountFragment.setUser(mUser);
+        getmAccountFragment().setUser(mUser);
 
         mCurrentFragment = mMapFragment;
 
-        getSupportFragmentManager().beginTransaction().add(R.id.fl_fragment_container, mMapFragment).add(R.id.fl_fragment_container, mHighscoreFragment).add(R.id.fl_fragment_container, mAccountFragment).hide(mHighscoreFragment).hide(mAccountFragment).commit();
+        getSupportFragmentManager().beginTransaction().add(R.id.fl_fragment_container, mMapFragment).add(R.id.fl_fragment_container, mHighscoreFragment).add(R.id.fl_fragment_container, getmAccountFragment()).hide(mHighscoreFragment).hide(getmAccountFragment()).commit();
 
         mTabLayout = (TabLayout) findViewById(R.id.tl_tabs);
         mTabLayout.setOnTabSelectedListener(this);
@@ -84,8 +84,8 @@ public class MainActivity extends FragmentActivity implements TabLayout.OnTabSel
                 break;
             case TAB_ACCOUNT:
                 Log.d(TAG, "Account clicked");
-                getSupportFragmentManager().beginTransaction().hide(mCurrentFragment).show(mAccountFragment).commit();
-                mCurrentFragment = mAccountFragment;
+                getSupportFragmentManager().beginTransaction().hide(mCurrentFragment).show(getmAccountFragment()).commit();
+                mCurrentFragment = getmAccountFragment();
                 break;
         }
         mCurrentFragment.onFragmentSelected();
@@ -101,4 +101,8 @@ public class MainActivity extends FragmentActivity implements TabLayout.OnTabSel
 
     //----------------------------------------------------------------------------------------------
     public User getUser(){ return mUser; }
+
+    public AccountFragment getmAccountFragment() {
+        return mAccountFragment;
+    }
 }
