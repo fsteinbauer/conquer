@@ -19,7 +19,7 @@ public class RenameRequest extends Request {
 
     public RenameRequest(String userID, String name) {
         mUserID = userID;
-        mName = name;
+        mName = name.trim().replace(" ", "%20");
         mResult = new Result();
         mResult.mSuccess = ReturnValue.NOT_INITIALIZED;
     }
