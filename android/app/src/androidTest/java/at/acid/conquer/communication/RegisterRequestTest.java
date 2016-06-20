@@ -47,13 +47,15 @@ public class RegisterRequestTest {
         public void onRequestError(Request r) {
 
         }
-    },"http://conquer2.menzi.at/");
+    },"http://conquer2.menzi.at");
 
 
     private MainActivity mActivity;
     @Before
     public void prepareDatabase() throws Exception
     {
+
+        c.mServerUrl = "http://conquer2.menzi.at";
         ClearDataRequest cdr = new ClearDataRequest();
         c.sendRequest(cdr);
         Thread.sleep(3000);
@@ -67,6 +69,11 @@ public class RegisterRequestTest {
 
        mActivity = mActivityRule.getActivity();
        User user = new User(mActivity.getApplicationContext());
+
+       user.setName(null);
+       user.setId(null);
+
+       user.getAreas().clear();
 
        user.clearStoredData();
 

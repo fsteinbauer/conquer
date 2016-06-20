@@ -24,7 +24,7 @@ import at.acid.conquer.model.User;
  */
 @RunWith(AndroidJUnit4.class)
 @LargeTest
-public class HighscoreRequestTest {
+public class SetScoreRequestTest {
 
     @Rule
     public ActivityTestRule<MainActivity> mActivityRule = new ActivityTestRule<>(
@@ -61,9 +61,7 @@ public class HighscoreRequestTest {
     }
 
     @Test
-    public void sendHighscoreRequest() throws Exception {
-
-
+    public void setScoreRequestSimple() throws Exception {
         User user = mActivity.getUser();
 
         AccountFragment ac = mActivity.getmAccountFragment();
@@ -122,22 +120,12 @@ public class HighscoreRequestTest {
         Assert.assertTrue(hu.getSelf());
         Assert.assertEquals(user.getName(), hu.getUsername());
 
-
-        hf.getRanking().setCurrentArea("Graz", 2);
-
-        Thread.sleep(5000);
-
-        Assert.assertEquals(0, hf.getRanking().getCount());
-
-        Assert.assertEquals(null, hf.getRanking().getCurrentRank());
 
 
     }
 
     @Test
-    public void HighscoreWithTwoUsersDifferenArea() throws Exception {
-
-
+    public void setScoreRequestTwoRunsOneRequestOneArea() throws Exception {
         User user = mActivity.getUser();
 
         AccountFragment ac = mActivity.getmAccountFragment();
@@ -153,200 +141,6 @@ public class HighscoreRequestTest {
 
         user.updateArea(1, 3000, 30);
 
-        user.updateScore();
-
-        Thread.sleep(5000);
-
-        HighscoreFragment hf = mActivity.getmHighscoreFragment();
-
-        hf.getRanking().setCurrentArea("Graz", 0);
-
-        Thread.sleep(5000);
-
-        Assert.assertEquals(1, hf.getRanking().getCount());
-
-        Assert.assertEquals(new Long(1), hf.getRanking().getCurrentRank());
-
-        Highscore.HighscoreUser hu = (Highscore.HighscoreUser) hf.getRanking().getItem(0);
-
-
-        Assert.assertEquals(new Long(1), hu.getRank());
-
-        Assert.assertEquals(new Long(30), hu.getPoints());
-
-        Assert.assertTrue(hu.getSelf());
-        Assert.assertEquals(user.getName(), hu.getUsername());
-
-        hf.getRanking().setCurrentArea("Graz", 1);
-
-        Thread.sleep(5000);
-
-        Assert.assertEquals(1, hf.getRanking().getCount());
-
-
-        Assert.assertEquals(new Long(1), hf.getRanking().getCurrentRank());
-
-        hu = (Highscore.HighscoreUser) hf.getRanking().getItem(0);
-
-
-        Assert.assertEquals(new Long(1), hu.getRank());
-
-        Assert.assertEquals(new Long(30), hu.getPoints());
-
-        Assert.assertTrue(hu.getSelf());
-        Assert.assertEquals(user.getName(), hu.getUsername());
-
-
-        hf.getRanking().setCurrentArea("Graz", 2);
-
-        Thread.sleep(5000);
-
-        Assert.assertEquals(0, hf.getRanking().getCount());
-
-        Assert.assertEquals(null, hf.getRanking().getCurrentRank());
-
-        user.getAreas().clear();
-
-        user.setId("");
-        user.setName("");
-
-        ac.registerUser();
-
-
-        Thread.sleep(5000);
-
-        user.updateArea(2, 7000, 70);
-
-        user.updateScore();
-
-        Thread.sleep(5000);
-
-
-        hf.getRanking().setCurrentArea("Graz", 0);
-
-        Thread.sleep(5000);
-
-        Assert.assertEquals(2, hf.getRanking().getCount());
-
-        Assert.assertEquals(new Long(1), hf.getRanking().getCurrentRank());
-
-        hu = (Highscore.HighscoreUser) hf.getRanking().getItem(0);
-
-
-        Assert.assertEquals(new Long(1), hu.getRank());
-
-        Assert.assertEquals(new Long(70), hu.getPoints());
-
-        Assert.assertTrue(hu.getSelf());
-        Assert.assertEquals(user.getName(), hu.getUsername());
-
-        hf.getRanking().setCurrentArea("Graz", 1);
-
-        Thread.sleep(5000);
-
-        Assert.assertEquals(1, hf.getRanking().getCount());
-
-        Assert.assertEquals(null, hf.getRanking().getCurrentRank());
-
-        hf.getRanking().setCurrentArea("Graz", 2);
-
-        Thread.sleep(5000);
-
-        Assert.assertEquals(1, hf.getRanking().getCount());
-
-        Assert.assertEquals(new Long(1), hf.getRanking().getCurrentRank());
-
-        hu = (Highscore.HighscoreUser) hf.getRanking().getItem(0);
-
-
-        Assert.assertEquals(new Long(1), hu.getRank());
-
-        Assert.assertEquals(new Long(70), hu.getPoints());
-
-
-    }
-
-
-    @Test
-    public void HighscoreWithTwoUsersSameArea() throws Exception {
-
-
-        User user = mActivity.getUser();
-
-        AccountFragment ac = mActivity.getmAccountFragment();
-        ac.setUser(user);
-
-        user.setId("");
-        user.setName("");
-
-        ac.registerUser();
-
-
-        Thread.sleep(5000);
-
-        user.updateArea(1, 3000, 30);
-
-        user.updateScore();
-
-        Thread.sleep(5000);
-
-        HighscoreFragment hf = mActivity.getmHighscoreFragment();
-
-        hf.getRanking().setCurrentArea("Graz", 0);
-
-        Thread.sleep(5000);
-
-        Assert.assertEquals(1, hf.getRanking().getCount());
-
-        Assert.assertEquals(new Long(1), hf.getRanking().getCurrentRank());
-
-        Highscore.HighscoreUser hu = (Highscore.HighscoreUser) hf.getRanking().getItem(0);
-
-
-        Assert.assertEquals(new Long(1), hu.getRank());
-
-        Assert.assertEquals(new Long(30), hu.getPoints());
-
-        Assert.assertTrue(hu.getSelf());
-        Assert.assertEquals(user.getName(), hu.getUsername());
-
-        hf.getRanking().setCurrentArea("Graz", 1);
-
-        Thread.sleep(5000);
-
-        Assert.assertEquals(1, hf.getRanking().getCount());
-
-
-        Assert.assertEquals(new Long(1), hf.getRanking().getCurrentRank());
-
-        hu = (Highscore.HighscoreUser) hf.getRanking().getItem(0);
-
-
-        Assert.assertEquals(new Long(1), hu.getRank());
-
-        Assert.assertEquals(new Long(30), hu.getPoints());
-
-        Assert.assertTrue(hu.getSelf());
-        Assert.assertEquals(user.getName(), hu.getUsername());
-
-
-        hf.getRanking().setCurrentArea("Graz", 2);
-
-        Thread.sleep(5000);
-
-        Assert.assertEquals(0, hf.getRanking().getCount());
-
-        Assert.assertEquals(null, hf.getRanking().getCurrentRank());
-
-        user.getAreas().clear();
-
-        user.setId("");
-        user.setName("");
-
-        ac.registerUser();
-
-
-        Thread.sleep(5000);
 
         user.updateArea(1, 7000, 70);
 
@@ -354,12 +148,117 @@ public class HighscoreRequestTest {
 
         Thread.sleep(5000);
 
+        HighscoreFragment hf = mActivity.getmHighscoreFragment();
 
         hf.getRanking().setCurrentArea("Graz", 0);
 
         Thread.sleep(5000);
 
-        Assert.assertEquals(2, hf.getRanking().getCount());
+        Assert.assertEquals(1, hf.getRanking().getCount());
+
+        Assert.assertEquals(new Long(1), hf.getRanking().getCurrentRank());
+
+        Highscore.HighscoreUser hu = (Highscore.HighscoreUser) hf.getRanking().getItem(0);
+
+
+        Assert.assertEquals(new Long(1), hu.getRank());
+
+        Assert.assertEquals(new Long(100), hu.getPoints());
+
+        Assert.assertTrue(hu.getSelf());
+        Assert.assertEquals(user.getName(), hu.getUsername());
+
+        hf.getRanking().setCurrentArea("Graz", 1);
+
+        Thread.sleep(5000);
+
+        Assert.assertEquals(1, hf.getRanking().getCount());
+
+
+        Assert.assertEquals(new Long(1), hf.getRanking().getCurrentRank());
+
+        hu = (Highscore.HighscoreUser) hf.getRanking().getItem(0);
+
+
+        Assert.assertEquals(new Long(1), hu.getRank());
+
+        Assert.assertEquals(new Long(100), hu.getPoints());
+
+        Assert.assertTrue(hu.getSelf());
+        Assert.assertEquals(user.getName(), hu.getUsername());
+
+    }
+
+
+    @Test
+    public void setScoreRequestTwoRunsOneRequestTwoAreas() throws Exception {
+        User user = mActivity.getUser();
+
+        AccountFragment ac = mActivity.getmAccountFragment();
+        ac.setUser(user);
+
+        user.setId("");
+        user.setName("");
+
+        ac.registerUser();
+
+
+        Thread.sleep(5000);
+
+        user.updateArea(1, 3000, 30);
+
+
+        user.updateArea(2, 7000, 70);
+
+        user.updateScore();
+
+        Thread.sleep(5000);
+
+        HighscoreFragment hf = mActivity.getmHighscoreFragment();
+
+        hf.getRanking().setCurrentArea("Graz", 0);
+
+        Thread.sleep(5000);
+
+        Assert.assertEquals(1, hf.getRanking().getCount());
+
+        Assert.assertEquals(new Long(1), hf.getRanking().getCurrentRank());
+
+        Highscore.HighscoreUser hu = (Highscore.HighscoreUser) hf.getRanking().getItem(0);
+
+
+        Assert.assertEquals(new Long(1), hu.getRank());
+
+        Assert.assertEquals(new Long(100), hu.getPoints());
+
+        Assert.assertTrue(hu.getSelf());
+        Assert.assertEquals(user.getName(), hu.getUsername());
+
+        hf.getRanking().setCurrentArea("Graz", 1);
+
+        Thread.sleep(5000);
+
+        Assert.assertEquals(1, hf.getRanking().getCount());
+
+
+        Assert.assertEquals(new Long(1), hf.getRanking().getCurrentRank());
+
+        hu = (Highscore.HighscoreUser) hf.getRanking().getItem(0);
+
+
+        Assert.assertEquals(new Long(1), hu.getRank());
+
+        Assert.assertEquals(new Long(30), hu.getPoints());
+
+        Assert.assertTrue(hu.getSelf());
+        Assert.assertEquals(user.getName(), hu.getUsername());
+
+        hf.getRanking().setCurrentArea("Graz", 2);
+
+        Thread.sleep(5000);
+
+        Assert.assertEquals(1, hf.getRanking().getCount());
+
 
         Assert.assertEquals(new Long(1), hf.getRanking().getCurrentRank());
 
@@ -373,32 +272,6 @@ public class HighscoreRequestTest {
         Assert.assertTrue(hu.getSelf());
         Assert.assertEquals(user.getName(), hu.getUsername());
 
-        hf.getRanking().setCurrentArea("Graz", 1);
-
-        Thread.sleep(5000);
-
-        Assert.assertEquals(2, hf.getRanking().getCount());
-
-
-        hu = (Highscore.HighscoreUser) hf.getRanking().getItem(0);
-
-
-        Assert.assertEquals(new Long(1), hu.getRank());
-
-        Assert.assertEquals(new Long(70), hu.getPoints());
-
-        Assert.assertTrue(hu.getSelf());
-        Assert.assertEquals(user.getName(), hu.getUsername());
-
-
-        hf.getRanking().setCurrentArea("Graz", 2);
-
-        Thread.sleep(5000);
-
-        Assert.assertEquals(0, hf.getRanking().getCount());
-
-        Assert.assertEquals(null, hf.getRanking().getCurrentRank());
-        
     }
 
 

@@ -19,13 +19,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import at.acid.conquer.LocationService;
-import at.acid.conquer.MainActivity;
-import at.acid.conquer.R;
-import at.acid.conquer.model.Area;
-import at.acid.conquer.model.Route;
-import at.acid.conquer.model.User;
-import com.google.android.gms.maps.*;
+
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.MapsInitializer;
+import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -39,6 +38,13 @@ import java.util.Calendar;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import at.acid.conquer.LocationService;
+import at.acid.conquer.MainActivity;
+import at.acid.conquer.R;
+import at.acid.conquer.model.Area;
+import at.acid.conquer.model.Route;
+import at.acid.conquer.model.User;
+
 import static at.acid.conquer.LocationUtility.getLatLng;
 import static at.acid.conquer.LocationUtility.validDistance;
 
@@ -47,16 +53,16 @@ import static at.acid.conquer.LocationUtility.validDistance;
  * Created by trewurm
  * 04.05.2016.
  */
-public class MapFragment extends BaseClass implements View.OnClickListener, OnMapReadyCallback, LocationService.LocationServiceClient{
+public class MapFragment extends BaseClass implements View.OnClickListener, OnMapReadyCallback, LocationService.LocationServiceClient {
     public static final String TAG = "MapFragment";
     public static final float MAP_DEFAULT_ZOOM = 16f;
-    public static final int AREA_COLOR_BORDER  = Color.argb(192, 128, 128, 128);
-    public static final int AREA_COLOR_UNKNOWN = Color.argb( 64, 128, 128, 128);
-    public static final int AREA_COLOR_GOOD    = Color.argb( 64,   0, 255,   0);
-    public static final int AREA_COLOR_AVERAGE = Color.argb( 64, 255, 255,   0);
-    public static final int AREA_COLOR_BAD     = Color.argb( 64, 255,   0,   0);
-    public static final int ROUTE_COLOR        = Color.argb( 255,   0,   0, 255);
-    public static final float ROUTE_WIDTH      = 10f;
+    public static final int AREA_COLOR_BORDER = Color.argb(192, 128, 128, 128);
+    public static final int AREA_COLOR_UNKNOWN = Color.argb(64, 128, 128, 128);
+    public static final int AREA_COLOR_GOOD = Color.argb(64, 0, 255, 0);
+    public static final int AREA_COLOR_AVERAGE = Color.argb(64, 255, 255, 0);
+    public static final int AREA_COLOR_BAD = Color.argb(64, 255, 0, 0);
+    public static final int ROUTE_COLOR = Color.argb(255, 0, 0, 255);
+    public static final float ROUTE_WIDTH = 10f;
 
     private MainActivity mMainActivity;
 
@@ -133,37 +139,8 @@ public class MapFragment extends BaseClass implements View.OnClickListener, OnMa
         updateInfo();
 
 
-
         return rootView;
     }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           String permissions[], int[] grantResults) {
-        Log.d(TAG, "result");
-        switch (requestCode) {
-            case MY_LOCATION_PERMISSION: {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-                    // permission was granted, yay! Do the
-                    // contacts-related task you need to do.
-
-                } else {
-
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
-                }
-                return;
-            }
-
-            // other 'case' lines to check for other
-            // permissions this app might request
-        }
-    }
-
-
 
 
     @Override//-------------------------------------------------------------------------------------
@@ -175,13 +152,11 @@ public class MapFragment extends BaseClass implements View.OnClickListener, OnMa
                     stopTracking();
 
                     mFABTrackingInfo.setImageResource(R.drawable.ic_run);
-//                    mFABTrackingInfo.setBackgroundTintList(ColorStateList.valueOf(ContextCompact.getColor(v.getContext(), R.color.green)));
 
                 } else {
                     mIsRunning = true;
                     tryStartTracking();
                     mFABTrackingInfo.setImageResource(R.drawable.ic_hotel);
-//                    mFABTrackingInfo.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(v.getContext(), R.color.red)));
                 }
                 break;
 
@@ -256,9 +231,9 @@ public class MapFragment extends BaseClass implements View.OnClickListener, OnMa
             }
         }
 
-        if( mCurrentArea != null ) {
+        if (mCurrentArea != null) {
             User user = mMainActivity.getUser();
-            user.updateArea(mCurrentArea.getId(), distance, (long)distance / 100);
+            user.updateArea(mCurrentArea.getId(), distance, (long) distance / 100);
         }
 
         mLastLocation = loc;
@@ -278,8 +253,7 @@ public class MapFragment extends BaseClass implements View.OnClickListener, OnMa
             area.draw(mGoogleMap, AREA_COLOR_UNKNOWN, AREA_COLOR_BORDER);
         }
 
-        // default locatin: graz
-        Location location = new Location("Wikipedia");
+        Location location = new Location("Graz");
         location.setLatitude(47.067);
         location.setLongitude(15.433);
 
@@ -293,41 +267,26 @@ public class MapFragment extends BaseClass implements View.OnClickListener, OnMa
     }
 
 
-    public void tryStartTracking(){
+    public void tryStartTracking() {
 
         Log.d(TAG, "try start tracking");
-        if ( ContextCompat.checkSelfPermission(mMainActivity,
+        if (ContextCompat.checkSelfPermission(mMainActivity,
                 Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED){
+                != PackageManager.PERMISSION_GRANTED) {
 
             Log.d(TAG, "permission not granted");
 
-            // Should we show an explanation?
-            if (ActivityCompat.shouldShowRequestPermissionRationale(mMainActivity,
-                    Manifest.permission.ACCESS_FINE_LOCATION)) {
 
-                // Show an expanation to the user *asynchronously* -- don't block
-                // this thread waiting for the user's response! After the user
-                // sees the explanation, try again to request the permission.
-                Log.d(TAG, "permission not granted1");
-                return;
-
-            } else {
-
-                // No explanation needed, we can request the permission.
-
-                ActivityCompat.requestPermissions(mMainActivity,
-                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, MY_LOCATION_PERMISSION
-                );
-                Log.d(TAG, "permission not granted2");
-                return;
-
-                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
-                // app-defined int constant. The callback method gets the
-                // result of the request.
-            }
+            ActivityCompat.requestPermissions(mMainActivity,
+                    new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, MY_LOCATION_PERMISSION
+            );
+            Log.d(TAG, "asking for permission");
+            return;
         }
+
+
         startTracking();
+
     }
 
     //----------------------------------------------------------------------------------------------
@@ -360,7 +319,7 @@ public class MapFragment extends BaseClass implements View.OnClickListener, OnMa
         user.addRoute(mRoute.getStartTime(),
                 mRoute.getRunTime(),
                 mRoute.getDistance(),
-                (long)mRoute.getDistance() / 100);
+                (long) mRoute.getDistance() / 100);
         user.saveData();
 
         user.updateScore();
@@ -432,7 +391,7 @@ public class MapFragment extends BaseClass implements View.OnClickListener, OnMa
     }
 
     //----------------------------------------------------------------------------------------------
-    SparseArray<Area> loadAreasFromAssets(String path){
+    SparseArray<Area> loadAreasFromAssets(String path) {
         ArrayList<String> areas_json = new ArrayList<String>();
         try {
             String[] area_files;
@@ -464,8 +423,12 @@ public class MapFragment extends BaseClass implements View.OnClickListener, OnMa
     }
 
     @Override
-    public void onFragmentSelected(){
+    public void onFragmentSelected() {
 
+    }
+
+    public boolean ismIsRunning() {
+        return mIsRunning;
     }
 }
 
