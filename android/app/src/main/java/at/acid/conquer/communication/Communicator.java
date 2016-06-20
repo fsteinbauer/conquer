@@ -3,17 +3,13 @@ package at.acid.conquer.communication;
 
 import android.util.Log;
 
-import com.google.android.gms.cast.Cast;
-
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
 import java.net.URL;
-import java.util.List;
 
-import at.acid.conquer.R;
 import at.acid.conquer.communication.Requests.Request;
 
 /**
@@ -21,22 +17,25 @@ import at.acid.conquer.communication.Requests.Request;
  */
 public class Communicator {
     final static String TAG = "Communicator";
-    private String mServerUrl;
+    public static String mServerUrl;
     private Thread mLastRequest;
 
     private CummunicatorClient mClient;
+
     public interface CummunicatorClient {
         void onRequestReady(Request r);
+
         void onRequestTimeOut(Request r);
+
         void onRequestError(Request r);
     }
 
 
-
-
-    public Communicator(CummunicatorClient client, String server_url){
+    public Communicator(CummunicatorClient client, String server_url) {
         mClient = client;
-        mServerUrl = server_url;
+        if (mServerUrl == null || mServerUrl.isEmpty()) {
+            mServerUrl = server_url;
+        }
     }
 
     private String readStream(InputStream in) throws IOException {
@@ -52,7 +51,7 @@ public class Communicator {
 
 
     public Thread sendRequest(final Request req) {
-        mLastRequest  = new Thread(new Runnable() {
+        mLastRequest = new Thread(new Runnable() {
             public void run() {
                 try {
                     final java.net.URL url = new URL(mServerUrl + req.getURLExtension());
@@ -68,12 +67,10 @@ public class Communicator {
                         mClient.onRequestReady(req);
                         urlConnection.disconnect();
                     }
-                }
-                catch (SocketTimeoutException e) {
+                } catch (SocketTimeoutException e) {
                     req.setSuccess(Request.ReturnValue.TIME_OUT);
                     mClient.onRequestTimeOut(req);
-                }
-                catch (IOException ioe) {
+                } catch (IOException ioe) {
                     Log.d(TAG, ioe.getMessage());
                     ioe.printStackTrace();
                     req.setSuccess(Request.ReturnValue.IO_ERROR);
@@ -86,11 +83,10 @@ public class Communicator {
         return mLastRequest;
     }
 
-    void waitForResponse(){
+    void waitForResponse() {
         try {
             mLastRequest.join();
-        }
-        catch(InterruptedException e){
+        } catch (InterruptedException e) {
             Log.d(TAG, e.getMessage());
             e.printStackTrace();
         }
