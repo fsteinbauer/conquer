@@ -60,7 +60,7 @@ public class MainActivity extends FragmentActivity implements TabLayout.OnTabSel
 
         mCurrentFragment = mMapFragment;
 
-        getSupportFragmentManager().beginTransaction().add(R.id.fl_fragment_container, mMapFragment).add(R.id.fl_fragment_container, mHighscoreFragment).add(R.id.fl_fragment_container, getmAccountFragment()).hide(mHighscoreFragment).hide(getmAccountFragment()).commit();
+        getSupportFragmentManager().beginTransaction().add(R.id.fl_fragment_container, mMapFragment).add(R.id.fl_fragment_container, getmHighscoreFragment()).add(R.id.fl_fragment_container, getmAccountFragment()).hide(getmHighscoreFragment()).hide(getmAccountFragment()).commit();
 
         mTabLayout = (TabLayout) findViewById(R.id.tl_tabs);
         mTabLayout.setOnTabSelectedListener(this);
@@ -79,8 +79,8 @@ public class MainActivity extends FragmentActivity implements TabLayout.OnTabSel
 
             case TAB_HIGHSCORE:
                 Log.d(TAG, "Highscores clicked");
-                getSupportFragmentManager().beginTransaction().hide(mCurrentFragment).show(mHighscoreFragment).commit();
-                mCurrentFragment = mHighscoreFragment;
+                getSupportFragmentManager().beginTransaction().hide(mCurrentFragment).show(getmHighscoreFragment()).commit();
+                mCurrentFragment = getmHighscoreFragment();
                 break;
             case TAB_ACCOUNT:
                 Log.d(TAG, "Account clicked");
@@ -104,5 +104,9 @@ public class MainActivity extends FragmentActivity implements TabLayout.OnTabSel
 
     public AccountFragment getmAccountFragment() {
         return mAccountFragment;
+    }
+
+    public HighscoreFragment getmHighscoreFragment() {
+        return mHighscoreFragment;
     }
 }

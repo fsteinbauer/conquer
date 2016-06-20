@@ -19,6 +19,8 @@ import at.acid.conquer.communication.Requests.RegisterRequest;
 import at.acid.conquer.communication.Requests.Request;
 import at.acid.conquer.fragments.AccountFragment;
 import at.acid.conquer.fragments.HighscoreFragment;
+import at.acid.conquer.fragments.MapFragment;
+import at.acid.conquer.model.Highscore;
 import at.acid.conquer.model.User;
 
 import static junit.framework.Assert.assertEquals;
@@ -60,6 +62,7 @@ public class HighscoreRequestTest {
     @Before
     public void prepareDatabase() throws Exception
     {
+        c.mServerUrl = "http://conquer2.menzi.at/";
         ClearDataRequest cdr = new ClearDataRequest();
         c.sendRequest(cdr);
         Thread.sleep(3000);
@@ -71,23 +74,55 @@ public class HighscoreRequestTest {
 
 
 
-        User user = new User(mActivity.getApplicationContext());
+        User user = mActivity.getUser();
 
         AccountFragment ac = mActivity.getmAccountFragment();
-
-
-
         ac.setUser(user);
+
+        user.setId("");
+        user.setName("");
 
         ac.registerUser();
 
 
         Thread.sleep(5000);
 
-        
+        user.updateArea(1, 3000, 30);
+
+        user.updateScore();
+
+        Thread.sleep(5000);
+
+        HighscoreFragment hf = mActivity.getmHighscoreFragment();
+
+        hf.getRanking().setCurrentArea("Graz", 0);
+
+        Thread.sleep(5000);
+
+        Assert.assertEquals(1, hf.getRanking().getCount());
+
+        Assert.assertEquals(new Long(1),hf.getRanking().getCurrentRank());
+
+        Highscore.HighscoreUser hu = (Highscore.HighscoreUser)hf.getRanking().getItem(0);
 
 
-//
+        Assert.assertEquals(new Long(1), hu.getRank());
+
+        Assert.assertEquals(new Long(30), hu.getPoints());
+
+        Assert.assertTrue(hu.getSelf());
+        Assert.assertEquals(user.getName(), hu.getUsername());
+
+        hf.getRanking().setCurrentArea("Graz", 1);
+
+        Thread.sleep(5000);
+
+        Assert.assertEquals(1, hf.getRanking().getCount());
+
+        Assert.assertEquals(new Long(1),hf.getRanking().getCurrentRank());
+
+
+
     }
 
 
