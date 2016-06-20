@@ -23,7 +23,7 @@ public class MainActivity extends FragmentActivity implements TabLayout.OnTabSel
     private MapFragment mMapFragment;
     private HighscoreFragment mHighscoreFragment;
     private AccountFragment mAccountFragment;
-    private BaseClass mCurrentFragment;
+    public BaseClass mCurrentFragment;
 
     public ArrayList<String> areaNames;
     User mUser;

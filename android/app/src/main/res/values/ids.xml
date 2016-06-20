@@ -28,7 +28,6 @@
     <item name="spinner_city" type="id"/>
     <item name="tv_place" type="id"/>
     <item name="lv_highscore" type="id"/>
-    <item name="spinner_account" type="id"/>
     <item name="tv_current_ranking" type="id"/>
     <item name="rl_ranking" type="id"/>
     <item name="tv_ranking_name" type="id"/>

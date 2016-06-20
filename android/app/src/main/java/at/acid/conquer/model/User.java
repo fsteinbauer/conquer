@@ -24,7 +24,7 @@ public class User {
     public static final String STORE_NAME = "LocalStore";
 
 
-    private class AreaStore{
+    public class AreaStore{
         public int mId;
         public long mRunningTime;
         public double mDistance;

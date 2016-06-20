@@ -467,5 +467,9 @@ public class MapFragment extends BaseClass implements View.OnClickListener, OnMa
     public void onFragmentSelected(){
 
     }
+
+    public boolean ismIsRunning(){
+        return mIsRunning;
+    }
 }
 
