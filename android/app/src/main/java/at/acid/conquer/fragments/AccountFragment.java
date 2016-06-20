@@ -97,7 +97,7 @@ public class AccountFragment extends BaseClass implements View.OnClickListener {
 
 
     public void registerUser() {
-        if (mUser.getId().isEmpty()) {
+        if (mUser.getId() == null || mUser.getId().isEmpty()) {
             RegisterRequest rr = new RegisterRequest();
 
             Communicator c = new Communicator(new Communicator.CummunicatorClient() {
