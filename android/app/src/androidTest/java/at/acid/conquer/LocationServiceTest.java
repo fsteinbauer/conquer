@@ -71,7 +71,7 @@ public class LocationServiceTest implements LocationService.LocationServiceClien
     public void onLocationUpdate(Location location) {
 
         mLocations.add(location);
-        Log.d("LocationService", "onLocationUpdate() : " + mLocations.size());
+        Log.d("LocationService", "onLocationUpdate()");
     }
 
     @Before//---------------------------------------------------------------------------------------

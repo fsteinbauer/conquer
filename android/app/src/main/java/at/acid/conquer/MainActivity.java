@@ -1,5 +1,6 @@
 package at.acid.conquer;
 
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentActivity;
@@ -23,7 +24,7 @@ public class MainActivity extends FragmentActivity implements TabLayout.OnTabSel
     private MapFragment mMapFragment;
     private HighscoreFragment mHighscoreFragment;
     private AccountFragment mAccountFragment;
-    private BaseClass mCurrentFragment;
+    public BaseClass mCurrentFragment;
 
     public ArrayList<String> areaNames;
     User mUser;
@@ -60,7 +61,7 @@ public class MainActivity extends FragmentActivity implements TabLayout.OnTabSel
 
         mCurrentFragment = mMapFragment;
 
-        getSupportFragmentManager().beginTransaction().add(R.id.fl_fragment_container, mMapFragment).add(R.id.fl_fragment_container, mHighscoreFragment).add(R.id.fl_fragment_container, getmAccountFragment()).hide(mHighscoreFragment).hide(getmAccountFragment()).commit();
+        getSupportFragmentManager().beginTransaction().add(R.id.fl_fragment_container, mMapFragment).add(R.id.fl_fragment_container, getmHighscoreFragment()).add(R.id.fl_fragment_container, getmAccountFragment()).hide(getmHighscoreFragment()).hide(getmAccountFragment()).commit();
 
         mTabLayout = (TabLayout) findViewById(R.id.tl_tabs);
         mTabLayout.setOnTabSelectedListener(this);
@@ -79,8 +80,8 @@ public class MainActivity extends FragmentActivity implements TabLayout.OnTabSel
 
             case TAB_HIGHSCORE:
                 Log.d(TAG, "Highscores clicked");
-                getSupportFragmentManager().beginTransaction().hide(mCurrentFragment).show(mHighscoreFragment).commit();
-                mCurrentFragment = mHighscoreFragment;
+                getSupportFragmentManager().beginTransaction().hide(mCurrentFragment).show(getmHighscoreFragment()).commit();
+                mCurrentFragment = getmHighscoreFragment();
                 break;
             case TAB_ACCOUNT:
                 Log.d(TAG, "Account clicked");
@@ -99,10 +100,33 @@ public class MainActivity extends FragmentActivity implements TabLayout.OnTabSel
     public void onTabReselected(TabLayout.Tab tab){
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        Log.d(TAG, "result");
+        switch (requestCode) {
+            case MapFragment.MY_LOCATION_PERMISSION: {
+
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    mMapFragment.startTracking();
+                }
+                return;
+            }
+
+        }
+    }
+
+
     //----------------------------------------------------------------------------------------------
     public User getUser(){ return mUser; }
 
     public AccountFragment getmAccountFragment() {
         return mAccountFragment;
+    }
+
+    public HighscoreFragment getmHighscoreFragment() {
+        return mHighscoreFragment;
     }
 }
