@@ -24,12 +24,6 @@ import at.acid.conquer.model.Highscore;
 public class RenameUserTest implements Communicator.CummunicatorClient {
     Communicator mComm;
 
-    final static int NUM_USERS = 20;
-
-    int mFinishedRequests = 0;
-
-    static List<String> mUsers = new ArrayList<>();
-
     @Override
     public void onRequestReady(Request r) {
 
@@ -55,6 +49,7 @@ public class RenameUserTest implements Communicator.CummunicatorClient {
         mComm.waitForResponse();
     }
 
+    // rename user (one word)
     @Test
     public void renameUser0() {
         RegisterRequest r = new RegisterRequest();
@@ -78,6 +73,7 @@ public class RenameUserTest implements Communicator.CummunicatorClient {
         Assert.assertEquals("Testperson", hscore.get(0).getUsername());
     }
 
+    // rename user with space (two words)
     @Test
     public void renameUser1() {
         RegisterRequest r = new RegisterRequest();
@@ -101,6 +97,7 @@ public class RenameUserTest implements Communicator.CummunicatorClient {
         Assert.assertEquals("Max Mustermann", hscore.get(0).getUsername());
     }
 
+    // rename wiht special character
     @Test
     public void renameUser2() {
         RegisterRequest r = new RegisterRequest();
@@ -124,6 +121,7 @@ public class RenameUserTest implements Communicator.CummunicatorClient {
         Assert.assertEquals("Grätchen", hscore.get(0).getUsername());
     }
 
+    // rename with number
     @Test
     public void renameUser3() {
         RegisterRequest r = new RegisterRequest();
@@ -147,6 +145,7 @@ public class RenameUserTest implements Communicator.CummunicatorClient {
         Assert.assertEquals("Läufer1", hscore.get(0).getUsername());
     }
 
+    // rename with space in fornt of name
     @Test
     // space before name
     public void renameUser4() {
@@ -171,7 +170,7 @@ public class RenameUserTest implements Communicator.CummunicatorClient {
         Assert.assertEquals("Schnecke", hscore.get(0).getUsername());
     }
 
-
+    // rename with space after name
     @Test
     // space after name
     public void renameUser5() {

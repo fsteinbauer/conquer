@@ -25,12 +25,6 @@ import at.acid.conquer.model.Highscore;
 public class AddScoreTest implements Communicator.CummunicatorClient {
     Communicator mComm;
 
-    final static int NUM_USERS = 20;
-
-    int mFinishedRequests = 0;
-
-    static List<String> mUsers = new ArrayList<>();
-
     @Override
     public void onRequestReady(Request r) {
 
@@ -56,6 +50,7 @@ public class AddScoreTest implements Communicator.CummunicatorClient {
         mComm.waitForResponse();
     }
 
+    // simple add
     @Test
     public void addScore0() {
         RegisterRequest r = new RegisterRequest();
@@ -78,6 +73,7 @@ public class AddScoreTest implements Communicator.CummunicatorClient {
         Assert.assertEquals(new Long(100), hscore.get(0).getPoints());
     }
 
+    // add in to different areas and check sum
     @Test
     public void addScore1() {
         RegisterRequest r = new RegisterRequest();
@@ -104,6 +100,7 @@ public class AddScoreTest implements Communicator.CummunicatorClient {
         Assert.assertEquals(new Long(300), hscore.get(0).getPoints());
     }
 
+    // override existing score
     @Test
     public void addScore2() {
         RegisterRequest r = new RegisterRequest();
@@ -130,6 +127,7 @@ public class AddScoreTest implements Communicator.CummunicatorClient {
         Assert.assertEquals(new Long(300), hscore.get(0).getPoints());
     }
 
+    // zero in front of points
     @Test
     public void addScore3() {
         RegisterRequest r = new RegisterRequest();
@@ -137,7 +135,7 @@ public class AddScoreTest implements Communicator.CummunicatorClient {
         mComm.waitForResponse();
         Assert.assertEquals(Request.ReturnValue.SUCCESS, r.getResult().mSuccess);
 
-        AddScoreRequest r2 = new AddScoreRequest(r.getResult().mID, 1000111000, 17);
+        AddScoreRequest r2 = new AddScoreRequest(r.getResult().mID, 01000, 17);
         mComm.sendRequest(r2);
         mComm.waitForResponse();
         Assert.assertEquals(Request.ReturnValue.SUCCESS, r2.getResult().mSuccess);
@@ -148,9 +146,10 @@ public class AddScoreTest implements Communicator.CummunicatorClient {
         Assert.assertEquals(Request.ReturnValue.SUCCESS, r3.getResult().mSuccess);
 
         Highscore hscore = r3.getResult().mHighScore;
-        Assert.assertEquals(new Long(1000111000), hscore.get(0).getPoints());
+        Assert.assertEquals(new Long(1000), hscore.get(0).getPoints());
     }
 
+    // not existing area-id
     @Test
     public void addScore4() {
         RegisterRequest r = new RegisterRequest();
@@ -158,12 +157,13 @@ public class AddScoreTest implements Communicator.CummunicatorClient {
         mComm.waitForResponse();
         Assert.assertEquals(Request.ReturnValue.SUCCESS, r.getResult().mSuccess);
 
-        AddScoreRequest r2 = new AddScoreRequest(r.getResult().mID, 2000111000, 18);
+        AddScoreRequest r2 = new AddScoreRequest(r.getResult().mID, 11000, 18);
         mComm.sendRequest(r2);
         mComm.waitForResponse();
         Assert.assertEquals(Request.ReturnValue.DATABASE_ERROR, r2.getResult().mSuccess);
     }
 
+    // add zero points
     @Test
     public void addScore5() {
         RegisterRequest r = new RegisterRequest();
@@ -185,6 +185,7 @@ public class AddScoreTest implements Communicator.CummunicatorClient {
         Assert.assertEquals(new Long(0), hscore.get(0).getPoints());
     }
 
+    // big number of points
     @Test
     public void addScore6() {
         RegisterRequest r = new RegisterRequest();
@@ -192,25 +193,9 @@ public class AddScoreTest implements Communicator.CummunicatorClient {
         mComm.waitForResponse();
         Assert.assertEquals(Request.ReturnValue.SUCCESS, r.getResult().mSuccess);
 
-        HighscoreRequest r3 = new HighscoreRequest(0,r.getResult().mID);
-        mComm.sendRequest(r3);
-        mComm.waitForResponse();
-        Assert.assertEquals(Request.ReturnValue.SUCCESS, r3.getResult().mSuccess);
-
-        Highscore hscore = r3.getResult().mHighScore;
-        Assert.assertEquals(new Long(0), hscore.get(0).getPoints());
-    }
-
-    @Test
-    public void addScore7() {
-        RegisterRequest r = new RegisterRequest();
-        mComm.sendRequest(r);
-        mComm.waitForResponse();
-        Assert.assertEquals(Request.ReturnValue.SUCCESS, r.getResult().mSuccess);
-
-        AddScoreRequest r2 = new AddScoreRequest(r.getResult().mID, 500, 1);
+        AddScoreRequest r2 = new AddScoreRequest(r.getResult().mID, 1000000, 1);
         mComm.sendRequest(r2);
         mComm.waitForResponse();
-        Assert.assertEquals(Request.ReturnValue.DATABASE_ERROR, r2.getResult().mSuccess);
+        Assert.assertEquals(Request.ReturnValue.SUCCESS, r2.getResult().mSuccess);
     }
 }

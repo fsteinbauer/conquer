@@ -24,12 +24,6 @@ import at.acid.conquer.model.Highscore;
 public class HighscoreTest implements Communicator.CummunicatorClient {
     Communicator mComm;
 
-    final static int NUM_USERS = 20;
-
-    int mFinishedRequests = 0;
-
-    static List<String> mUsers = new ArrayList<>();
-
     @Override
     public void onRequestReady(Request r) {
 
@@ -55,6 +49,7 @@ public class HighscoreTest implements Communicator.CummunicatorClient {
         mComm.waitForResponse();
     }
 
+    // highscoreRequest of leading person
     @Test
     public void highscore0() {
         RegisterRequest r_0 = new RegisterRequest();
@@ -189,7 +184,7 @@ public class HighscoreTest implements Communicator.CummunicatorClient {
         Assert.assertEquals(new Long(800), hscore.get(4).getPoints());
     }
 
-
+    // highscoreRequest of area with no points
     @Test
     public void highscore1() {
         RegisterRequest r_0 = new RegisterRequest();
@@ -322,6 +317,7 @@ public class HighscoreTest implements Communicator.CummunicatorClient {
         Assert.assertEquals(0, hscore.size());
     }
 
+    // request form rank 6 of 12
     @Test
     public void highscore2() {
         RegisterRequest r_0 = new RegisterRequest();
@@ -457,6 +453,7 @@ public class HighscoreTest implements Communicator.CummunicatorClient {
         Assert.assertEquals(new Long(100), hscore.get(7).getPoints());
     }
 
+    // request form rank 10 of 12
     @Test
     public void highscore3() {
         RegisterRequest r_0 = new RegisterRequest();
@@ -592,6 +589,7 @@ public class HighscoreTest implements Communicator.CummunicatorClient {
         Assert.assertEquals(new Long(12), hscore.get(9).getRank());
     }
 
+    // request from rank 8 of 12
     @Test
     public void highscore4() {
         RegisterRequest r_0 = new RegisterRequest();
@@ -725,6 +723,7 @@ public class HighscoreTest implements Communicator.CummunicatorClient {
         Assert.assertEquals(new Long(10), hscore.get(9).getRank());
     }
 
+    // request from rank 6 of 12
     @Test
     public void highscore5() {
         RegisterRequest r_0 = new RegisterRequest();
@@ -859,6 +858,7 @@ public class HighscoreTest implements Communicator.CummunicatorClient {
         Assert.assertEquals(new Long(700), hscore.get(5).getPoints());
     }
 
+    // request of areas with 1 to 4 entities
     @Test
     public void highscore6() {
         RegisterRequest r_0 = new RegisterRequest();
@@ -1014,6 +1014,7 @@ public class HighscoreTest implements Communicator.CummunicatorClient {
         Assert.assertEquals(1, hscore_3.size());
     }
 
+    // request of not existing area
     @Test
     public void highscore7() {
         RegisterRequest r_0 = new RegisterRequest();
@@ -1042,6 +1043,7 @@ public class HighscoreTest implements Communicator.CummunicatorClient {
         Assert.assertEquals(Request.ReturnValue.JSON_ERROR, r2.getResult().mSuccess);
     }
 
+    // request for incorrect UserID
     @Test
     public void highscore8() {
         RegisterRequest r_0 = new RegisterRequest();

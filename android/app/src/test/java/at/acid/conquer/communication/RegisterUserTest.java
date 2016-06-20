@@ -25,12 +25,6 @@ import at.acid.conquer.model.Highscore;
 public class RegisterUserTest implements Communicator.CummunicatorClient {
     Communicator mComm;
 
-    final static int NUM_USERS = 20;
-
-    int mFinishedRequests = 0;
-
-    static List<String> mUsers = new ArrayList<>();
-
     @Override
     public void onRequestReady(Request r) {
 
@@ -56,6 +50,7 @@ public class RegisterUserTest implements Communicator.CummunicatorClient {
         mComm.waitForResponse();
     }
 
+    // create new user
     @Test
     public void registerUser() {
         RegisterRequest r = new RegisterRequest();

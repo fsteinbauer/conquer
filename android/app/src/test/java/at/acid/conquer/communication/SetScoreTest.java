@@ -25,12 +25,6 @@ import at.acid.conquer.model.Highscore;
 public class SetScoreTest implements Communicator.CummunicatorClient {
     Communicator mComm;
 
-    final static int NUM_USERS = 20;
-
-    int mFinishedRequests = 0;
-
-    static List<String> mUsers = new ArrayList<>();
-
     @Override
     public void onRequestReady(Request r) {
 
@@ -56,6 +50,7 @@ public class SetScoreTest implements Communicator.CummunicatorClient {
         mComm.waitForResponse();
     }
 
+    // replace existing score
     @Test
     public void setScore0() {
         RegisterRequest r = new RegisterRequest();
@@ -82,6 +77,7 @@ public class SetScoreTest implements Communicator.CummunicatorClient {
         Assert.assertEquals(new Long(200), hscore.get(0).getPoints());
     }
 
+    // set score to not existing user
     @Test
     public void setScore1() {
         RegisterRequest r = new RegisterRequest();
@@ -95,6 +91,7 @@ public class SetScoreTest implements Communicator.CummunicatorClient {
         Assert.assertEquals(Request.ReturnValue.DATABASE_ERROR, r2.getResult().mSuccess);
     }
 
+    // set score at different areas
     @Test
     public void setScore2() {
         RegisterRequest r = new RegisterRequest();
@@ -121,6 +118,7 @@ public class SetScoreTest implements Communicator.CummunicatorClient {
         Assert.assertEquals(new Long(200), hscore.get(0).getPoints());
     }
 
+    // set score in not existing area
     @Test
     public void setScore3() {
         RegisterRequest r = new RegisterRequest();
