@@ -27,8 +27,8 @@ public class AddScoreRequest extends Request {
             throw new IllegalArgumentException("Points may not be negative!");
 
         }
-        if (Area < 0) {
-            throw new IllegalArgumentException("Area may not be negative!");
+        if (Area <= 0) {
+            throw new IllegalArgumentException("Area must be > 0!");
 
         }
         mPoints = Points;
@@ -44,7 +44,7 @@ public class AddScoreRequest extends Request {
 
     @Override
     public String getURLExtension() {
-        return "addscore/" + mUserID + "/" + mArea + "/" + mPoints;
+        return "/addscore/" + mUserID + "/" + mArea + "/" + mPoints;
     }
 
     @Override

@@ -44,11 +44,13 @@ public class RegisterRequest extends Request {
 
     @Override
     public String getURLExtension() {
-        return "register"; //"+ mLatitude + "/"  + mLongitude;
+        return "/register"; //"+ mLatitude + "/"  + mLongitude;
     }
 
     @Override
     public void parseReturn(String returnString) {
+
+        Log.d(TAG, "received answer: "+ returnString);
         Result result = this.mResult;
         try {
             JSONObject obj = new JSONObject(returnString);

@@ -99,6 +99,48 @@ $REQUESTS = [
   },
   
   //----------------------------------------------------------------------------
+  'setscore' => function($data, $db){
+    if(count($data) != 4)
+      throw new Exception("'{$data[0]}' expects {user}/{area}/{points}");
+    $user = getUser($data[1]);
+    $area = getArea($data[2]);
+    $points = getUInt($data[3]);
+    
+    if($area == 0)
+      throw new Exception("'area' is not allowed to be 0");
+    
+    $db->multi_query("
+      INSERT INTO highscore
+        (user_id, area_id, points, rank)
+      VALUES
+        ('$user', $area, $points, 0),
+        ('$user', 0, $points, 0)
+      ON DUPLICATE KEY UPDATE
+        points = VALUES(points);
+        
+      UPDATE highscore
+
+      SET points = (
+        SELECT SUM(points)
+        FROM (SELECT * FROM highscore) AS hs
+        WHERE
+          user_id = '$user'
+          AND
+          area_id > 0
+      )
+      WHERE
+        user_id = '$user'
+        AND
+        area_id = 0;
+    ");
+    
+    updateRank($db, 0);
+    updateRank($db, $area);
+    
+    return json_encode(['success' => true]);
+  },
+  
+  //----------------------------------------------------------------------------
   'rename' => function($data, $db){
     if(count($data) != 3)
       throw new Exception("'{$data[0]}' expects {user}/{name}");

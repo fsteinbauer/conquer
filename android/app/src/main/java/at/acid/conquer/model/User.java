@@ -4,18 +4,17 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 import android.util.SparseArray;
+import at.acid.conquer.communication.Communicator;
+import at.acid.conquer.communication.Requests.RegisterRequest;
+import at.acid.conquer.communication.Requests.RenameRequest;
+import at.acid.conquer.communication.Requests.Request;
+import at.acid.conquer.communication.Requests.SetScoreRequest;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import at.acid.conquer.communication.Communicator;
-import at.acid.conquer.communication.Requests.AddScoreRequest;
-import at.acid.conquer.communication.Requests.RegisterRequest;
-import at.acid.conquer.communication.Requests.RenameRequest;
-import at.acid.conquer.communication.Requests.Request;
 
 /**
  * Created by florian on 10.05.2016.
@@ -72,8 +71,8 @@ public class User {
         public void onRequestReady(Request r) {
             RegisterRequest rr = (RegisterRequest) r;
 
-            setId(rr.getResult().mID);
-            setName(rr.getResult().mName);
+            mId = rr.getResult().mID;
+            mName = rr.getResult().mName;
         }
 
         @Override
@@ -107,15 +106,10 @@ public class User {
 
         String routesJson = store.getString("routes", "[]");
         String areasJson = store.getString("areas", "[]");
-        mName = store.getString("name", "Name");
+        mName = store.getString("name", "John Doe");
         mId = store.getString("id", "");
 
-        if(mId.isEmpty())
-        {
-            RegisterRequest rr = new RegisterRequest();
 
-            c.sendRequest(rr);
-        }
         mLastAvtivity = store.getLong("last_activity", 0);
         mLastServerConnect = store.getLong("last_server_connect", 0);
 
@@ -203,7 +197,7 @@ public class User {
         for(int i = 0; i < this.mAreas.size(); i++)
         {
             AreaStore r = this.mAreas.valueAt(i);
-            c2.sendRequest(new AddScoreRequest(this.getId(), r.mPoints, r.mId ));
+            c2.sendRequest(new SetScoreRequest(this.getId(), r.mPoints, r.mId ));
         }
 
     }
@@ -243,11 +237,6 @@ public class User {
     }
 
     //----------------------------------------------------------------------------------------------
-    public void persist(){
-        // TODO: Create Network persist function
-    }
-
-    //----------------------------------------------------------------------------------------------
     public String getId() { return mId; }
     public String getName() { return mName; }
     public SparseArray<AreaStore> getAreas(){
@@ -277,10 +266,17 @@ public class User {
 
         }
     }, "http://conquer.menzi.at");
-    public void setName(String name) { this.mName = name;
 
+
+    public void changeName(String name){
+        this.setName(name);
+        this.saveData();
         RenameRequest ncr = new RenameRequest(this.getId(), name);
 
         c3.sendRequest(ncr);
+    }
+    public void setName(String name) { this.mName = name;
+
+
     }
 }

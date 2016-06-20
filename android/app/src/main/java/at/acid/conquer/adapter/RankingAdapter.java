@@ -67,7 +67,7 @@ public class RankingAdapter extends BaseAdapter {
         mSelf = self;
 
         mParent = hf;
-        this.setCurrentArea("Graz", 0);
+
     }
 
     private Highscore mHighscore;
