@@ -17,4 +17,4 @@ Testing Enviroment:
 
    ---> Goto Settings -> Language & Input -> Current Input -> Disable Hardware Show Input method -> Close
 
-   
+   --> Emulator need to have Internet Access
