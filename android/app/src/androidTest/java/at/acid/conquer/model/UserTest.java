@@ -7,6 +7,9 @@ import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.test.InstrumentationTestCase;
 import at.acid.conquer.MainActivity;
+import at.acid.conquer.communication.Communicator;
+
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,6 +23,12 @@ public class UserTest extends InstrumentationTestCase{
 
     public static final String STORE_NAME = "LocalStore";
     private User user;
+
+    @Before
+    public void setDB()
+    {
+        Communicator.mServerUrl = "http://conquer2.menzi.at";
+    }
 
     @Rule
     public ActivityTestRule<MainActivity> activityTestRule = new ActivityTestRule<MainActivity>(MainActivity.class){

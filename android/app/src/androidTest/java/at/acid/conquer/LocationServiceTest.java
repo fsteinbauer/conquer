@@ -40,6 +40,8 @@ import org.junit.runner.RunWith;
 import java.util.ArrayList;
 import java.util.List;
 
+import at.acid.conquer.communication.Communicator;
+
 import static junit.framework.Assert.assertEquals;
 
 /**
@@ -66,6 +68,12 @@ public class LocationServiceTest implements LocationService.LocationServiceClien
             mLocationService = null;
         }
     };
+
+    @Before
+    public void setDB()
+    {
+        Communicator.mServerUrl = "http://conquer2.menzi.at";
+    }
 
     @Override//-------------------------------------------------------------------------------------
     public void onLocationUpdate(Location location) {
