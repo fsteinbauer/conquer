@@ -1,5 +1,3 @@
-# conquer
-
 Testing Enviroment:
   - "Real" Hardware Devices:
     - ...
