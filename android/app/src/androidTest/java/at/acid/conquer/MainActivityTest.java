@@ -1,6 +1,8 @@
 package at.acid.conquer;
 
 import android.support.design.widget.TabLayout;
+import android.support.test.espresso.action.ScrollToAction;
+import android.support.test.espresso.action.ViewActions;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.widget.Spinner;
@@ -11,11 +13,14 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.util.regex.Matcher;
+
 import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.*;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
+import static android.support.test.espresso.matcher.ViewMatchers.withParent;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertFalse;
@@ -58,7 +63,7 @@ public class MainActivityTest{
     }
 
     @Test
-    public void highscoreActions(){
+    public void highscoreActions() throws  Exception{
         TabLayout tabLayout = (TabLayout) mActivityRule.getActivity().findViewById(R.id.tl_tabs);
         TabLayout.Tab tab = tabLayout.getTabAt(1);
 
@@ -66,7 +71,9 @@ public class MainActivityTest{
         assertTrue(mActivityRule.getActivity().mCurrentFragment instanceof HighscoreFragment);
 
         onView(withId(R.id.spinner_city)).perform(click());
-        onData(allOf(is(instanceOf(String.class)), is("Graz - Gries"))).perform(click());
+
+        onView(withText("Graz")).perform(swipeUp());
+        onView(withText("Graz - Gries")).perform(click());
 
         Spinner spinner = (Spinner)mActivityRule.getActivity().findViewById(R.id.spinner_city);
         String text = spinner.getSelectedItem().toString();
