@@ -6,9 +6,14 @@ import android.support.test.espresso.action.ViewActions;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.widget.Spinner;
+
+import at.acid.conquer.communication.Communicator;
 import at.acid.conquer.fragments.AccountFragment;
 import at.acid.conquer.fragments.HighscoreFragment;
 import at.acid.conquer.fragments.MapFragment;
+
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -39,6 +44,12 @@ public class MainActivityTest{
     public ActivityTestRule<MainActivity> mActivityRule = new ActivityTestRule<>(MainActivity.class);
 
 
+
+    @Before
+    public void setDB()
+    {
+        Communicator.mServerUrl = "http://conquer2.menzi.at";
+    }
     @Test
     public void changeTabs(){
         TabLayout tabLayout = (TabLayout) mActivityRule.getActivity().findViewById(R.id.tl_tabs);
